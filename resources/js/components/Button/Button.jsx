@@ -12,6 +12,7 @@ const Button = ({
     primary = false,
     secondary = false,
     noBackground = false,
+    text = false,
 
     shadow = false,
     disabled = false,
@@ -58,11 +59,12 @@ const Button = ({
         Comp = 'a';
     }
 
-    const classes = cx('text', {
+    const classes = cx('button', {
         [className]: className,
         primary,
         secondary,
-        noBackground,
+        'no-background': noBackground,
+        text,
 
         shadow,
         disabled,
@@ -77,7 +79,7 @@ const Button = ({
         <Comp className={classes} {...props} style={{ width: width }}>
             {leftIcon && <span className={cx('icon')}>{leftIcon}</span>}
             <span className={cx('content', { center: contentCenter })}>{children}</span>
-            {rightIcon && <span className={cx('icon')}>{rightIcon}</span>}{' '}
+            {rightIcon && <span className={cx('icon')}>{rightIcon}</span>}
         </Comp>
     );
 };
