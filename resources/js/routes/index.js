@@ -1,5 +1,5 @@
-import config from '../config';
-import pages from '../pages';
+import config from '~/config';
+import pages from '~/pages';
 import layouts from '~/layouts';
 
 const publicRoutes = [
@@ -8,9 +8,9 @@ const publicRoutes = [
     // { path: config.routes.user.productList, component: pages.user.productList, layout: layouts.user.default },
     // { path: config.routes.user.cart, component: pages.user.cart, layout: layouts.user.default },
 
+    { path: config.routes.other.landing, component: pages.other.landing, layout: layouts.other.noHeader },
     { path: config.routes.other.login, component: pages.other.login, layout: layouts.other.noHeader },
     { path: config.routes.other.register, component: pages.other.register, layout: layouts.other.noHeader },
-    { path: config.routes.other.landing, component: pages.other.landing, layout: layouts.other.noHeader },
 ];
 
 const privateRoutes = [
