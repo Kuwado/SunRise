@@ -7,10 +7,12 @@
     // Color
     --bg-primary: #ffffff;
     --bg-secondary: #603809;
+
     --cl-primary: #ea6a12;
     --cl-secondary: #f8c51b;
     --cl-favorite: #ff4848;
     --cl-hightlight: #1458dd;
+
     --text-color: #252c32;
 }
 
@@ -55,12 +57,12 @@ a {
 // Scrollbar CSS
 html *::-webkit-scrollbar {
     border-radius: 0;
-    width: var(--scrollbar-width);
+    width: 10px;
 }
 
 html *::-webkit-scrollbar-thumb {
     border-radius: 4px;
-    background: var(--secondary-25);
+    background: var(--cl-primary);
 }
 
 html *::-webkit-scrollbar-track {

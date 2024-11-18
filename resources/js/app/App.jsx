@@ -13,7 +13,6 @@ const App = () => {
                         const Page = route.component;
 
                         let Layout = layouts.admin.default;
-
                         if (route.layout === null) {
                             Layout = Fragment; // No layout
                         } else if (route.layout) {

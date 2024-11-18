@@ -2,9 +2,9 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    font-size: var(--font-size);
+    gap: 10px;
     font-weight: 600;
-    color: var(--text-primary);
+    color: var(--text-color);
     border-radius: 10px;
     cursor: pointer;
     user-select: none;
@@ -36,16 +36,16 @@
     text-align: center;
 }
 
-.content {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: start;
+// .content {
+//     flex: 1;
+//     display: flex;
+//     align-items: center;
+//     justify-content: start;
 
-    &.center {
-        justify-content: center;
-    }
-}
+//     &.center {
+//         justify-content: center;
+//     }
+// }
 
 .icon + .content,
 .content + .icon {
@@ -54,88 +54,50 @@
 
 // Type
 .text {
-    @extend .button;
-    border: 1px solid transparent;
     background-color: transparent;
+    color: var(--text-color);
+    text-decoration: underline;
 
-    &:hover {
-        background-color: var(--hover-item);
+    &:hover,
+    &.active {
+        color: var(--cl-primary);
     }
-}
-
-.text.active {
-    background-color: var(--active-item);
 }
 
 .primary {
     background-color: var(--cl-primary);
-    color: var(--text-primary);
+    color: var(--text-color);
 
     &:hover,
     &.active {
-        background-color: var(--secondary);
-        color: var(--text-secondary);
+        background-color: var(--cl-secondary);
     }
 }
 
 .secondary {
-    background-color: var(--secondary);
-    color: var(--text-secondary);
+    background-color: var(--cl-secondary);
+    color: var(--text-color);
 
     &:hover,
     &.active {
-        background-color: var(--primary);
-        color: var(--text-primary);
+        background-color: var(--cl-primary);
     }
 }
 
-.danger {
-    background-color: var(--error-color);
-    color: var(--text-error);
-
-    &:hover,
-    &.active {
-        background-color: var(--text-error);
-        color: var(--error-color);
-    }
-}
-
-.primaryBorder {
-    @extend .primary;
-    border-color: var(--text-primary);
-
-    &:hover,
-    &.active {
-        border-color: var(--text-secondary);
-    }
-}
-
-.secondaryBorder {
-    @extend .secondary;
-    border-color: var(--text-secondary);
-
-    &:hover,
-    &.active {
-        border-color: var(--text-primary);
-    }
-}
-
-.outline {
+.no-background {
     background-color: transparent;
-    border-color: var(--primary);
-    color: var(--text-primary);
+    color: var(--text-color);
 
     &:hover,
     &.active {
-        background-color: var(--primary);
-        border-color: var(--secondary);
-        color: var(--text-secondary);
+        color: var(--cl-primary);
     }
 }
 
 // Size
 .medium {
     padding: 9px 18px;
+    font-size: 16px;
 }
 
 .small {
@@ -148,10 +110,6 @@
     border-radius: 15px 0;
     font-size: 1.8rem;
     border-width: 2px;
-}
-
-.no-radius {
-    border-radius: 0;
 }
 
 .no-click {
