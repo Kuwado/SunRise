@@ -14,6 +14,7 @@
     --cl-hightlight: #1458dd;
 
     --text-color: #252c32;
+    --font-size: 16px;
 }
 
 * {
@@ -31,9 +32,9 @@ body {
     max-width: 100vw;
     width: 100vw;
     font-family: 'Montserrat', sans-serif;
-    font-size: 16px;
+    font-size: var(--font-size);
     text-rendering: optimizeSpeed;
-    color: var(--text-primary);
+    color: var(--text-color);
     line-height: var(--line-height);
     overflow-y: overlay;
     overflow-x: hidden;
@@ -45,6 +46,7 @@ input,
     border: none;
     outline: none;
     line-height: var(--line-height);
+    font-size: var(--font-size);
 }
 
 a {

@@ -1,0 +1,25 @@
+.default-input {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+
+    &.shadow {
+        box-shadow: 5px 10px 9px 0px #00000040;
+    }
+
+    .required-note {
+        color: var(--cl-favorite);
+    }
+}
+
+.default-input label {
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.default-input input {
+    border-radius: 8px;
+    background-color: #ffff33;
+    padding: 10px;
+    border: 1px solid var(--text-color);
+}
