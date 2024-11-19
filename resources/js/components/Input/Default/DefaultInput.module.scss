@@ -10,6 +10,11 @@
     .required-note {
         color: var(--cl-favorite);
     }
+
+    &.no-label label {
+        visibility: hidden;
+    }
+
 }
 
 .default-input label {
@@ -21,5 +26,9 @@
     border-radius: 8px;
     background-color: #ffff33;
     padding: 10px;
-    border: 1px solid var(--text-color);
+    border: 1px solid var(--text-color-50);
+}
+
+.default-input:focus-within input {
+    border-color: var(--text-color);
 }
