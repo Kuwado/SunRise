@@ -7,9 +7,11 @@ const Test = () => {
     const [input, setInput] = useState('');
     const [array, setArray] = useState(['haha1', 'haha2', 'haha3']);
     console.log(password);
+  
     return (
         <div style={{ padding: 10, display: 'flex', flexDirection: 'column' }}>
             <PasswordInput id="ps" label="メール" password={password} setPassword={setPassword} required />
+
             <DefaultInput value={input} setValue={setInput} placeholder="値を入力" />
             <Dropdown title="Helo" label="haha">
                 {array.map((arr, index) => (
