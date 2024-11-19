@@ -11,6 +11,7 @@ const Button = ({
     // css type, defult = text
     primary = false,
     secondary = false,
+    extra = false,
     noBackground = false,
     text = false,
 
@@ -63,6 +64,7 @@ const Button = ({
         [className]: className,
         primary,
         secondary,
+        extra,
         'no-background': noBackground,
         text,
 
