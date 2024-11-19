@@ -19,6 +19,7 @@ const routes = {
         register: '/register',
         landing: '/',
         forbidden: '/forbidden',
+        test: '/test',
     },
 };
 

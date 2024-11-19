@@ -9,7 +9,7 @@ const Landing = () => {
     const [password, setPassword] = useState('k');
     return (
         <div>
-            <Button primary shadow width="200px" curved leftIcon={<FontAwesomeIcon icon={faUser} />}>
+            <Button small primary shadow width="200px" curved leftIcon={<FontAwesomeIcon icon={faUser} />}>
                 Helo
             </Button>
             <PasswordInput password={password} setPassword={setPassword} />
