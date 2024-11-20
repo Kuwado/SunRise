@@ -13,6 +13,8 @@ const Dropdown = ({
     id = 'id',
     selected,
     width = 'fit-content',
+    left = false,
+    right = false,
     required,
     className,
     children,
@@ -34,14 +36,27 @@ const Dropdown = ({
         };
     }, []);
 
+    const classes = cx('dropdown', {
+        active: show,
+        [className]: className,
+        'no-label': !label,
+        left,
+        right,
+    });
+
     return (
-        <div className={cx('dropdown', { active: show, [className]: className, 'no-label': !label })} style={{ width }}>
+        <div className={classes}>
             <div className={cx('label')}>
                 {label}
                 {required && <span className={cx('required-note')}>*</span>}
                 {!label && 'no-label'}
             </div>
-            <div className={cx('dropdown-box')} ref={dropRef} onClick={() => setShow((prev) => !prev)}>
+            <div
+                className={cx('dropdown-box')}
+                style={{ width }}
+                ref={dropRef}
+                onClick={() => setShow((prev) => !prev)}
+            >
                 <div className={cx('selected')}>{selected ? selected : title}</div>
                 <div className={cx('icon')}>
                     <FontAwesomeIcon icon={show ? faChevronUp : faChevronDown} />

@@ -18,6 +18,16 @@
     &.active .dropdown-box {
         border-color: var(--text-color);
     }
+
+    &.left .options {
+        left: 0;
+        right: unset;
+    }
+
+    &.right .options {
+        right: 0;
+        left: unset;
+    }
 }
 
 .label {
@@ -57,7 +67,6 @@
     position: absolute;
     top: 110%;
     left: 0;
-    right: 0;
     max-height: 50vh;
     border-radius: 12px;
     border: 1px solid var(--text-color);

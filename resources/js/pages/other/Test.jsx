@@ -1,13 +1,20 @@
 import React, { useState } from 'react';
+import { CheckboxInput } from '~/components/Checkbox';
 import Dropdown from '~/components/Dropdown';
 import { DefaultInput, PasswordInput } from '~/components/Input';
 
 const Test = () => {
     const [password, setPassword] = useState('');
     const [input, setInput] = useState('');
-    const [array, setArray] = useState(['haha1', 'haha2', 'haha3']);
+    const [array, setArray] = useState(['haha1', 'haha2', 'haha3dâdfafdsfsdf']);
     console.log(password);
-  
+
+    const handleChecked = (e) => {
+        if (e.target.checked) {
+            alert('check');
+        }
+    };
+
     return (
         <div style={{ padding: 10, display: 'flex', flexDirection: 'column' }}>
             <PasswordInput id="ps" label="メール" password={password} setPassword={setPassword} required />
@@ -21,6 +28,7 @@ const Test = () => {
                     </div>
                 ))}
             </Dropdown>
+            <CheckboxInput name="save" title="30日間記憶する" id="helo" onChange={handleChecked} />
         </div>
     );
 };
