@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { CheckboxInput } from '~/components/Checkbox';
 import Dropdown from '~/components/Dropdown';
 import { DefaultInput, PasswordInput } from '~/components/Input';
+import Rating from '~/components/Rating';
+import Star from '~/components/Rating/Star';
 
 const Test = () => {
     const [password, setPassword] = useState('');
@@ -28,7 +30,11 @@ const Test = () => {
                     </div>
                 ))}
             </Dropdown>
-            <CheckboxInput name="save" title="30日間記憶する" id="helo" onChange={handleChecked} />
+            <CheckboxInput name="save" title="30日間記憶する" id="helo" onChange={handleChecked}>
+                hloe
+            </CheckboxInput>
+            <Star rate={30} large />
+            <Rating rate={3.56} medium />
         </div>
     );
 };
