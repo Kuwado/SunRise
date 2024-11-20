@@ -7,7 +7,7 @@ import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 
 const cx = classNames.bind(styles);
 
-const PasswordInput = ({ password, setPassword, width = '500px', id = 'id', label = '', required = false }) => {
+const PasswordInput = ({ password, setPassword, width = 'fit-content', id = 'id', label = '', required = false }) => {
     const [show, setShow] = useState(false);
     const handleChangePassword = (e) => {
         setPassword(e.target.value);

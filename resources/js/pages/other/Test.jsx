@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
+import Card from '~/components/Card';
 import { CheckboxInput } from '~/components/Checkbox';
 import Dropdown from '~/components/Dropdown';
-import { DefaultInput, PasswordInput } from '~/components/Input';
+import { CustomInput, DefaultInput, PasswordInput } from '~/components/Input';
 import Rating from '~/components/Rating';
 import Star from '~/components/Rating/Star';
 
 const Test = () => {
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [input, setInput] = useState('');
     const [array, setArray] = useState(['haha1', 'haha2', 'haha3dâdfafdsfsdf']);
@@ -20,7 +22,7 @@ const Test = () => {
     return (
         <div style={{ padding: 10, display: 'flex', flexDirection: 'column' }}>
             <PasswordInput id="ps" label="メール" password={password} setPassword={setPassword} required />
-
+            <CustomInput id="hee" label="メール" value={email} setValue={setEmail} required />
             <DefaultInput value={input} setValue={setInput} placeholder="値を入力" />
             <Dropdown title="Helo" label="haha">
                 {array.map((arr, index) => (
@@ -35,6 +37,7 @@ const Test = () => {
             </CheckboxInput>
             <Star rate={30} large />
             <Rating rate={3.56} medium />
+            <Card />
         </div>
     );
 };
