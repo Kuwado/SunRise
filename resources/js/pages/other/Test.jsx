@@ -20,8 +20,15 @@ const Test = () => {
     };
 
     return (
-        <div style={{ padding: 10, display: 'flex', flexDirection: 'column' }}>
-            <PasswordInput id="ps" label="メール" password={password} setPassword={setPassword} required />
+        <div style={{ padding: 10, display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            <PasswordInput
+                id="ps"
+                label="メール"
+                width="500px"
+                password={password}
+                setPassword={setPassword}
+                required
+            />
             <CustomInput id="hee" label="メール" value={email} setValue={setEmail} required />
             <DefaultInput value={input} setValue={setInput} placeholder="値を入力" />
             <Dropdown title="Helo" label="haha">

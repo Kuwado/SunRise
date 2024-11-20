@@ -12,6 +12,18 @@
         color: var(--cl-favorite);
         font-size: var(--font-size);
     }
+
+    &.small input {
+        padding: 5px 0;
+    }
+
+    &.medium input {
+        padding: 10px 0;
+    }
+
+    &.large input {
+        padding: 15px 0;
+    }
 }
 
 .custom-input label {
@@ -25,7 +37,7 @@
 }
 
 .custom-input input {
-    padding: 15px 0;
+    padding: 10px 0;
     height: 100%;
     width: 100%;
     font-size: var(--font-size);

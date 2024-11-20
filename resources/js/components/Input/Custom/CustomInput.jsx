@@ -11,6 +11,9 @@ const CustomInput = ({
     width = 'fit-content',
     id = 'id',
     label = '',
+    small = false,
+    medium = false,
+    large = false,
     required = false,
 }) => {
     const handleChangeValue = (e) => {
@@ -18,7 +21,7 @@ const CustomInput = ({
     };
 
     return (
-        <div className={cx('custom-input')} style={{ width: width }}>
+        <div className={cx('custom-input', { small, medium, large })} style={{ width: width }}>
             <input id={`custom-input-${id}`} type={type} value={value} onChange={handleChangeValue} placeholder=" " />
             <label htmlFor={`custom-input-${id}`}>
                 {label}
