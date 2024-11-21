@@ -16,15 +16,15 @@ return new class extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->string('password');
-            $table->string('phone')->unique();
+            $table->string('phone')->unique()->nullable();
             $table->text('address')->nullable();
             $table->string('birth')->nullable();
             $table->string('avatar')->nullable();
             $table->string('workplace')->nullable();
             $table->string('nationality')->nullable();
             $table->string('city')->nullable();
-            $table->timestamps();
             $table->enum('role', ['admin', 'user'])->default('user');
+            $table->timestamps();
         });
     }
 
