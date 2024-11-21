@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class styles extends Model
+class Restaurant extends Model
 {
     //
 }
