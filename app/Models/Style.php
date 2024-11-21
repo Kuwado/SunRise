@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class reviews extends Model
+class Style extends Model
 {
     //
 }
