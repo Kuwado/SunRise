@@ -78,7 +78,7 @@
         position: absolute;
         top: 50%;
         left: -100px;
-        content: "";
+        content: '';
         width: 200%;
         height: 0.5px;
         background-color: var(--bg-secondary);
@@ -87,7 +87,7 @@
     .separate-text::after {
         position: absolute;
         top: 50%;
-        content: "";
+        content: '';
         right: -100px;
         width: 200%;
         height: 0.5px;
@@ -109,7 +109,7 @@
     .register-checkbox {
         display: flex;
         align-items: center;
-    
+
         label {
             font-size: 12px;
             user-select: none;
