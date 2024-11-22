@@ -6,7 +6,7 @@ import Button from '~/components/Button';
 import { CustomInput, PasswordInput } from '~/components/Input';
 import { CheckboxInput } from '~/components/Checkbox';
 import images from '~/assets/images';
-
+import axios from 'axios';
 const cx = classNames.bind(styles);
 
 const Login = () => {
@@ -14,17 +14,20 @@ const Login = () => {
     const [password, setPassword] = useState('');
     const [remember, setRemember] = useState(false);
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         const payload = {
             email: email,
             password: password,
-            remember: remember,
+            // remember: remember,
         };
         console.log(payload);
+        console.log(1234);
 
         try {
             // Call API
+            const response = await axios.post('https://127.0.0.1:8000/login', payload);
+            console.log(response);
         } catch (error) {
             console.log(error);
         }
@@ -43,9 +46,10 @@ const Login = () => {
                     </div>
                     <div className={cx('google-login')}>
                         <Button
+                            large
                             noBackground
                             shadow
-                            width="250px"
+                            width="300px"
                             curved
                             leftIcon={<img style={{ width: 18 }} src={images.google} alt="google-icon" />}
                         >
@@ -58,20 +62,22 @@ const Login = () => {
                     <form onSubmit={(e) => handleSubmit(e)} className={cx('login-form')}>
                         <div className={cx('login-input')}>
                             <CustomInput
+                                large
                                 medium
                                 required
                                 label="メール"
-                                width="250px"
+                                width="300px"
                                 value={email}
                                 setValue={setEmail}
                             />
                         </div>
                         <div className={cx('login-input')}>
                             <PasswordInput
+                                large
                                 medium
                                 required
                                 label="パスワード"
-                                width="250px"
+                                width="300px"
                                 password={password}
                                 setPassword={setPassword}
                             />
@@ -80,7 +86,7 @@ const Login = () => {
                             <CheckboxInput onChange={() => setRemember(!remember)}>30日間記憶する</CheckboxInput>
                         </div>
                         <div className={cx('submit-btn')}>
-                            <Button secondary shadow curved width="250px">
+                            <Button large secondary shadow curved width="300px">
                                 ログイン
                             </Button>
                         </div>

@@ -7,7 +7,7 @@
 .main {
     margin: auto;
     width: 720px;
-    height: 512px;
+    height: 580px;
     background-color: var(--bg-primary);
     display: flex;
     padding: 8px 4px;
@@ -58,7 +58,6 @@
 .google-login {
     span {
         font-weight: 500;
-        font-size: 14px;
     }
 
     button {
@@ -97,7 +96,7 @@
 
 .login-form {
     .login-input {
-        margin: 15px 0;
+        margin: 19px 0;
         font-size: 13px;
 
         label {
@@ -137,13 +136,13 @@
     justify-content: center;
     align-items: center;
     overflow: hidden; /* Đảm bảo không vượt ra ngoài khung */
-    border-top-right-radius: 8px; /* Bo góc trên phải */
-    border-bottom-right-radius: 8px; /* Bo góc dưới phải */
+    border-radius: 17px;
+    margin-right: 4px;
 }
 
 .login-image img {
     width: 100%; /* Chiều rộng ảnh chiếm toàn bộ vùng chứa */
     height: 100%; /* Chiều cao ảnh vừa toàn bộ vùng chứa */
     object-fit: cover; /* Đảm bảo ảnh hiển thị đẹp, không méo */
-    border-radius: 0; /* Nếu cần bo góc ảnh */
+    border-radius: 8px;
 }
