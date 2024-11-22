@@ -1,5 +1,5 @@
 import React from 'react';
-import { useState } from 'react';
+import { useState, } from 'react';
 import classNames from 'classnames/bind';
 import styles from './Register.module.scss';
 
@@ -17,22 +17,36 @@ const Register = () => {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [remember, setRemember] = useState(false);
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
+
+        if (password !== confirmPassword) {
+            alert('パスワードが一致しません');
+            return;
+        }
+
         const payload = {
-            username: username,
+            name: username,
             email: email,
             password: password,
-            confirm_password: confirmPassword,
-            remember: remember,
+            // remember: remember,
         };
         console.log(payload);
 
-        try {
-            // Call API
-        } catch (error) {
-            console.log(error);
-        }
+        axios.post('http://127.0.0.1:8000/api/register', payload)
+            .then(response => {
+                // console.log(response);
+                if (response.status === 201) {
+                    alert('登録が成功しました');
+                    window.location.href = '/login';
+                } else {
+                    alert('登録が失敗しました');
+                }
+            })
+            .catch(error => {
+                alert(error.response.data.message);
+                // console.log(error);
+            });
     };
 
     return (
@@ -50,8 +64,9 @@ const Register = () => {
                         <div className={cx('google-register')}>
                             <Button
                                 noBackground
+                                large
                                 shadow
-                                width="250px"
+                                width="300px"
                                 curved
                                 leftIcon={<img style={{ width: 18 }} src={images.google} alt="ggicon"></img>}
                             >
@@ -64,40 +79,38 @@ const Register = () => {
                         <form className={cx('register-form')}>
                             <div className={cx('register-input')}>
                                 <CustomInput
-                                    medium
+                                    id='username'
+                                    large
                                     required
                                     label="名前"
-                                    width="250px"
+                                    width="100%"
                                     value={username}
                                     setValue={setUsername}
                                 ></CustomInput>
-                            </div>
-                            <div className={cx('register-input')}>
                                 <CustomInput
-                                    medium
+                                    id='email'
+                                    large
                                     required
                                     label="メール"
-                                    width="250px"
+                                    width="100%"
                                     value={email}
                                     setValue={setEmail}
                                 ></CustomInput>
-                            </div>
-                            <div className={cx('register-input')}>
                                 <PasswordInput
-                                    medium
+                                    id='password'
+                                    large
                                     required
                                     label="パスワード"
-                                    width="250px"
+                                    width="100%"
                                     password={password}
                                     setPassword={setPassword}
                                 ></PasswordInput>
-                            </div>
-                            <div className={cx('register-input')}>
                                 <PasswordInput
-                                    medium
+                                    id='confirmPassword'
+                                    large
                                     required
                                     label="パスワードを確認してください"
-                                    width="250px"
+                                    width="100%"
                                     value={confirmPassword}
                                     setPassword={setConfirmPassword}
                                 ></PasswordInput>
@@ -106,7 +119,7 @@ const Register = () => {
                                 <CheckboxInput onChange={() => setRemember(!remember)}>30日間記憶する</CheckboxInput>
                             </div>
                             <div className={cx('submit-btn')}>
-                                <Button onClick={(e) => handleSubmit(e)} secondary shadow width="250px" curved>
+                                <Button onClick={(e) => handleSubmit(e)} secondary shadow width="100%" curved large>
                                     サインアップ
                                 </Button>
                             </div>
@@ -117,9 +130,7 @@ const Register = () => {
                         </div>
                     </div>
                     <div className={cx('right-content')}>
-                        <div className={cx('register-image')}>
-                            <img src={images.register} alt="register"></img>
-                        </div>
+                        <img src={images.register} alt="register"></img>
                     </div>
                 </div>
             </div>
