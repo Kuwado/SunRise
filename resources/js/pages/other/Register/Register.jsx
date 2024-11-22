@@ -45,7 +45,7 @@ const Register = () => {
             })
             .catch(error => {
                 alert(error.response.data.message);
-                // console.log(error);
+                console.log(error);
             });
     };
 
