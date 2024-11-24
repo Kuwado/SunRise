@@ -26,10 +26,17 @@ const Login = () => {
 
         try {
             // Call API
-            const response = await axios.post('https://127.0.0.1:8000/login', payload);
+            const response = await axios.post('http://127.0.0.1:8000/api/login', payload);
+            if (response.status === 200) {
+                alert('ログインが成功しました');
+                window.location.href = '/';
+            } else {
+                alert('ログインが失敗しました');
+            }
+
             console.log(response);
         } catch (error) {
-            console.log(error);
+            alert(error.response.data.message);
         }
     };
 
