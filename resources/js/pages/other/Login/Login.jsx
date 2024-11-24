@@ -22,6 +22,7 @@ const Login = () => {
             // remember: remember,
         };
         console.log(payload);
+        console.log(1234);
 
         try {
             // Call API
