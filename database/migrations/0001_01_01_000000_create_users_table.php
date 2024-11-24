@@ -25,9 +25,9 @@ return new class extends Migration
             $table->string('nationality')->nullable();
             $table->string('city')->nullable();
             $table->rememberToken();
-            $table->timestamps();
+            // $table->timestamps();
             $table->enum('role', ['admin', 'user'])->default('user');
-            $table->timestamps();
+            // $table->timestamps();
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
