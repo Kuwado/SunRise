@@ -1,0 +1,171 @@
+/* Header */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 40px;
+    background-color: #fff;
+
+    .logo {
+        height: 50px;
+    }
+
+    .nav {
+        display: flex;
+        gap: 20px;
+
+        .loginButton,
+        .registerButton {
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .loginButton {
+            background-color: #4b2e2b; /* Dark brown */
+            color: #fff;
+        }
+
+        .registerButton {
+            background-color: #f5a623; /* Orange */
+            color: #fff;
+        }
+    }
+}
+
+/* Hero Section */
+.heroSection {
+    background: url('resources/js/assets/background/background1.png') no-repeat center center;
+    background-size: cover;
+    text-align: center;
+    padding: 100px 20px;
+    color: #fff;
+
+    .heroTitle {
+        font-size: 64px;
+        font-weight: bold;
+        margin-bottom: 20px;
+    }
+
+    .heroDescription {
+        font-size: 20px;
+        margin-bottom: 10px;
+    }
+
+    .heroAdditional {
+        font-size: 16px;
+        margin-bottom: 30px;
+    }
+
+    .exploreButton {
+        background-color: #f5a623; /* Orange */
+        color: #fff;
+        padding: 15px 40px;
+        font-size: 18px;
+        border: none;
+        cursor: pointer;
+    }
+}
+
+/* Best Coffee Section */
+.bestCoffeeSection {
+    padding: 50px 20px;
+    text-align: center;
+
+    .sectionHeading {
+        font-size: 36px;
+        font-weight: bold;
+        color: #4b2e2b;
+        margin-bottom: 20px;
+    }
+
+    .sectionDescription {
+        font-size: 18px;
+        color: #6d4c41;
+        margin-bottom: 40px;
+    }
+
+    .illustrationImage {
+        width: 478px;
+        height: 478px;
+    }
+}
+
+/* New Coffee Style Section */
+.newStyleSection {
+    padding: 50px 20px;
+
+    .coffeeList {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+
+        .coffeeCard {
+            text-align: center;
+
+            .cafeImage {
+                width: 200px;
+                height: 200px;
+                margin-bottom: 10px;
+            }
+
+            .cafeName {
+                font-size: 20px;
+                font-weight: bold;
+                margin-bottom: 5px;
+            }
+
+            .cafeDetails {
+                font-size: 16px;
+                margin-bottom: 10px;
+            }
+
+            .moreButton {
+                background-color: #f5a623;
+                color: #fff;
+                padding: 10px 20px;
+                border: none;
+                cursor: pointer;
+            }
+        }
+    }
+}
+
+/* Footer */
+.footer {
+    .footerTop {
+        width: 100%;
+        height: auto;
+    }
+
+    .footerContent {
+        padding: 20px;
+        text-align: center;
+
+        .footerLogo {
+            height: 50px;
+            margin-bottom: 20px;
+        }
+
+        .footerNav {
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+
+            ul {
+                list-style: none;
+                padding: 0;
+
+                li:first-child {
+                    font-weight: bold;
+                    margin-bottom: 10px;
+                }
+            }
+        }
+    }
+
+    .footerDown {
+        width: 100%;
+        height: auto;
+    }
+}
