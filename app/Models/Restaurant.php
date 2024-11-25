@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Restaurant extends Model
 {
+
     public function reviews()
     {
         return $this->hasMany(Review::class);
@@ -21,3 +22,4 @@ class Restaurant extends Model
         return $this->belongsToMany(Style::class, 'restaurants_styles');
     }
 }
+
