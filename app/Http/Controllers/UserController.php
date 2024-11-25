@@ -8,34 +8,33 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\QueryException;
+use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
     //
     public function register(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'email' => [
-                'required',
-                'email',
-                'regex:/^[a-zA-Z0-9._%+-]+@sun-asterisk\.com$/',
-                'unique:users,email',
-            ],
-            'password' => 'required|string',
-        ], [
-            'name.required' => 'Tên là bắt buộc.',
-            'email.required' => 'Email là bắt buộc.',
-            'email.email' => 'Email không đúng định dạng.',
-            'email.regex' => 'Email phải kết thúc bằng @sun-asterisk.com.',
-            'email.unique' => 'Email này đã được sử dụng.',
-            'password.required' => 'Mật khẩu là bắt buộc.',
-        ]);
+        $messageValidation = '';
 
-        if ($validator->fails()) {
+        if (!$request->input('name')) {
+            $messageValidation = 'Tên là bắt buộc.';
+        } else if (!$request->input('email')) {
+            $messageValidation = 'Email là bắt buộc.';
+        } else if (!Str::endsWith($request->input('email'), '@sun-asterisk.com')) {
+            $messageValidation = 'Email phải kết thúc bằng @sun-asterisk.com.';
+        } else if (!$request->input('password')) {
+            $messageValidation = 'Mật khẩu là bắt buộc.';
+        } else {
+            $user = User::where('email', $request->input('email'))->first();
+            if ($user) {
+                $messageValidation = 'Email này đã được sử dụng.';
+            }
+        }
+
+        if ($messageValidation) {
             return response()->json([
-                'message' => 'Dữ liệu không hợp lệ.',
-                'errors' => $validator->errors(),
+                'message' => $messageValidation,
             ], 422);
         }
 
@@ -54,28 +53,27 @@ class UserController extends Controller
             // 'user' => $user,
         ], 201);
     }
+
     public function login(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'email' => [
-                'required',
-                'email',
-                'regex:/^[a-zA-Z0-9._%+-]+@sun-asterisk\.com$/',
-            ],
-            'password' => 'required|string',
-        ], [
-            'email.required' => 'Email là bắt buộc.',
-            'email.email' => 'Email không đúng định dạng.',
-            'email.regex' => 'Email phải kết thúc bằng @sun-asterisk.com.',
-            'password.required' => 'Mật khẩu là bắt buộc.',
-        ]);
 
-        if ($validator->fails()) {
+        $messageValidation = '';
+
+        if (!$request->input('email')) {
+            $messageValidation = 'Email là bắt buộc.';
+        } else if (!Str::endsWith($request->input('email'), '@sun-asterisk.com')) {
+            $messageValidation = 'Email phải kết thúc bằng @sun-asterisk.com.';
+        } else if (!$request->input('password')) {
+            $messageValidation = 'Mật khẩu là bắt buộc.';
+        }
+
+        if ($messageValidation) {
             return response()->json([
-                'message' => 'Dữ liệu không hợp lệ.',
-                'errors' => $validator->errors(),
+                'message' => $messageValidation,
             ], 422);
         }
+
+
         $email = $request->input("email");
         $user = User::where('email', $email)->first();
         try {
@@ -84,12 +82,12 @@ class UserController extends Controller
                     return response()->json([
                         'type' => 'email',
                         'message' => 'Email không chính xác!',
-                    ], 201);
+                    ], 422);
                 } else {
                     return response()->json([
                         'type' => 'password',
                         'message' => 'Mật khẩu không chính xác!',
-                    ], 201);
+                    ], 422);
                 }
             }
 
