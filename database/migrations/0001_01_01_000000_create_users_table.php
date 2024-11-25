@@ -25,7 +25,7 @@ return new class extends Migration
             $table->string('nationality')->nullable();
             $table->string('city')->nullable();
             $table->rememberToken();
-            // $table->timestamps();
+            $table->timestamps();
             $table->enum('role', ['admin', 'user'])->default('user');
         });
 
