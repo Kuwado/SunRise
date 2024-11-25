@@ -45,7 +45,7 @@ class UserController extends Controller
             $user->password = bcrypt($request->password);
             $user->save();
         } catch (QueryException $e) {
-            throw new \Exception('Lỗi tạo user: ' . $e->getMessage());
+            throw new \Exception('Lỗi tạo prfile: ' . $e->getMessage());
         }
 
         return response()->json([
@@ -104,5 +104,9 @@ class UserController extends Controller
                 'message' => 'Lỗi đăng nhập: ' . $e->getMessage()
             ], 500);
         }
+    }
+
+    public function update (Request $request) {
+        
     }
 }
