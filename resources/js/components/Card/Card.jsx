@@ -9,7 +9,7 @@ const cx = classNames.bind(styles);
 
 const Restaurant = {
     id: 5,
-    avatar: images.logo,
+    avatar: images.restaurant,
     name: 'スターバックスコーヒー',
     price_start: '50k',
     price_end: '150k',

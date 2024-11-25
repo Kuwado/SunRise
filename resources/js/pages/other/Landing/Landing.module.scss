@@ -1,0 +1,220 @@
+/* Header */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 100px;
+
+    .logo {
+        height: 40px;
+    }
+
+    .nav {
+        display: flex;
+        gap: 20px;
+        align-items: center;
+
+        a {
+            text-decoration: underline;
+        }
+    }
+}
+
+/* Hero Section */
+.heroSection {
+    height: 50vw;
+    width: 100%;
+    background-size: contain;
+    color: #fff;
+    position: relative;
+
+    .heroContent {
+        position: absolute;
+        top: 130px;
+        left: 100px;
+        justify-content: left;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .heroTitle {
+        font-size: 200px;
+        font-weight: bold;
+    }
+
+    .heroDescription {
+        font-size: 22px;
+        letter-spacing: 1px;
+        margin-bottom: 10px;
+        width: 50%;
+    }
+
+    .heroAdditional {
+        letter-spacing: 1px;
+        font-size: 22px;
+        margin-bottom: 30px;
+    }
+}
+
+/* Best Coffee Section */
+.bestCoffeeSection {
+    margin: 50px 100px 0;
+    text-align: left;
+    display: flex;
+    gap: 30px;
+    letter-spacing: 1.2px;
+
+    .sectionHeading {
+        font-size: 54px;
+        font-weight: bold;
+        color: #4b2e2b;
+        margin-bottom: 30px;
+        margin-top: 70px;
+    }
+
+    .sectionDescription {
+        font-size: 20px;
+        color: #6d4c41;
+        margin-bottom: 40px;
+        padding-right: 200px;
+    }
+
+    .illustrationImage {
+        width: 478px;
+        height: 478px;
+    }
+}
+
+/* New Coffee Style Section */
+.newStyleSection {
+    margin-top: 50px;
+    margin-bottom: 300px;
+    padding: 50px 20px;
+    text-align: center;
+    position: relative;
+
+    .coffeeBlast {
+        transform: scaleX(-1);
+        position: absolute;
+        bottom: -200px;
+        right: 0;
+    }
+
+    .coffeeBlastDown {
+        position: absolute;
+        top: -200px;
+        left: 0;
+    }
+
+    .sectionHeading {
+        font-size: 54px;
+        color: var(--bg-secondary);
+    }
+
+    .sectionDescription {
+        font-size: 20px;
+        margin-bottom: 30px;
+    }
+
+    .coffeeList {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+
+        .coffeeCard {
+            text-align: center;
+
+            .cafeImage {
+                width: 200px;
+                height: 200px;
+                margin-bottom: 10px;
+            }
+
+            .cafeName {
+                font-size: 20px;
+                font-weight: bold;
+                margin-bottom: 5px;
+            }
+
+            .cafeDetails {
+                font-size: 16px;
+                margin-bottom: 10px;
+            }
+
+            .moreButton {
+                background-color: #f5a623;
+                color: #fff;
+                padding: 10px 20px;
+                border: none;
+                cursor: pointer;
+            }
+        }
+    }
+}
+
+/* Footer */
+.footer {
+    position: relative;
+
+    .footerTop {
+        width: 100%;
+        margin-bottom: 0;
+    }
+
+    .cfImage2 {
+        position: absolute;
+        left: 0;
+        top: 20%;
+    }
+
+    .cfImage2Right {
+        position: absolute;
+        right: 0;
+        top: 20%;
+        transform: scaleX(-1);
+    }
+
+    .footerContent {
+        margin-top: 0;
+        padding: 20px;
+        height: 480px;
+        text-align: left;
+        color: white;
+
+        .footerDesc {
+            width: 50%;
+        }
+
+        .footerLogo {
+            height: 50px;
+            margin-bottom: 20px;
+        }
+
+        .footerNav {
+            display: flex;
+            justify-content: space-evenly;
+            margin-top: 130px;
+            gap: 50px;
+
+            ul {
+                list-style: none;
+                padding: 0;
+
+                li:first-child {
+                    font-weight: bold;
+                    font-size: 26px;
+                    margin-bottom: 30px;
+                }
+
+                li {
+                    margin-bottom: 10px;
+                }
+            }
+        }
+
+        .info {
+            display: flex;
+            gap: 100px;
+        }
+    }
+}
