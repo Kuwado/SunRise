@@ -29,13 +29,10 @@ const Register = () => {
             name: username,
             email: email,
             password: password,
-            // remember: remember,
         };
-        console.log(payload);
 
         axios.post('http://127.0.0.1:8000/api/register', payload)
             .then(response => {
-                // console.log(response);
                 if (response.status === 201) {
                     alert('登録が成功しました');
                     window.location.href = '/login';
@@ -44,7 +41,6 @@ const Register = () => {
                 }
             })
             .catch(error => {
-                alert(error.response.data.message);
                 console.log(error);
             });
     };
