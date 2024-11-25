@@ -11,8 +11,8 @@ const Restaurant = {
     id: 5,
     avatar: images.logo,
     name: 'スターバックスコーヒー',
-    start: '50k',
-    end: '150k',
+    price_start: '50k',
+    price_end: '150k',
     distance: '2km',
     number: 1500,
     rate: 3.6,
@@ -29,7 +29,7 @@ const Card = ({ restaurant = Restaurant }) => {
                 <div className={cx('name')}>{restaurant.name}</div>
                 <div className={cx('price-and-distance')}>
                     <div className={cx('price')}>
-                        {restaurant.start} ~ {restaurant.end}
+                        {restaurant.price_start} ~ {restaurant.price_end}
                     </div>
                     <div className={cx('distance')}>~ {restaurant.distance}</div>
                 </div>
