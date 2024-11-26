@@ -21,9 +21,6 @@ const Login = () => {
             password: password,
             // remember: remember,
         };
-        console.log(payload);
-        console.log(1234);
-
         try {
             // Call API
             const response = await axios.post('http://127.0.0.1:8000/api/login', payload);
