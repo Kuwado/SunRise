@@ -27,8 +27,6 @@ const Login = () => {
             if (response.status === 200) {
                 alert('ログインが成功しました');
                 window.location.href = '/';
-            } else {
-                alert('ログインが失敗しました');
             }
 
             console.log(response);
