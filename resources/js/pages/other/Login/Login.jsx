@@ -7,6 +7,8 @@ import { CustomInput, PasswordInput } from '~/components/Input';
 import { CheckboxInput } from '~/components/Checkbox';
 import images from '~/assets/images';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
+import config from '~/config';
 const cx = classNames.bind(styles);
 
 const Login = () => {
@@ -95,7 +97,7 @@ const Login = () => {
                     </form>
                     <div className={cx('login-footer')}>
                         <span>アカウントをお持ちですか？</span>
-                        <a href="/register">サインアップ</a>
+                        <Link to={config.routes.other.register}>サインアップ</Link>
                     </div>
                 </div>
                 <div className={cx('right-content')}>
