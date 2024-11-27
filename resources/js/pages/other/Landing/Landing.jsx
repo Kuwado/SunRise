@@ -7,6 +7,8 @@ import background from '~/assets/background';
 import Button from '~/components/Button';
 
 import styles from './Landing.module.scss';
+import config from '~/config';
+import { Link } from 'react-router-dom';
 const Landing = () => {
     return (
         <div className={styles.landingPage}>
@@ -19,8 +21,8 @@ const Landing = () => {
                 <header className={styles.header}>
                     <img src={images.logo} alt="SunRise Logo" className={styles.logo} />
                     <nav className={styles.nav}>
-                        <a href="/login">ログイン</a>
-                        <Button curved secondary width="140px">
+                        <Link to={config.routes.other.login}>ログイン</Link>
+                        <Button curved secondary width="140px" to={config.routes.other.register}>
                             新規登録
                         </Button>
                     </nav>

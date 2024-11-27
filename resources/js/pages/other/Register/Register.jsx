@@ -1,5 +1,5 @@
 import React from 'react';
-import { useState, } from 'react';
+import { useState } from 'react';
 import classNames from 'classnames/bind';
 import styles from './Register.module.scss';
 
@@ -7,6 +7,8 @@ import Button from '~/components/Button';
 import { CustomInput, PasswordInput } from '~/components/Input';
 import { CheckboxInput } from '~/components/Checkbox';
 import images from '~/assets/images';
+import config from '~/config';
+import { Link } from 'react-router-dom';
 
 const cx = classNames.bind(styles);
 
@@ -31,8 +33,9 @@ const Register = () => {
             password: password,
         };
 
-        axios.post('http://127.0.0.1:8000/api/register', payload)
-            .then(response => {
+        axios
+            .post('http://127.0.0.1:8000/api/register', payload)
+            .then((response) => {
                 if (response.status === 201) {
                     alert('登録が成功しました');
                     window.location.href = '/login';
@@ -40,7 +43,7 @@ const Register = () => {
                     alert('登録が失敗しました');
                 }
             })
-            .catch(error => {
+            .catch((error) => {
                 alert(error.response.data.message);
             });
     };
@@ -75,7 +78,7 @@ const Register = () => {
                         <form className={cx('register-form')}>
                             <div className={cx('register-input')}>
                                 <CustomInput
-                                    id='username'
+                                    id="username"
                                     large
                                     required
                                     label="名前"
@@ -84,7 +87,7 @@ const Register = () => {
                                     setValue={setUsername}
                                 ></CustomInput>
                                 <CustomInput
-                                    id='email'
+                                    id="email"
                                     large
                                     required
                                     label="メール"
@@ -93,7 +96,7 @@ const Register = () => {
                                     setValue={setEmail}
                                 ></CustomInput>
                                 <PasswordInput
-                                    id='password'
+                                    id="password"
                                     large
                                     required
                                     label="パスワード"
@@ -102,7 +105,7 @@ const Register = () => {
                                     setPassword={setPassword}
                                 ></PasswordInput>
                                 <PasswordInput
-                                    id='confirmPassword'
+                                    id="confirmPassword"
                                     large
                                     required
                                     label="パスワードを確認してください"
@@ -122,7 +125,7 @@ const Register = () => {
                         </form>
                         <div className={cx('register-footer')}>
                             <span>すでにアカウントをお持ちですか？</span>
-                            <a href="/login">ログイン</a>
+                            <Link to={config.routes.other.login}>ログイン</Link>
                         </div>
                     </div>
                     <div className={cx('right-content')}>
