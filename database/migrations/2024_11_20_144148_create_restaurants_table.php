@@ -20,6 +20,9 @@ return new class extends Migration
             $table->string('price_end')->nullable();
             $table->time('open_time')->nullable();
             $table->time('close_time')->nullable();
+            $table->string('avata')->nullable();
+            $table->string('email')->nullable();
+            $table->string('phone')->nullable();
             $table->timestamps();
         });
     }
