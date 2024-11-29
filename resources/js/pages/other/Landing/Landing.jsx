@@ -19,7 +19,7 @@ const Landing = () => {
             >
                 {/* Header */}
                 <header className={styles.header}>
-                    <img src={images.logo} alt="SunRise Logo" className={styles.logo} />
+                    <h1 className={styles.logoText}>SunRise</h1>
                     <nav className={styles.nav}>
                         <Link to={config.routes.other.login}>ログイン</Link>
                         <Button curved secondary width="140px" to={config.routes.other.register}>
@@ -89,12 +89,12 @@ const Landing = () => {
                 >
                     <nav className={styles.footerNav}>
                         <div className={styles.footerDesc}>
-                            <img src={images.logo} alt="SunRise Logo" className={styles.footerLogo} />
+                            <h1 className={styles.footerLogoText}>SunRise</h1>
                             <p>一日の始まりは、お気に入りのカフェで一杯のコーヒーから。</p>
                             <p>これまでにない豊かなフレーバーを楽しんで、特別なひとときを過ごしませんか？</p>
                             <p>Sun*の社員にぴったりのカフェを見つけて、最高の体験を提供します</p>
                         </div>
-                        <div className={styles.info}>
+                        <div className={styles.info}> 
                             <ul>
                                 <li>
                                     <strong>サービス</strong>
@@ -119,3 +119,6 @@ const Landing = () => {
 };
 
 export default Landing;
+
+
+
