@@ -14,8 +14,11 @@ return new class extends Migration
         Schema::create('restaurants', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique();
+            $table->string('email')->unique();
+            $table->string('phone')->unique()->nullable();
+            $table->text('address')->nullable();
+            $table->string('avatar')->nullable();
             $table->string('description')->nullable();
-            $table->text('address');
             $table->string('price_start')->nullable();
             $table->string('price_end')->nullable();
             $table->time('open_time')->nullable();
