@@ -12,6 +12,7 @@ const routes = {
         productList: '/products',
         productDetail: '/product/:productId/:variantId',
         cart: '/cart',
+        userInfor: '/userInfor',
     },
 
     other: {
