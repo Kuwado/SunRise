@@ -15,14 +15,15 @@ return new class extends Migration
             $table->id();
             $table->string('name')->unique();
             $table->string('email')->unique();
-            $table->string('phone')->unique()->nullable();
-            $table->text('address')->nullable();
+            $table->string('phone')->unique();
+            $table->text('address');
             $table->string('avatar')->nullable();
-            $table->string('description')->nullable();
-            $table->string('price_start')->nullable();
-            $table->string('price_end')->nullable();
-            $table->time('open_time')->nullable();
-            $table->time('close_time')->nullable();
+            $table->text('media')->nullable();
+            $table->string('description');
+            $table->string('price_start');
+            $table->string('price_end');
+            $table->time('open_time');
+            $table->time('close_time');
             $table->timestamps();
         });
     }
