@@ -19,15 +19,20 @@ class RestaurantController extends Controller
     }
 
     public function getRestaurant(Request $request) {
+        $id = $request->query('id');
+        $restaurant = Restaurant::where('id', $id)->get();
 
+        if (!$restaurant) {
+            return response()->json([
+                'message' => 'Cửa hàng không tồn tại'
+            ], 404);
+        }
+
+        return response()->json([
+            'message' => 'Lấy thành công cửa hàng',
+            'restaurant' => $restaurant,
+        ], 200);
     }
-
-    // public function sortRestaurantsByStyle($restaurants, $styleId) {
-    //     $restaurants = $restaurants->whereHas('styles', function ($query) use ($styleId) {
-    //         $query->where('style_id', $styleId);
-    //     });
-    //     return $restaurants;
-    // }
 
     public function sortRestaurantsByType($restaurants, $type) {
         switch ($type) {
@@ -130,7 +135,7 @@ class RestaurantController extends Controller
         $restaurants = $restaurants->paginate($perPage);
 
         return response()->json([
-            'message' => 'Lấy thành công danh sách sản phẩm',
+            'message' => 'Lấy thành công danh sách cửa hàng',
             'restaurants' => [
                 'data' => RestaurantResource::collection($restaurants),
                 'meta' => [
