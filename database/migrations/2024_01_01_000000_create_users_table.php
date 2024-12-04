@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->string('phone')->unique()->nullable();
             $table->text('address')->nullable();
@@ -24,9 +23,14 @@ return new class extends Migration
             $table->string('workplace')->nullable();
             $table->string('nationality')->nullable();
             $table->string('city')->nullable();
+            $table->foreignId('style_id')->nullable()->constrained()->onDelete('cascade');
+            $table->integer('desired_distance')->default(1);
+            $table->integer('price_start')->default(40);
+            $table->integer('price_end')->default(90);
+            $table->enum('role', ['admin', 'user'])->default('user');
+            $table->timestamp('email_verified_at')->nullable();
             $table->rememberToken();
             $table->timestamps();
-            $table->enum('role', ['admin', 'user'])->default('user');
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
