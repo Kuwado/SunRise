@@ -16,7 +16,7 @@ class RestaurantsTableSeeder extends Seeder
     {
         $faker = Faker::create();
 
-        foreach (range(1, 10) as $index) {
+        foreach (range(1, 30) as $index) {
             DB::table('restaurants')->insert([
                 'name' => $faker->unique()->company,
                 'email' => $faker->unique()->safeEmail,
