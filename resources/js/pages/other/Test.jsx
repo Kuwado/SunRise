@@ -30,7 +30,7 @@ const Test = () => {
                 required
             />
             <CustomInput id="hee" label="メール" value={email} setValue={setEmail} required />
-            <DefaultInput value={input} setValue={setInput} placeholder="値を入力" />
+            <DefaultInput value={input} setValue={setInput} placeholder="値を入力" label="メール" />
             <Dropdown title="Helo" label="haha">
                 {array.map((arr, index) => (
                     <div key={`${index}`}>

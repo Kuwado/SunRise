@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import classNames from 'classnames/bind';
 import styles from './Login.module.scss';
-
+import { useNavigate } from 'react-router';
 import Button from '~/components/Button';
 import { CustomInput, PasswordInput } from '~/components/Input';
 import { CheckboxInput } from '~/components/Checkbox';
@@ -15,7 +15,7 @@ const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [remember, setRemember] = useState(false);
-
+    const navigate = useNavigate();
     const handleSubmit = async (e) => {
         e.preventDefault();
         const payload = {
@@ -28,7 +28,7 @@ const Login = () => {
             const response = await axios.post('http://127.0.0.1:8000/api/login', payload);
             if (response.status === 200) {
                 alert('ログインが成功しました');
-                window.location.href = '/';
+                navigate('/');
             }
 
             console.log(response);

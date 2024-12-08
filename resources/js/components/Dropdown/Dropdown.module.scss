@@ -33,7 +33,6 @@
 .label {
     font-size: 18px;
     font-weight: 700;
-
     .required-note {
         color: red;
     }
@@ -74,7 +73,7 @@
     background-color: var(--bg-primary);
     overflow: hidden;
     z-index: 3;
-
+    width: 100%;
     .wrapper {
         width: 100%;
         max-height: 50vh;
@@ -83,9 +82,20 @@
 
     .wrapper > * {
         padding: 5px 10px;
+      
     }
 
     .wrapper > *:hover {
         background-color: var(--cl-primary);
+    }
+}
+.option {
+    padding: 5px 10px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+        background-color: var(--cl-primary-light);
+        color: white;
     }
 }
