@@ -17,6 +17,7 @@ Route::post('/user/update/{id}', [UserController::class, 'update']);
 // Restaurant
 Route::post('/restaurant/create', [RestaurantController::class, 'createRestaurant']);
 Route::post('/restaurant/update/{id}', [RestaurantController::class, 'updateRestaurant']);
+Route::delete('/restaurant/delete/{id}', [RestaurantController::class, 'deleteRestaurant']);
 Route::get('/restaurant', [RestaurantController::class, 'getRestaurant']);
 Route::get('/restaurants', [RestaurantController::class, 'getRestaurants']);
 
