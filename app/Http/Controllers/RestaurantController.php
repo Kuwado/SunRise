@@ -31,8 +31,8 @@ class RestaurantController extends Controller
                 'description' => 'nullable|string',
                 'price_start' => 'required|numeric',
                 'price_end' => 'required|numeric',
-                'open_time' => 'required|date_format:H:i',
-                'close_time' => 'required|date_format:H:i',
+                'open_time' => 'required|date_format:H:i:s',
+                'close_time' => 'required|date_format:H:i:s',
                 'avatar' => 'nullable|string',
                 'media' => 'nullable|string',
             ]);
