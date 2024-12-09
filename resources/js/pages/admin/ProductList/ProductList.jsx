@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faRedo, faAngleLeft, faAngleRight } from '@fortawesome/free-solid-svg-icons';
 import Rating from '~/components/Rating';
-
 import ProductItem from '~/components/ProductItem';
 import { DefaultInput } from '~/components/Input';
 import { CheckboxInput } from '~/components/Checkbox';

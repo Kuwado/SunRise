@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
 import classNames from 'classnames/bind';
-
 import styles from './Dropdown.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons';
@@ -9,11 +8,12 @@ const cx = classNames.bind(styles);
 
 const Dropdown = ({
     title = '',
-    label = '',
+    label,
     id = 'id',
     selected,
     setValue,
     width = 'fit-content',
+    height = 'auto',
     left = false,
     right = false,
     required,
@@ -38,9 +38,9 @@ const Dropdown = ({
     }, []);
 
     const handleOptionClick = (option) => {
-        setValue(option); // Cập nhật giá trị được chọn
+        setValue(option);
         setTimeout(() => {
-            setShow(false); // Đóng dropdown sau khi chọn
+            setShow(false);
         }, 0);
     };
 
@@ -54,11 +54,12 @@ const Dropdown = ({
 
     return (
         <div className={classes}>
-            <div className={cx('label')}>
-                {label}
-                {required && <span className={cx('required-note')}>*</span>}
-                {!label && 'no-label'}
-            </div>
+            {label && (
+                <div className={cx('label')}>
+                    {label}
+                    {required && <span className={cx('required-note')}>*</span>}
+                </div>
+            )}
             <div
                 className={cx('dropdown-box')}
                 style={{ width }}
@@ -70,7 +71,7 @@ const Dropdown = ({
                     <FontAwesomeIcon icon={show ? faChevronUp : faChevronDown} />
                 </div>
                 {show && children && (
-                    <div className={cx('options')}>
+                    <div className={cx('options')} style={{ maxHeight: height }}>
                         <div className={cx('wrapper')}>
                             {React.Children.map(children, (child) => (
                                 <div onClick={() => handleOptionClick(child.props.children)} className={cx('option')}>

@@ -1,3 +1,5 @@
+import FindRestaurant from "~/pages/user/FindRestaurant";
+
 const routes = {
     admin: {
         dashboard: '/admin',
@@ -13,6 +15,7 @@ const routes = {
         productDetail: '/product/:productId/:variantId',
         cart: '/cart',
         userInfor: '/userInfor',
+        findRestaurant: '/findRestaurant',
     },
 
     other: {
