@@ -20,8 +20,8 @@ return new class extends Migration
             $table->string('avatar')->nullable();
             $table->text('media')->nullable();
             $table->string('description');
-            $table->string('price_start');
-            $table->string('price_end');
+            $table->integer('price_start');
+            $table->integer('price_end');
             $table->time('open_time');
             $table->time('close_time');
             $table->timestamps();

@@ -8,6 +8,7 @@ use App\Models\Restaurant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 
 class RestaurantController extends Controller
 {
@@ -88,58 +89,22 @@ class RestaurantController extends Controller
         ], 200);
     }
 
-    public function sortRestaurantsByType($restaurants, $type)
-    {
-        switch ($type) {
-            case 1:
-                $restaurants = $restaurants->orWhereRaw('(CAST(price_start AS DECIMAL) + CAST(price_end AS DECIMAL)) / 2 <= ?', [50]);
-                break;
-            case 2:
-                $restaurants = $restaurants->orWhereRaw(
-                    '
-                    (CAST(price_start AS DECIMAL) + CAST(price_end AS DECIMAL)) / 2 > ? AND 
-                    (CAST(price_start AS DECIMAL) + CAST(price_end AS DECIMAL)) / 2 <= ?',
-                    [50, 100]
-                );
-                break;
-            case 3:
-                $restaurants = $restaurants->orWhereRaw(
-                    '
-                    (CAST(price_start AS DECIMAL) + CAST(price_end AS DECIMAL)) / 2 > ? AND 
-                    (CAST(price_start AS DECIMAL) + CAST(price_end AS DECIMAL)) / 2 <= ?',
-                    [100, 200]
-                );
-                break;
-            case 4:
-                $restaurants = $restaurants->orWhereRaw('(CAST(price_start AS DECIMAL) + CAST(price_end AS DECIMAL)) / 2 > ?', [200]);
-                break;
-            default:
-                break;
-        }
-        return $restaurants;
-    }
-
-    public function sortRestaurantsByRating($restaurants, $rating)
-    {
-        $restaurants = $restaurants->orWhereRaw('reviews_avg_rating > ? AND reviews_avg_rating <= ?', [$rating - 1, $rating]);
-        return $restaurants;
-    }
-
-    public function getRestaurants(Request $request)
-    {
+    public function getRestaurants(Request $request) {
         $styleId = $request->query('style_id') ?? null;
         $styleIds = $request->query('style_ids') ?? null;
-        $type = $request->query('type') ?? null;
-        $types = $request->query('types') ?? null;
         $rating = $request->query('rating') ?? null;
         $ratings = $request->query('ratings') ?? null;
         $name = $request->query('name') ?? null;
+        $start = $request->query('start') ?? null;
+        $end = $request->query('end') ?? null;
+        $sort_rating = $request->query('sort_rating') ?? null;
+        $sort_price = $request->query('sort_price') ?? null;
 
         $perPage = $request->query('per_page') ?? 10;
 
         $restaurants = Restaurant::withAvg('reviews', 'rating');
 
-        // Style
+        // Style filter
         if ($styleId) {
             $restaurants = $restaurants->whereHas('styles', function ($query) use ($styleId) {
                 $query->where('style_id', $styleId);
@@ -151,34 +116,33 @@ class RestaurantController extends Controller
             });
         }
 
-        // Type
-        if ($type) {
-            $restaurants = $this->sortRestaurantsByType($restaurants, $type);
-        } else if ($types) {
-            $typeArray = explode(',', $types);
-            foreach ($typeArray as $t) {
-                $restaurants = $this->sortRestaurantsByType($restaurants, $t);
-            }
-        }
-
-        //Rating
+        // Rating filter
         if ($rating) {
-            $minRating = $rating - 1;
-            $maxRating = $rating;
-            $restaurants = $restaurants->having('reviews_avg_rating', '>', $minRating)
-                ->having('reviews_avg_rating', '<=', $maxRating);
+            $minRating = $rating - 0.5;
+            $maxRating = $rating + 0.5;
+            $restaurants = $restaurants->havingRaw('reviews_avg_rating > ? AND reviews_avg_rating <= ?', [$minRating, $maxRating]);     
         } else if ($ratings) {
             $ratingsArray = explode(',', $ratings);
-            $restaurants->where(function ($query) use ($ratingsArray) {
-                foreach ($ratingsArray as $rating) {
-                    $minRating = $rating - 1;
-                    $maxRating = $rating;
+            $restaurants->having(function ($query) use ($ratingsArray) {
+                foreach ($ratingsArray as $rate) {
+                    $rate = intval($rate);
+                    $minRating = $rate - 0.5;
+                    $maxRating = $rate + 0.5;
                     $query->orHavingRaw('reviews_avg_rating > ? AND reviews_avg_rating <= ?', [$minRating, $maxRating]);
                 }
             });
         }
 
-        // Name
+        // Price filter
+        if ($start && $end) {
+            $restaurants = $restaurants->whereRaw('(price_start < ? AND price_end > ?) OR (price_end < ? AND price_end > ?)', [$end, $end, $end, $start]);
+        } else if ($start) {
+            $restaurants = $restaurants->where('price_end', '>=', $start);
+        } else if ($end) {
+            $restaurants = $restaurants->where('price_start', '<=', $end);
+        }
+
+        // Name filter
         if ($name) {
             $restaurants = $restaurants->where('name', 'like', "%{$name}%");
             if ($restaurants->count() == 0) {
@@ -189,7 +153,23 @@ class RestaurantController extends Controller
             }
         }
 
-        //Distance
+        // Distance
+
+        // Price sort
+        if ($sort_price === "asc") {
+            $restaurants = $restaurants->select('*', DB::raw('((price_start + price_end) / 2) as avg_price'))
+            ->orderBy('avg_price', 'asc');
+        } else if ($sort_price === "desc") {
+            $restaurants = $restaurants->select('*', DB::raw('((price_start + price_end) / 2) as avg_price'))
+            ->orderBy('avg_price', 'desc');
+        }
+
+        // Rating sort
+        if ($sort_rating === "asc") {
+            $restaurants = $restaurants->orderBy('reviews_avg_rating', 'asc');
+        } else if ($sort_rating === "desc") {
+            $restaurants = $restaurants->orderBy('reviews_avg_rating', 'desc');
+        }
 
         $restaurants = $restaurants->paginate($perPage);
 
