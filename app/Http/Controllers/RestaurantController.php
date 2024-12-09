@@ -33,8 +33,8 @@ class RestaurantController extends Controller
                 'price_end' => 'required|numeric',
                 'open_time' => 'required|date_format:H:i:s',
                 'close_time' => 'required|date_format:H:i:s',
-                'avatar' => 'nullable|string',
-                'media' => 'nullable|string',
+                'avatar' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+                'media.*' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             ]);
     
             // Kiểm tra điều kiện giá bắt đầu < giá kết thúc
@@ -51,6 +51,43 @@ class RestaurantController extends Controller
                 ], 422); // HTTP 422: Unprocessable Entity
             }
     
+        // Xử lý ảnh avatar (nếu có)
+        if ($request->hasFile('avatar')) {
+            $avatar = $request->file('avatar');
+            $avatarName = time() . '_avatar_' . uniqid() . '.' . $avatar->extension();
+            $avatar->storeAs('images', $avatarName, 'public');
+            $validatedData['avatar'] = "/storage/images/$avatarName";
+
+            // Xóa ảnh avatar cũ (nếu cần)
+            if ($restaurant->avatar && file_exists(public_path($restaurant->avatar))) {
+                unlink(public_path($restaurant->avatar));
+            }
+        }
+
+        // Xử lý media (nếu có)
+        if ($request->hasFile('media')) {
+            $mediaPaths = [];
+            foreach ($request->file('media') as $media) {
+                $mediaName = time() . '_media_' . uniqid() . '.' . $media->extension();
+                $media->storeAs('images', $mediaName, 'public');
+                $mediaPaths[] = "/storage/images/$mediaName";
+            }
+
+            // Lưu các đường dẫn media mới vào cơ sở dữ liệu
+            $validatedData['media'] = json_encode($mediaPaths);
+
+            // Xóa media cũ (nếu cần)
+            if ($restaurant->media) {
+                $oldMedia = json_decode($restaurant->media, true);
+                foreach ($oldMedia as $oldMediaPath) {
+                    if (file_exists(public_path($oldMediaPath))) {
+                        unlink(public_path($oldMediaPath));
+                    }
+                }
+            }
+        }
+
+
             // Cập nhật thông tin cửa hàng
             $restaurant->update($validatedData);
     
