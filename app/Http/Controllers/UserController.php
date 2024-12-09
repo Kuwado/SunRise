@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
+
 
 class UserController extends Controller
 {
@@ -105,8 +107,8 @@ class UserController extends Controller
         }
     }
 
-    public function getUser($id)
-    {
+    public function getUser(Request $request){
+        $id = $request->query('id');
         $user = User::with('style')->find($id);
 
         if (!$user) {
@@ -116,20 +118,8 @@ class UserController extends Controller
         }
 
         return response()->json([
-            'id' => $user->id,
-            'avatar' => $user->avatar,
-            'name' => $user->name,
-            'email' => $user->email,
-            'birth' => $user->birth,
-            'phone' => $user->phone,
-            'address' => $user->address,
-            'workplace' => $user->workplace,
-            'nationality' => $user->nationality,
-            'city' => $user->city,
-            'desired_distance' => $user->desired_distance,
-            'price_start' => $user->price_start,
-            'price_end' => $user->price_end,
-            'style' => $user->style ? $user->style->name : null,
+            'message' => "Lấy thành công thông tin người dùng",
+            'user' => $user
         ], 200);
     }
 
@@ -143,12 +133,12 @@ class UserController extends Controller
             ], 404);
         }
 
-        $validatedData = $request->validate([
+        $validator = Validator::make($request->all(), [
             'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'name' => 'nullable|string|max:255',
-            'email' => 'nullable|email|unique:users,email,' . $user->id,
+            'email' => 'nullable|email|unique:users,email',
             'birth' => 'nullable|date',
-            'phone' => 'nullable|numeric|unique:users,phone,' . $user->id,
+            'phone' => 'nullable|numeric|unique:users,phone',
             'address' => 'nullable|string|max:255',
             'workplace' => 'nullable|string|max:255',
             'nationality' => 'nullable|string|max:255',
@@ -159,16 +149,28 @@ class UserController extends Controller
             'style_id' => 'nullable|exists:styles,id',
         ]);
 
-        foreach ($validatedData as $key => $value) {
-            $user->{$key} = $value;
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Dữ liệu không hợp lệ',
+                'errors' => $validator->errors()
+            ], 422);
         }
 
         if ($request->hasFile('avatar')) {
-            $avatarPath = $request->file('avatar')->store('avatars', 'public');
-            $user->avatar = 'storage/' . $avatarPath;
+            $image = $request->file('image');
+            $imageName = time() . '_' . uniqid() . '.' . $image->extension();
+            $image->storeAs('images', $imageName, 'public');
+            $imageName = "/storage/images/$imageName";
+
+            if ($user->avatar) {
+                $imageName = basename($user->avatar);
+                Storage::delete("public/images/$imageName");
+            }    
         }
 
-        $user->update($validatedData);
+        $user->avatar = $imageName;
+        $user->email = $request->input('email');
+        $user->save();
 
         return response()->json([
             'message' => 'Cập nhật thông tin người dùng thành công!',

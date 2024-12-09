@@ -4,7 +4,7 @@ import layouts from '~/layouts';
 
 const publicRoutes = [
     { path: config.routes.user.home, component: pages.user.home, layout: layouts.user.home },
-    { path: config.routes.user.productDetail, component: pages.user.productDetail, layout: layouts.user.default },
+    { path: config.routes.user.restaurantDetail, component: pages.user.restaurantdetail, layout: layouts.user.default },
     // { path: config.routes.user.productList, component: pages.user.productList, layout: layouts.user.default },
     // { path: config.routes.user.cart, component: pages.user.cart, layout: layouts.user.default },
 
@@ -14,6 +14,7 @@ const publicRoutes = [
     { path: config.routes.other.test, component: pages.other.test, layout: layouts.other.noHeader },
     { path: config.routes.user.userInfor, component: pages.user.userInfor, layout: layouts.user.default },
     { path: config.routes.user.findRestaurant, component: pages.user.findRestaurant, layout: layouts.user.default },
+    { path: config.routes.admin.productList, component: pages.admin.productList, role: 'admin' },
 ];
 
 const privateRoutes = [

@@ -142,7 +142,7 @@ class RestaurantController extends Controller
 
         return response()->json([
             'message' => 'Lấy thành công cửa hàng',
-            'restaurant' => $restaurant,
+            'restaurant' => new RestaurantResource($restaurant),
         ], 200);
     }
 
@@ -329,12 +329,14 @@ class RestaurantController extends Controller
             'open_time' => 'required|string',
             'close_time' => 'required|string',
         ]);
+
         if ($validator->fails()) {
             return response()->json([
                 'message' => 'Dữ liệu không hợp lệ',
                 'errors' => $validator->errors()
             ], 422);
         }
+
         $avatarPath = null;
         if ($request->hasFile('avatar')) {
             $avatar = $request->file('avatar');
@@ -342,6 +344,7 @@ class RestaurantController extends Controller
             $avatar->storeAs('images', $avatarName, 'public');
             $avatarPath = "/storage/images/$avatarName";
         }
+
         $mediaPaths = [];
         if ($request->hasFile('media')) {
             foreach ($request->file('media') as $mediaFile) {
@@ -350,6 +353,7 @@ class RestaurantController extends Controller
                 $mediaPaths[] = "/storage/images/$mediaName";
             }
         }
+
         $restaurant = Restaurant::create([
             'name' => $request->input('name'),
             'email' => $request->input('email'),
