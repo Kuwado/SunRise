@@ -13,6 +13,8 @@ import headerUser from './header-user-infor.png'
 import avatarUser from './avatar_user.png'
 import iconUserInfor1 from './icon-user-infor1.png'
 import caffeeRestaurant from './cf_restaurant.jpg'
+import headerFindRestaurant from './header-findRestaurant.png'
+import restaurantItem1 from './restaurant-item1.png'
 const images = {
     logo: Logo,
     register: register,
@@ -28,7 +30,9 @@ const images = {
     headerUser: headerUser,
     avatarUser: avatarUser,
     iconUserInfor1: iconUserInfor1,
-    caffeeRestaurant: caffeeRestaurant
+    caffeeRestaurant: caffeeRestaurant,
+    headerFindRestaurant,
+    restaurantItem1,
 };
 
 export default images;
