@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
-class UserTableSeeder extends Seeder
+class UsersTableSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -22,6 +22,8 @@ class UserTableSeeder extends Seeder
                 'password' => Hash::make('hoanluu57'),
                 'phone' => '+84372689718',
                 'address' => 'Trung Van, Nam Tu Liem, Ha Noi',
+                'latitude' => $faker->latitude(20.8, 21.2),  // Tọa độ vĩ độ trong phạm vi Hà Nội
+                'longitude' => $faker->longitude(105.7, 106.0),  // Tọa độ kinh độ trong phạm vi Hà Nội
                 'birth' => '2003-07-05',
                 'avatar' => 'avt1.jpg',
                 'workplace' => 'Hanoi University of Science and Technology, Hanoi, Vietnam',
@@ -38,6 +40,8 @@ class UserTableSeeder extends Seeder
                 'password' => Hash::make('southriver1809'),
                 'phone' => '+84398626045',
                 'address' => 'Bach Khoa, Hai Ba Trung, Ha Noi',
+                'latitude' => $faker->latitude(20.8, 21.2),  // Tọa độ vĩ độ trong phạm vi Hà Nội
+                'longitude' => $faker->longitude(105.7, 106.0),  // Tọa độ kinh độ trong phạm vi Hà Nội
                 'birth' => '2003-09-18',
                 'avatar' => 'avt2.jpg',
                 'workplace' => 'Hanoi University of Science and Technology, Hanoi, Vietnam',
@@ -54,6 +58,8 @@ class UserTableSeeder extends Seeder
                 'password' => Hash::make('quan1402'),
                 'phone' => '+84352650269',
                 'address' => 'Hoang Liet, Hoang Mai, Ha Noi',
+                'latitude' => $faker->latitude(20.8, 21.2),  // Tọa độ vĩ độ trong phạm vi Hà Nội
+                'longitude' => $faker->longitude(105.7, 106.0),  // Tọa độ kinh độ trong phạm vi Hà Nội
                 'birth' => '2003-02-14',
                 'avatar' => 'avt3.jpg',
                 'workplace' => 'Hanoi University of Science and Technology, Hanoi, Vietnam',
@@ -75,6 +81,8 @@ class UserTableSeeder extends Seeder
                 'nationality' => $country = $faker->country,
                 'city' => $city = $faker->city,
                 'address' => $faker->streetAddress . ', ' . $city . ', ' . $country,
+                'latitude' => $faker->latitude(20.8, 21.2),  // Tọa độ vĩ độ trong phạm vi Hà Nội
+                'longitude' => $faker->longitude(105.7, 106.0),  // Tọa độ kinh độ trong phạm vi Hà Nội
                 'birth' => $faker->date,
                 'avatar' => 'avt' . $i + 4 . '.jpg',
                 'workplace' => $faker->company,

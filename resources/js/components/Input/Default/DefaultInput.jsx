@@ -4,12 +4,24 @@ import styles from './DefaultInput.module.scss';
 
 const cx = classNames.bind(styles);
 
-const DefaultInput = ({ value, setValue, label = '', placeholder = '', type = 'text', id, width, required }) => {
+const DefaultInput = ({
+    value,
+    setValue,
+    label = '',
+    placeholder = '',
+    type = 'text',
+    id,
+    width,
+    required,
+    className,
+    inputClassName,
+    readOnly,
+}) => {
     const handleChangeValue = (e) => {
         setValue(e.target.value);
     };
     return (
-        <div className={cx('default-input', { 'no-label': !label })} style={{ width: width }}>
+        <div className={cx('default-input', { 'no-label': !label, [className]: className })} style={{ width: width }}>
             <label htmlFor={`default-input-${id}`}>
                 {label}
                 {required && <span className={cx('required-note')}>*</span>}
@@ -21,6 +33,9 @@ const DefaultInput = ({ value, setValue, label = '', placeholder = '', type = 't
                 value={value}
                 onChange={handleChangeValue}
                 placeholder={placeholder}
+                className={cx({ [inputClassName]: inputClassName })}
+                readOnly={readOnly}
+                autoComplete='off'
             />
         </div>
     );

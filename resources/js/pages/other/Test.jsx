@@ -5,7 +5,6 @@ import Dropdown from '~/components/Dropdown';
 import { CustomInput, DefaultInput, PasswordInput } from '~/components/Input';
 import Rating from '~/components/Rating';
 import Star from '~/components/Rating/Star';
-
 const Test = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -39,9 +38,7 @@ const Test = () => {
                     </div>
                 ))}
             </Dropdown>
-            <CheckboxInput name="save" title="30日間記憶する" id="helo" onChange={handleChecked}>
-                hloe
-            </CheckboxInput>
+            <CheckboxInput onChange={handleChecked}>安い (20)</CheckboxInput>
             <Star rate={30} large />
             <Rating rate={3.56} medium />
             <Card />
