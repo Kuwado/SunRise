@@ -15,6 +15,7 @@ const DefaultInput = ({
     required,
     className,
     inputClassName,
+    readOnly,
 }) => {
     const handleChangeValue = (e) => {
         setValue(e.target.value);
@@ -33,6 +34,8 @@ const DefaultInput = ({
                 onChange={handleChangeValue}
                 placeholder={placeholder}
                 className={cx({ [inputClassName]: inputClassName })}
+                readOnly={readOnly}
+                autoComplete='off'
             />
         </div>
     );
