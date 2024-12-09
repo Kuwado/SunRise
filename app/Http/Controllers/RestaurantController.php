@@ -16,8 +16,7 @@ class RestaurantController extends Controller
 {
     //
     private $locationService;
-    public function __construct(LocationService $locationService)
-    {
+    public function __construct(LocationService $locationService)  {
         $this->locationService = $locationService;
     }
 
@@ -221,7 +220,7 @@ class RestaurantController extends Controller
             });
         } else if ($styleIds) {
             $styleIdsArray = explode(',', $styleIds);
-            $restaurants = Restaurant::whereHas('styles', function ($query) use ($styleIdsArray) {
+            $restaurants = $restaurants->whereHas('styles', function ($query) use ($styleIdsArray) {
                 $query->whereIn('style_id', $styleIdsArray);
             });
         }
@@ -233,7 +232,7 @@ class RestaurantController extends Controller
             $restaurants = $restaurants->havingRaw('reviews_avg_rating > ? AND reviews_avg_rating <= ?', [$minRating, $maxRating]);
         } else if ($ratings) {
             $ratingsArray = explode(',', $ratings);
-            $restaurants->having(function ($query) use ($ratingsArray) {
+            $restaurants = $restaurants->having(function ($query) use ($ratingsArray) {
                 foreach ($ratingsArray as $rate) {
                     $rate = intval($rate);
                     $minRating = $rate - 0.5;
@@ -268,7 +267,16 @@ class RestaurantController extends Controller
             if ($restaurants->count() == 0) {
                 return response()->json([
                     'message' => 'Không tìm thấy nhà hàng nào',
-                    'restaurants' => [],
+                    'restaurants' => [
+                        'data' => [],
+                        // 'data' => $restaurants,
+                        'meta' => [
+                            'current_page' => 1,
+                            'last_page' => 1,
+                            'total' => 1,
+                            'per_page' => 1,
+                        ]
+                    ],
                 ], 200);
             }
         }
