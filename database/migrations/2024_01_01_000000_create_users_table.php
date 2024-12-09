@@ -18,6 +18,8 @@ return new class extends Migration
             $table->string('password');
             $table->string('phone')->unique()->nullable();
             $table->text('address')->nullable();
+            $table->decimal('latitude', 10, 7)->default(21.017021);
+            $table->decimal('longitude', 10, 7)->default(105.783480);
             $table->string('birth')->nullable();
             $table->string('avatar')->nullable();
             $table->string('workplace')->nullable();

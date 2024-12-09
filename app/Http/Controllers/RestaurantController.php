@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\RestaurantResource;
 use App\Models\Restaurant;
+use App\Models\User;
+use App\Services\LocationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
@@ -12,6 +14,12 @@ use Illuminate\Support\Facades\DB;
 
 class RestaurantController extends Controller
 {
+    //
+    private $locationService;
+    public function __construct(LocationService $locationService)
+    {
+        $this->locationService = $locationService;
+    }
     
     public function updateRestaurant(Request $request, $id)
     {
@@ -107,12 +115,11 @@ class RestaurantController extends Controller
         }
     }
     
-    
-
     public function getRestaurant(Request $request) {
-
         $id = $request->query('id');
-        $restaurant = Restaurant::where('id', $id)->get();
+        $userId = $request->query('user_id') ?? null;
+
+        $restaurant = Restaurant::find($id);
 
         if (!$restaurant) {
             return response()->json([
@@ -120,26 +127,90 @@ class RestaurantController extends Controller
             ], 404);
         }
 
+        if ($userId) {
+            $user = User::find($userId);
+            $lat = 21.0170210;
+            $lng = 105.7834800;
+            if ($user) {
+                $lat = $user->latitude;
+                $lng = $user->longitude;
+            }
+            $distance = $this->locationService->calculateDistance($lat, $lng, $restaurant->latitude, $restaurant->longitude);
+            $restaurant->distance = round($distance, 2);
+        }
+
+
         return response()->json([
             'message' => 'Lấy thành công cửa hàng',
             'restaurant' => $restaurant,
         ], 200);
     }
 
+    private function getDistance($restaurants, $type) {
+        switch ($type) {
+            case 1:
+                $restaurants = $restaurants->orHavingRaw('distance <= ?', [10]);
+                break;
+            case 2:
+                $restaurants = $restaurants->orHavingRaw('distance > ? AND distance <= ?', [10, 20]);                   
+                break;
+            case 3:
+                $restaurants = $restaurants->orHavingRaw('distance > ? AND distance <= ?', [20, 30]);                                    
+                break;
+            case 4:
+                $restaurants = $restaurants->orHavingRaw('distance > ? AND distance <= ?', [30, 40]);                                    
+                break;
+            case 5:
+                $restaurants = $restaurants->orHavingRaw('distance > ?', [40]);                                    
+                break;
+            default:
+                break;
+        }
+        return $restaurants;
+    }
+
     public function getRestaurants(Request $request) {
+        // Style filter
         $styleId = $request->query('style_id') ?? null;
         $styleIds = $request->query('style_ids') ?? null;
+        // Rating filter
         $rating = $request->query('rating') ?? null;
         $ratings = $request->query('ratings') ?? null;
+        // Distance filter
+        $distanceType = $request->query('distance_type') ?? null;
+        $distanceTypes = $request->query('distance_types') ?? null;
+        // Name filter
         $name = $request->query('name') ?? null;
+        // Price filter
         $start = $request->query('start') ?? null;
         $end = $request->query('end') ?? null;
+        // Sort
         $sort_rating = $request->query('sort_rating') ?? null;
         $sort_price = $request->query('sort_price') ?? null;
+        $sort_distance = $request->query('sort_distance') ?? null;
+        $userId = $request->query('user_id') ?? null;
 
         $perPage = $request->query('per_page') ?? 10;
 
         $restaurants = Restaurant::withAvg('reviews', 'rating');
+
+        // Add distance
+        if ($userId) {
+            $user = User::find($userId);
+            $lat = 21.0170210;
+            $lng = 105.7834800;
+            if ($user) {
+                $lat = $user->latitude;
+                $lng = $user->longitude;
+            }
+            $restaurants = $restaurants->addSelect(DB::raw("
+                (6371 * acos(
+                    cos(radians($lat)) * cos(radians(latitude)) * 
+                    cos(radians(longitude) - radians($lng)) + 
+                    sin(radians($lat)) * sin(radians(latitude))
+                )) AS distance
+            "));
+        }
 
         // Style filter
         if ($styleId) {
@@ -179,6 +250,16 @@ class RestaurantController extends Controller
             $restaurants = $restaurants->where('price_start', '<=', $end);
         }
 
+        // Distance filter
+        if ($distanceType) {
+            $restaurants = $this->getDistance($restaurants, $distanceType);
+        } else if ($distanceTypes) {
+            $typeArray = explode(',', $distanceTypes);
+            foreach ($typeArray as $t) {
+                $restaurants = $this->getDistance($restaurants, $t);
+            }
+        }
+
         // Name filter
         if ($name) {
             $restaurants = $restaurants->where('name', 'like', "%{$name}%");
@@ -189,8 +270,6 @@ class RestaurantController extends Controller
                 ], 200);
             }
         }
-
-        // Distance
 
         // Price sort
         if ($sort_price === "asc") {
@@ -208,12 +287,21 @@ class RestaurantController extends Controller
             $restaurants = $restaurants->orderBy('reviews_avg_rating', 'desc');
         }
 
+        // Distance sort
+        if ($sort_distance === "asc") {
+            $restaurants = $restaurants->orderBy('distance', 'asc');
+        } else if ($sort_distance === "desc") {
+            $restaurants = $restaurants->orderBy('distance', 'desc');
+        }
+
+
         $restaurants = $restaurants->paginate($perPage);
 
         return response()->json([
             'message' => 'Lấy thành công danh sách cửa hàng',
             'restaurants' => [
                 'data' => RestaurantResource::collection($restaurants),
+                // 'data' => $restaurants,
                 'meta' => [
                     'current_page' => $restaurants->currentPage(),
                     'last_page' => $restaurants->lastPage(),
@@ -247,6 +335,15 @@ class RestaurantController extends Controller
             ], 422);
         }
 
+        // Location
+        $address = $request->input('address');
+        $locations = $this->locationService->getCoordinates($address);
+        if (!$locations) {
+            return response()->json([
+                'message' => 'Địa chỉ không hợp lệ',
+            ], 422);
+        } 
+
         $avatarPath = null;
         if ($request->hasFile('avatar')) {
             // Tạo request mới cho avatar
@@ -270,8 +367,10 @@ class RestaurantController extends Controller
             'email' => $request->input('email'),
             'phone' => $request->input('phone'),
             'address' => $request->input('address'),
+            'longitude' => $locations['lng'],
+            'latitude' => $locations['lat'],
             'avatar' => $avatarPath,
-            'media' => json_encode($mediaPaths),
+            'media' => json_encode($mediaPaths, true),
             'description' => $request->input('description'),
             'price_start' => $request->input('price_start'),
             'price_end' => $request->input('price_end'),
@@ -282,6 +381,8 @@ class RestaurantController extends Controller
         return response()->json([
             'message' => 'Nhà hàng đã được tạo thành công!',
             'restaurant' => $restaurant,
+            'a' => $locations,
+            'add' => $address
         ], 200);
     }
 

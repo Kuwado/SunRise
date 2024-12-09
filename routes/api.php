@@ -1,9 +1,11 @@
 <?php
 
+use App\Http\Controllers\LocationController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\RestaurantController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UploadController;
+use App\Services\LocationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -29,3 +31,6 @@ Route::get('/getReview', [ReviewController::class, 'getReview']);
 //Upload
 Route::post('/upload/images', [UploadController::class, 'uploadImages']);
 Route::post('/upload/image', [UploadController::class, 'uploadImage']);
+
+// Location
+Route::get('/location', [LocationController::class, 'getCoordinates']);
