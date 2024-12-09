@@ -1,0 +1,104 @@
+.container {
+    width: 1179px;
+    height: 1600px;
+    margin: 0 auto;
+    background: #fff;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background-color: #f8f9fa;
+  
+    .logo {
+      font-size: 24px;
+      font-weight: bold;
+      color: #ff6600;
+    }
+  
+    .nav {
+      a {
+        margin: 0 10px;
+        text-decoration: none;
+        color: #333;
+        font-size: 16px;
+  
+        &:hover {
+          color: #ff6600;
+        }
+      }
+    }
+  }
+  
+  .main {
+    padding: 20px;
+  
+    .imageSlider {
+      margin-bottom: 20px;
+  
+      img {
+        width: 100%;
+        height: auto;
+        border-radius: 5px;
+      }
+    }
+  
+    .details {
+      margin-bottom: 40px;
+  
+      .cafeName {
+        font-size: 24px;
+        font-weight: bold;
+        color: #333;
+      }
+  
+      .address,
+      .hours,
+      .price,
+      .rating,
+      .description {
+        margin: 10px 0;
+        font-size: 16px;
+        color: #555;
+      }
+    }
+  
+    .comments {
+      .comment {
+        border-bottom: 1px solid #ddd;
+        padding: 10px 0;
+  
+        .username {
+          font-size: 18px;
+          font-weight: bold;
+          color: #333;
+        }
+  
+        .userComment {
+          font-size: 14px;
+          color: #555;
+        }
+  
+        .rating {
+          font-size: 16px;
+          color: #ffcc00;
+        }
+      }
+    }
+  }
+  
+  .footer {
+    text-align: center;
+    padding: 20px;
+    background-color: #f8f9fa;
+  
+    p {
+      margin: 5px 0;
+      color: #777;
+    }
+  }
+  
