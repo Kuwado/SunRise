@@ -106,7 +106,74 @@ class UserController extends Controller
         }
     }
 
-    public function update (Request $request) {
-        
+    public function getUser($id)
+    {
+        $user = User::with('style')->find($id);
+
+        if (!$user) {
+            return response()->json([
+                'message' => 'Không tìm thấy người dùng!',
+            ], 404);
+        }
+
+        return response()->json([
+            'id' => $user->id,
+            'avatar' => $user->avatar,
+            'name' => $user->name,
+            'email' => $user->email,
+            'birth' => $user->birth,
+            'phone' => $user->phone,
+            'address' => $user->address,
+            'workplace' => $user->workplace,
+            'nationality' => $user->nationality,
+            'city' => $user->city,
+            'desired_distance' => $user->desired_distance,
+            'price_start' => $user->price_start,
+            'price_end' => $user->price_end,
+            'style' => $user->style ? $user->style->name : null,
+        ], 200);
+    }
+
+    public function updateUser(Request $request, $id)
+    {
+        $user = User::find($id);
+
+        if (!$user) {
+            return response()->json([
+                'message' => 'Không tìm thấy người dùng!',
+            ], 404);
+        }
+
+        $validatedData = $request->validate([
+            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'name' => 'nullable|string|max:255',
+            'email' => 'nullable|email|unique:users,email,' . $user->id,
+            'birth' => 'nullable|date',
+            'phone' => 'nullable|numeric|unique:users,phone,' . $user->id,
+            'address' => 'nullable|string|max:255',
+            'workplace' => 'nullable|string|max:255',
+            'nationality' => 'nullable|string|max:255',
+            'city' => 'nullable|string|max:255',
+            'desired_distance' => 'nullable|numeric',
+            'price_start' => 'nullable|numeric',
+            'price_end' => 'nullable|numeric',
+            'style_id' => 'nullable|exists:styles,id',
+        ]);
+
+        foreach ($validatedData as $key => $value) {
+            $user->{$key} = $value;
+        }
+
+        if ($request->hasFile('avatar')) {
+            $avatarPath = $request->file('avatar')->store('avatars', 'public');
+            $user->avatar = 'storage/' . $avatarPath;
+        }
+
+        $user->update($validatedData);
+
+        return response()->json([
+            'message' => 'Cập nhật thông tin người dùng thành công!',
+            'user' => $user,
+        ], 200);
     }
 }
