@@ -6,19 +6,17 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\RestaurantResource;
 use App\Models\Restaurant;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
 
 class RestaurantController extends Controller
 {
     //
-    public function createRestaurant(Request $request) {
-        
-    }
 
-    public function updateRestaurant(Request $request) {
+    public function updateRestaurant(Request $request) {}
 
-    }
-
-    public function getRestaurant(Request $request) {
+    public function getRestaurant(Request $request)
+    {
         $id = $request->query('id');
         $restaurant = Restaurant::where('id', $id)->get();
 
@@ -32,34 +30,6 @@ class RestaurantController extends Controller
             'message' => 'Lấy thành công cửa hàng',
             'restaurant' => $restaurant,
         ], 200);
-    }
-
-    public function sortRestaurantsByType($restaurants, $type) {
-        switch ($type) {
-            case 1:
-                $restaurants = $restaurants->orWhereRaw('(CAST(price_start AS DECIMAL) + CAST(price_end AS DECIMAL)) / 2 <= ?', [50]);
-                break;
-            case 2:
-                $restaurants = $restaurants->orWhereRaw('
-                    (CAST(price_start AS DECIMAL) + CAST(price_end AS DECIMAL)) / 2 > ? AND 
-                    (CAST(price_start AS DECIMAL) + CAST(price_end AS DECIMAL)) / 2 <= ?', 
-                    [50, 100]
-                );                    
-                break;
-            case 3:
-                $restaurants = $restaurants->orWhereRaw('
-                    (CAST(price_start AS DECIMAL) + CAST(price_end AS DECIMAL)) / 2 > ? AND 
-                    (CAST(price_start AS DECIMAL) + CAST(price_end AS DECIMAL)) / 2 <= ?', 
-                    [100, 200]
-                );                     
-                break;
-            case 4:
-                $restaurants = $restaurants->orWhereRaw('(CAST(price_start AS DECIMAL) + CAST(price_end AS DECIMAL)) / 2 > ?', [200]);
-                break;
-            default:
-                break;
-        }
-        return $restaurants;
     }
 
     public function getRestaurants(Request $request) {
@@ -139,5 +109,99 @@ class RestaurantController extends Controller
                 ]
             ],
         ], 200);
+    }
+
+    public function createRestaurant(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:restaurants,email',
+            'phone' => 'required|string|max:20',
+            'address' => 'required|string|max:255',
+            'avatar' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'media.*' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'description' => 'nullable|string',
+            'price_start' => 'required|numeric',
+            'price_end' => 'required|numeric',
+            'open_time' => 'required|string',
+            'close_time' => 'required|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Dữ liệu không hợp lệ',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        $avatarPath = null;
+        if ($request->hasFile('avatar')) {
+            // Tạo request mới cho avatar
+            $avatarRequest = new Request();
+            $avatarRequest->files->set('image', $request->file('avatar'));
+            $avatarResponse = (new UploadController)->uploadImage($avatarRequest);
+            $avatarPath = json_decode($avatarResponse->getContent())->image;
+        }
+
+        $mediaPaths = [];
+        if ($request->hasFile('media')) {
+            // Tạo request mới cho media
+            $mediaRequest = new Request();
+            $mediaRequest->files->set('images', $request->file('media'));
+            $mediaResponse = (new UploadController)->uploadImages($mediaRequest);
+            $mediaPaths = json_decode($mediaResponse->getContent())->images;
+        }
+
+        $restaurant = Restaurant::create([
+            'name' => $request->input('name'),
+            'email' => $request->input('email'),
+            'phone' => $request->input('phone'),
+            'address' => $request->input('address'),
+            'avatar' => $avatarPath,
+            'media' => json_encode($mediaPaths),
+            'description' => $request->input('description'),
+            'price_start' => $request->input('price_start'),
+            'price_end' => $request->input('price_end'),
+            'open_time' => $request->input('open_time'),
+            'close_time' => $request->input('close_time'),
+        ]);
+
+        return response()->json([
+            'message' => 'Nhà hàng đã được tạo thành công!',
+            'restaurant' => $restaurant,
+        ], 200);
+    }
+
+    public function deleteRestaurant($id)
+    {
+        try {
+            $restaurant = Restaurant::findOrFail($id);
+
+            // Xóa avatar nếu có
+            if ($restaurant->avatar) {
+                UploadController::deleteImage($restaurant->avatar);
+            }
+
+            // Xóa media nếu có
+            if ($restaurant->media) {
+                $mediaImages = json_decode($restaurant->media, true);
+                if (is_array($mediaImages)) {
+                    foreach ($mediaImages as $mediaImage) {
+                        UploadController::deleteImage($mediaImage);
+                    }
+                }
+            }
+
+            // Xóa nhà hàng
+            $restaurant->delete();
+
+            return response()->json([
+                'message' => 'Nhà hàng đã được xóa thành công!',
+            ], 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'message' => 'Không tìm thấy nhà hàng!',
+            ], 404);
+        }
     }
 }

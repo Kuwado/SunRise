@@ -1,9 +1,9 @@
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import classNames from 'classnames/bind';
 
 import styles from './Dropdown.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronDown, faChevronUp, faL } from '@fortawesome/free-solid-svg-icons';
+import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons';
 
 const cx = classNames.bind(styles);
 
@@ -12,6 +12,7 @@ const Dropdown = ({
     label = '',
     id = 'id',
     selected,
+    setValue,
     width = 'fit-content',
     left = false,
     right = false,
@@ -36,6 +37,13 @@ const Dropdown = ({
         };
     }, []);
 
+    const handleOptionClick = (option) => {
+        setValue(option); // Cập nhật giá trị được chọn
+        setTimeout(() => {
+            setShow(false); // Đóng dropdown sau khi chọn
+        }, 0);
+    };
+
     const classes = cx('dropdown', {
         active: show,
         [className]: className,
@@ -57,13 +65,19 @@ const Dropdown = ({
                 ref={dropRef}
                 onClick={() => setShow((prev) => !prev)}
             >
-                <div className={cx('selected')}>{selected ? selected : title}</div>
+                <div className={cx('selected')}>{selected || title}</div>
                 <div className={cx('icon')}>
                     <FontAwesomeIcon icon={show ? faChevronUp : faChevronDown} />
                 </div>
                 {show && children && (
                     <div className={cx('options')}>
-                        <div className={cx('wrapper')}>{children}</div>
+                        <div className={cx('wrapper')}>
+                            {React.Children.map(children, (child) => (
+                                <div onClick={() => handleOptionClick(child.props.children)} className={cx('option')}>
+                                    {child.props.children}
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 )}
             </div>
