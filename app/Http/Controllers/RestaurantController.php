@@ -20,9 +20,101 @@ class RestaurantController extends Controller
     {
         $this->locationService = $locationService;
     }
+    
+    public function updateRestaurant(Request $request, $id)
+    {
+        try {
+            // Tìm cửa hàng theo ID
+            $restaurant = Restaurant::find($id);
+    
+            if (!$restaurant) {
+                return response()->json(['message' => 'Restaurant not found'], 404);
+            }
+    
+            // Validate dữ liệu đầu vào
+            $validatedData = $request->validate([
+                'name' => 'required|string|max:255|unique:restaurants,name,' . $id,
+                'email' => 'required|email|max:255|unique:restaurants,email,' . $id,
+                'phone' => 'required|string|max:20|unique:restaurants,phone,' . $id,
+                'address' => 'required|string',
+                'description' => 'nullable|string',
+                'price_start' => 'required|numeric',
+                'price_end' => 'required|numeric',
+                'open_time' => 'required|date_format:H:i:s',
+                'close_time' => 'required|date_format:H:i:s',
+                'avatar' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+                'media.*' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            ]);
+    
+            // Kiểm tra điều kiện giá bắt đầu < giá kết thúc
+            if ($validatedData['price_start'] >= $validatedData['price_end']) {
+                return response()->json([
+                    'message' => 'Giá bắt đầu phải nhỏ hơn giá kết thúc.',
+                ], 422); // HTTP 422: Unprocessable Entity
+            }
+    
+            // Kiểm tra điều kiện thời gian mở < thời gian đóng
+            if ($validatedData['open_time'] >= $validatedData['close_time']) {
+                return response()->json([
+                    'message' => 'Thời gian mở phải nhỏ hơn thời gian đóng.',
+                ], 422); // HTTP 422: Unprocessable Entity
+            }
+    
+        // Xử lý ảnh avatar (nếu có)
+        if ($request->hasFile('avatar')) {
+            $avatar = $request->file('avatar');
+            $avatarName = time() . '_avatar_' . uniqid() . '.' . $avatar->extension();
+            $avatar->storeAs('images', $avatarName, 'public');
+            $validatedData['avatar'] = "/storage/images/$avatarName";
 
-    public function updateRestaurant(Request $request) {}
+            // Xóa ảnh avatar cũ (nếu cần)
+            if ($restaurant->avatar && file_exists(public_path($restaurant->avatar))) {
+                unlink(public_path($restaurant->avatar));
+            }
+        }
 
+        // Xử lý media (nếu có)
+        if ($request->hasFile('media')) {
+            $mediaPaths = [];
+            foreach ($request->file('media') as $media) {
+                $mediaName = time() . '_media_' . uniqid() . '.' . $media->extension();
+                $media->storeAs('images', $mediaName, 'public');
+                $mediaPaths[] = "/storage/images/$mediaName";
+            }
+
+            // Lưu các đường dẫn media mới vào cơ sở dữ liệu
+            $validatedData['media'] = json_encode($mediaPaths);
+
+            // Xóa media cũ (nếu cần)
+            if ($restaurant->media) {
+                $oldMedia = json_decode($restaurant->media, true);
+                foreach ($oldMedia as $oldMediaPath) {
+                    if (file_exists(public_path($oldMediaPath))) {
+                        unlink(public_path($oldMediaPath));
+                    }
+                }
+            }
+        }
+
+
+            // Cập nhật thông tin cửa hàng
+            $restaurant->update($validatedData);
+    
+            // Trả về kết quả thành công
+            return response()->json([
+                'message' => 'Restaurant updated successfully',
+                'restaurant' => $restaurant,
+            ], 200);
+    
+        } catch (\Exception $e) {
+            // Xử lý lỗi không mong muốn
+            return response()->json([
+                'message' => 'An error occurred while updating the restaurant.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+    
     public function getRestaurant(Request $request) {
         $id = $request->query('id');
         $userId = $request->query('user_id') ?? null;
@@ -251,8 +343,6 @@ class RestaurantController extends Controller
                 'message' => 'Địa chỉ không hợp lệ',
             ], 422);
         } 
-
-
 
         $avatarPath = null;
         if ($request->hasFile('avatar')) {
