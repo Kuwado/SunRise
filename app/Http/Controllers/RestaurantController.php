@@ -176,19 +176,20 @@ class RestaurantController extends Controller
 
         $avatarPath = null;
         if ($request->hasFile('avatar')) {
-            $avatar = $request->file('avatar');
-            $avatarName = time() . '_avatar_' . uniqid() . '.' . $avatar->extension();
-            $avatar->storeAs('images', $avatarName, 'public');
-            $avatarPath = "/storage/images/$avatarName";
+            // Tạo request mới cho avatar
+            $avatarRequest = new Request();
+            $avatarRequest->files->set('image', $request->file('avatar'));
+            $avatarResponse = (new UploadController)->uploadImage($avatarRequest);
+            $avatarPath = json_decode($avatarResponse->getContent())->image;
         }
 
         $mediaPaths = [];
         if ($request->hasFile('media')) {
-            foreach ($request->file('media') as $mediaFile) {
-                $mediaName = time() . '_media_' . uniqid() . '.' . $mediaFile->extension();
-                $mediaFile->storeAs('images', $mediaName, 'public');
-                $mediaPaths[] = "/storage/images/$mediaName";
-            }
+            // Tạo request mới cho media
+            $mediaRequest = new Request();
+            $mediaRequest->files->set('images', $request->file('media'));
+            $mediaResponse = (new UploadController)->uploadImages($mediaRequest);
+            $mediaPaths = json_decode($mediaResponse->getContent())->images;
         }
 
         $restaurant = Restaurant::create([
@@ -210,29 +211,37 @@ class RestaurantController extends Controller
             'restaurant' => $restaurant,
         ], 200);
     }
+
     public function deleteRestaurant($id)
     {
-        $restaurant = Restaurant::findOrFail($id);
+        try {
+            $restaurant = Restaurant::findOrFail($id);
 
-        if ($restaurant->avatar) {
-            $avatarPath = str_replace('/storage/', '', $restaurant->avatar);
-            Storage::disk('public')->delete('images/' . basename($avatarPath));
-        }
+            // Xóa avatar nếu có
+            if ($restaurant->avatar) {
+                UploadController::deleteImage($restaurant->avatar);
+            }
 
-        if ($restaurant->media) {
-            $mediaImages = json_decode($restaurant->media, true);
-            if (is_array($mediaImages)) {
-                foreach ($mediaImages as $mediaImage) {
-                    $imagePath = str_replace('/storage/', '', $mediaImage);
-                    Storage::disk('public')->delete('images/' . basename($imagePath));
+            // Xóa media nếu có
+            if ($restaurant->media) {
+                $mediaImages = json_decode($restaurant->media, true);
+                if (is_array($mediaImages)) {
+                    foreach ($mediaImages as $mediaImage) {
+                        UploadController::deleteImage($mediaImage);
+                    }
                 }
             }
+
+            // Xóa nhà hàng
+            $restaurant->delete();
+
+            return response()->json([
+                'message' => 'Nhà hàng đã được xóa thành công!',
+            ], 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'message' => 'Không tìm thấy nhà hàng!',
+            ], 404);
         }
-
-        $restaurant->delete();
-
-        return response()->json([
-            'message' => 'Nhà hàng đã được xóa thành công!',
-        ], 200);
     }
 }
