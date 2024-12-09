@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\RestaurantResource;
 use App\Models\Restaurant;
+use App\Models\User;
+use App\Services\LocationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
@@ -13,19 +15,38 @@ use Illuminate\Support\Facades\DB;
 class RestaurantController extends Controller
 {
     //
+    private $locationService;
+    public function __construct(LocationService $locationService)
+    {
+        $this->locationService = $locationService;
+    }
 
     public function updateRestaurant(Request $request) {}
 
-    public function getRestaurant(Request $request)
-    {
+    public function getRestaurant(Request $request) {
         $id = $request->query('id');
-        $restaurant = Restaurant::where('id', $id)->get();
+        $userId = $request->query('user_id') ?? null;
+
+        $restaurant = Restaurant::find($id);
 
         if (!$restaurant) {
             return response()->json([
                 'message' => 'Cửa hàng không tồn tại'
             ], 404);
         }
+
+        if ($userId) {
+            $user = User::find($userId);
+            $lat = 21.0170210;
+            $lng = 105.7834800;
+            if ($user) {
+                $lat = $user->latitude;
+                $lng = $user->longitude;
+            }
+            $distance = $this->locationService->calculateDistance($lat, $lng, $restaurant->latitude, $restaurant->longitude);
+            $restaurant->distance = round($distance, 2);
+        }
+
 
         return response()->json([
             'message' => 'Lấy thành công cửa hàng',
@@ -154,6 +175,17 @@ class RestaurantController extends Controller
             ], 422);
         }
 
+        // Location
+        $address = $request->input('address');
+        $locations = $this->locationService->getCoordinates($address);
+        if (!$locations) {
+            return response()->json([
+                'message' => 'Địa chỉ không hợp lệ',
+            ], 422);
+        } 
+
+
+
         $avatarPath = null;
         if ($request->hasFile('avatar')) {
             // Tạo request mới cho avatar
@@ -177,8 +209,10 @@ class RestaurantController extends Controller
             'email' => $request->input('email'),
             'phone' => $request->input('phone'),
             'address' => $request->input('address'),
+            'longitude' => $locations['lng'],
+            'latitude' => $locations['lat'],
             'avatar' => $avatarPath,
-            'media' => json_encode($mediaPaths),
+            'media' => json_encode($mediaPaths, true),
             'description' => $request->input('description'),
             'price_start' => $request->input('price_start'),
             'price_end' => $request->input('price_end'),
@@ -189,6 +223,8 @@ class RestaurantController extends Controller
         return response()->json([
             'message' => 'Nhà hàng đã được tạo thành công!',
             'restaurant' => $restaurant,
+            'a' => $locations,
+            'add' => $address
         ], 200);
     }
 
