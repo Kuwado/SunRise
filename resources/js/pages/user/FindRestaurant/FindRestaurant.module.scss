@@ -71,8 +71,15 @@
     .cafe-list {
         flex: 3;
         display: grid;
-        grid-template-columns: repeat(3, 1fr);
+        // grid-template-columns: repeat(3, 1fr);
         gap: 20px;
+        &.grid-view {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    
+        &.list-view {
+            grid-template-columns: 1fr;
+        }
     }
 }
 .search-bar {
@@ -139,10 +146,14 @@
             font-size: 20px;
             cursor: pointer;
         }
+        &.active {
+            color: #000;
+        }
         h3{
             color: #787878;
             font-size: 18px;
         }
+        
     }
 }
 .filter-option {

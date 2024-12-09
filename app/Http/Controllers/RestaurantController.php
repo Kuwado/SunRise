@@ -16,8 +16,7 @@ class RestaurantController extends Controller
 {
     //
     private $locationService;
-    public function __construct(LocationService $locationService)
-    {
+    public function __construct(LocationService $locationService)  {
         $this->locationService = $locationService;
     }
 
@@ -142,7 +141,7 @@ class RestaurantController extends Controller
 
         return response()->json([
             'message' => 'Lấy thành công cửa hàng',
-            'restaurant' => $restaurant,
+            'restaurant' => new RestaurantResource($restaurant),
         ], 200);
     }
 
@@ -195,6 +194,7 @@ class RestaurantController extends Controller
         $perPage = $request->query('per_page') ?? 10;
 
         $restaurants = Restaurant::withAvg('reviews', 'rating');
+        $restaurants = $restaurants->addSelect(DB::raw("(price_start + price_end) / 2 AS price_avg"));
 
         // Add distance
         if ($userId) {
@@ -221,7 +221,7 @@ class RestaurantController extends Controller
             });
         } else if ($styleIds) {
             $styleIdsArray = explode(',', $styleIds);
-            $restaurants = Restaurant::whereHas('styles', function ($query) use ($styleIdsArray) {
+            $restaurants = $restaurants->whereHas('styles', function ($query) use ($styleIdsArray) {
                 $query->whereIn('style_id', $styleIdsArray);
             });
         }
@@ -233,7 +233,7 @@ class RestaurantController extends Controller
             $restaurants = $restaurants->havingRaw('reviews_avg_rating > ? AND reviews_avg_rating <= ?', [$minRating, $maxRating]);
         } else if ($ratings) {
             $ratingsArray = explode(',', $ratings);
-            $restaurants->having(function ($query) use ($ratingsArray) {
+            $restaurants = $restaurants->having(function ($query) use ($ratingsArray) {
                 foreach ($ratingsArray as $rate) {
                     $rate = intval($rate);
                     $minRating = $rate - 0.5;
@@ -268,18 +268,32 @@ class RestaurantController extends Controller
             if ($restaurants->count() == 0) {
                 return response()->json([
                     'message' => 'Không tìm thấy nhà hàng nào',
-                    'restaurants' => [],
+                    'restaurants' => [
+                        'data' => [],
+                        // 'data' => $restaurants,
+                        'meta' => [
+                            'current_page' => 1,
+                            'last_page' => 1,
+                            'total' => 1,
+                            'per_page' => 1,
+                        ]
+                    ],
                 ], 200);
             }
         }
 
         // Price sort
+        // if ($sort_price === "asc") {
+        //     $restaurants = $restaurants->select('*', DB::raw('((price_start + price_end) / 2) as avg_price'))
+        //         ->orderBy('avg_price', 'asc');
+        // } else if ($sort_price === "desc") {
+        //     $restaurants = $restaurants->select('*', DB::raw('((price_start + price_end) / 2) as avg_price'))
+        //         ->orderBy('avg_price', 'desc');
+        // }
         if ($sort_price === "asc") {
-            $restaurants = $restaurants->select('*', DB::raw('((price_start + price_end) / 2) as avg_price'))
-                ->orderBy('avg_price', 'asc');
+            $restaurants = $restaurants->orderBy('price_avg', 'asc');
         } else if ($sort_price === "desc") {
-            $restaurants = $restaurants->select('*', DB::raw('((price_start + price_end) / 2) as avg_price'))
-                ->orderBy('avg_price', 'desc');
+            $restaurants = $restaurants->orderBy('price_avg', 'desc');
         }
 
         // Rating sort
@@ -329,12 +343,14 @@ class RestaurantController extends Controller
             'open_time' => 'required|string',
             'close_time' => 'required|string',
         ]);
+
         if ($validator->fails()) {
             return response()->json([
                 'message' => 'Dữ liệu không hợp lệ',
                 'errors' => $validator->errors()
             ], 422);
         }
+
         $avatarPath = null;
         if ($request->hasFile('avatar')) {
             $avatar = $request->file('avatar');
@@ -342,6 +358,7 @@ class RestaurantController extends Controller
             $avatar->storeAs('images', $avatarName, 'public');
             $avatarPath = "/storage/images/$avatarName";
         }
+
         $mediaPaths = [];
         if ($request->hasFile('media')) {
             foreach ($request->file('media') as $mediaFile) {
@@ -350,6 +367,7 @@ class RestaurantController extends Controller
                 $mediaPaths[] = "/storage/images/$mediaName";
             }
         }
+
         $restaurant = Restaurant::create([
             'name' => $request->input('name'),
             'email' => $request->input('email'),

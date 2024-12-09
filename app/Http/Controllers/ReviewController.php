@@ -7,10 +7,10 @@ use Illuminate\Http\Request;
 
 class ReviewController extends Controller
 {
-    public function getReview(Request $request)
+    public function getReviews(Request $request)
     {
-        $userId = $request->query('userId');
-        $restaurantId = $request->query('restaurantId');
+        $userId = $request->query('user_id') ?? null;
+        $restaurantId = $request->query('restaurant_id') ?? null;
         $limit = $request->query('limit', 10); // Mặc định trả về 10 kết quả
 
         // Truy vấn bảng reviews với quan hệ tới user và restaurant
@@ -26,6 +26,9 @@ class ReviewController extends Controller
 
         $reviews = $query->limit($limit)->get();
 
-        return response()->json($reviews, 200);
+        return response()->json([
+            'message' => "Lấy thành công reviews",
+            'reviews' => $reviews
+        ], 200);
     }
 }
