@@ -194,6 +194,7 @@ class RestaurantController extends Controller
         $perPage = $request->query('per_page') ?? 10;
 
         $restaurants = Restaurant::withAvg('reviews', 'rating');
+        $restaurants = $restaurants->addSelect(DB::raw("(price_start + price_end) / 2 AS price_avg"));
 
         // Add distance
         if ($userId) {
@@ -282,12 +283,17 @@ class RestaurantController extends Controller
         }
 
         // Price sort
+        // if ($sort_price === "asc") {
+        //     $restaurants = $restaurants->select('*', DB::raw('((price_start + price_end) / 2) as avg_price'))
+        //         ->orderBy('avg_price', 'asc');
+        // } else if ($sort_price === "desc") {
+        //     $restaurants = $restaurants->select('*', DB::raw('((price_start + price_end) / 2) as avg_price'))
+        //         ->orderBy('avg_price', 'desc');
+        // }
         if ($sort_price === "asc") {
-            $restaurants = $restaurants->select('*', DB::raw('((price_start + price_end) / 2) as avg_price'))
-                ->orderBy('avg_price', 'asc');
+            $restaurants = $restaurants->orderBy('price_avg', 'asc');
         } else if ($sort_price === "desc") {
-            $restaurants = $restaurants->select('*', DB::raw('((price_start + price_end) / 2) as avg_price'))
-                ->orderBy('avg_price', 'desc');
+            $restaurants = $restaurants->orderBy('price_avg', 'desc');
         }
 
         // Rating sort
