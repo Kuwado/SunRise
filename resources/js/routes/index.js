@@ -14,6 +14,7 @@ const publicRoutes = [
     { path: config.routes.other.test, component: pages.other.test, layout: layouts.other.noHeader },
     { path: config.routes.user.userInfor, component: pages.user.userInfor, layout: layouts.user.default },
     { path: config.routes.user.findRestaurant, component: pages.user.findRestaurant, layout: layouts.user.default },
+    { path: config.routes.admin.productList, component: pages.admin.productList, role: 'admin' },
 ];
 
 const privateRoutes = [

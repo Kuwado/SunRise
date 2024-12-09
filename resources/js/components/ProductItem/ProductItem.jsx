@@ -1,23 +1,22 @@
+import { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faHouse, faTrash, faPen } from '@fortawesome/free-solid-svg-icons';
 
-import images from '~/assets/images';
+import { UpdatePopup, DeletePopup } from '../Popup';
+
 import styles from './ProductItem.module.scss';
 import classNames from 'classnames/bind';
 
-import { use, useState } from 'react';
-import { UpdatePopup, DeletePopup } from '../Popup';
-
 const cx = classNames.bind(styles);
 
-const ProductItem = ({ restaurant = restaurant }) => {
+const ProductItem = ({ restaurant = restaurant, onReFetch }) => {
     const [isShowUpdatePopup, setIsShowUpdatePopup] = useState(false);
     const [isShowDeletePopup, setIsShowDelelePopup] = useState(false);
 
     return (
         <>
-            {isShowUpdatePopup && (<UpdatePopup id={restaurant.id} onClose={() => setIsShowUpdatePopup(false)}></UpdatePopup>)}
-            {isShowDeletePopup && (<DeletePopup id={restaurant.id} onClose={() => setIsShowDelelePopup(false)}></DeletePopup>)}
+            {isShowUpdatePopup && (<UpdatePopup onReFetch={onReFetch} id={restaurant.id} onClose={() => setIsShowUpdatePopup(false)}></UpdatePopup>)}
+            {isShowDeletePopup && (<DeletePopup onReFetch={onReFetch} id={restaurant.id} onClose={() => setIsShowDelelePopup(false)}></DeletePopup>)}
             <div className={cx('card')}>
                 <div className={cx('avatar')}>
                     <img src={restaurant.avatar} alt="avatar" />
