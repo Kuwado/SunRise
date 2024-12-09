@@ -8,7 +8,7 @@ import { faHeart } from '@fortawesome/free-solid-svg-icons';
 
 const cx = classNames.bind(styles);
 
-const CafeItem = ({ image, name, location, priceRange, rating, reviews }) => {
+const CafeItem = ({ image, name, location, priceRange, rating, reviews, isListView }) => {
     const [isFavorite, setIsFavorite] = useState(false);
 
     const toggleFavorite = () => {
@@ -16,7 +16,7 @@ const CafeItem = ({ image, name, location, priceRange, rating, reviews }) => {
     };
 
     return (
-        <div className={cx('cafe-item')}>
+        <div className={cx('cafe-item', { list: isListView })}>
             <div className={cx('image-container')}>
                 <img src={image} alt={name} className={cx('image')} />
                 <div className={cx('favorite-icon', { active: isFavorite })} onClick={toggleFavorite}>
