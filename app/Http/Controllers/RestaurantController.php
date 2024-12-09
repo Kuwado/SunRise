@@ -20,17 +20,17 @@ class RestaurantController extends Controller
     {
         $this->locationService = $locationService;
     }
-    
+
     public function updateRestaurant(Request $request, $id)
     {
         try {
             // Tìm cửa hàng theo ID
             $restaurant = Restaurant::find($id);
-    
+
             if (!$restaurant) {
                 return response()->json(['message' => 'Restaurant not found'], 404);
             }
-    
+
             // Validate dữ liệu đầu vào
             $validatedData = $request->validate([
                 'name' => 'required|string|max:255|unique:restaurants,name,' . $id,
@@ -45,67 +45,66 @@ class RestaurantController extends Controller
                 'avatar' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
                 'media.*' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             ]);
-    
+
             // Kiểm tra điều kiện giá bắt đầu < giá kết thúc
             if ($validatedData['price_start'] >= $validatedData['price_end']) {
                 return response()->json([
                     'message' => 'Giá bắt đầu phải nhỏ hơn giá kết thúc.',
                 ], 422); // HTTP 422: Unprocessable Entity
             }
-    
+
             // Kiểm tra điều kiện thời gian mở < thời gian đóng
             if ($validatedData['open_time'] >= $validatedData['close_time']) {
                 return response()->json([
                     'message' => 'Thời gian mở phải nhỏ hơn thời gian đóng.',
                 ], 422); // HTTP 422: Unprocessable Entity
             }
-    
-        // Xử lý ảnh avatar (nếu có)
-        if ($request->hasFile('avatar')) {
-            $avatar = $request->file('avatar');
-            $avatarName = time() . '_avatar_' . uniqid() . '.' . $avatar->extension();
-            $avatar->storeAs('images', $avatarName, 'public');
-            $validatedData['avatar'] = "/storage/images/$avatarName";
 
-            // Xóa ảnh avatar cũ (nếu cần)
-            if ($restaurant->avatar && file_exists(public_path($restaurant->avatar))) {
-                unlink(public_path($restaurant->avatar));
-            }
-        }
+            // Xử lý ảnh avatar (nếu có)
+            if ($request->hasFile('avatar')) {
+                $avatar = $request->file('avatar');
+                $avatarName = time() . '_avatar_' . uniqid() . '.' . $avatar->extension();
+                $avatar->storeAs('images', $avatarName, 'public');
+                $validatedData['avatar'] = "/storage/images/$avatarName";
 
-        // Xử lý media (nếu có)
-        if ($request->hasFile('media')) {
-            $mediaPaths = [];
-            foreach ($request->file('media') as $media) {
-                $mediaName = time() . '_media_' . uniqid() . '.' . $media->extension();
-                $media->storeAs('images', $mediaName, 'public');
-                $mediaPaths[] = "/storage/images/$mediaName";
+                // Xóa ảnh avatar cũ (nếu cần)
+                if ($restaurant->avatar && file_exists(public_path($restaurant->avatar))) {
+                    unlink(public_path($restaurant->avatar));
+                }
             }
 
-            // Lưu các đường dẫn media mới vào cơ sở dữ liệu
-            $validatedData['media'] = json_encode($mediaPaths);
+            // Xử lý media (nếu có)
+            if ($request->hasFile('media')) {
+                $mediaPaths = [];
+                foreach ($request->file('media') as $media) {
+                    $mediaName = time() . '_media_' . uniqid() . '.' . $media->extension();
+                    $media->storeAs('images', $mediaName, 'public');
+                    $mediaPaths[] = "/storage/images/$mediaName";
+                }
 
-            // Xóa media cũ (nếu cần)
-            if ($restaurant->media) {
-                $oldMedia = json_decode($restaurant->media, true);
-                foreach ($oldMedia as $oldMediaPath) {
-                    if (file_exists(public_path($oldMediaPath))) {
-                        unlink(public_path($oldMediaPath));
+                // Lưu các đường dẫn media mới vào cơ sở dữ liệu
+                $validatedData['media'] = json_encode($mediaPaths);
+
+                // Xóa media cũ (nếu cần)
+                if ($restaurant->media) {
+                    $oldMedia = json_decode($restaurant->media, true);
+                    foreach ($oldMedia as $oldMediaPath) {
+                        if (file_exists(public_path($oldMediaPath))) {
+                            unlink(public_path($oldMediaPath));
+                        }
                     }
                 }
             }
-        }
 
 
             // Cập nhật thông tin cửa hàng
             $restaurant->update($validatedData);
-    
+
             // Trả về kết quả thành công
             return response()->json([
                 'message' => 'Restaurant updated successfully',
                 'restaurant' => $restaurant,
             ], 200);
-    
         } catch (\Exception $e) {
             // Xử lý lỗi không mong muốn
             return response()->json([
@@ -114,8 +113,9 @@ class RestaurantController extends Controller
             ], 500);
         }
     }
-    
-    public function getRestaurant(Request $request) {
+
+    public function getRestaurant(Request $request)
+    {
         $id = $request->query('id');
         $userId = $request->query('user_id') ?? null;
 
@@ -146,22 +146,23 @@ class RestaurantController extends Controller
         ], 200);
     }
 
-    private function getDistance($restaurants, $type) {
+    private function getDistance($restaurants, $type)
+    {
         switch ($type) {
             case 1:
                 $restaurants = $restaurants->orHavingRaw('distance <= ?', [10]);
                 break;
             case 2:
-                $restaurants = $restaurants->orHavingRaw('distance > ? AND distance <= ?', [10, 20]);                   
+                $restaurants = $restaurants->orHavingRaw('distance > ? AND distance <= ?', [10, 20]);
                 break;
             case 3:
-                $restaurants = $restaurants->orHavingRaw('distance > ? AND distance <= ?', [20, 30]);                                    
+                $restaurants = $restaurants->orHavingRaw('distance > ? AND distance <= ?', [20, 30]);
                 break;
             case 4:
-                $restaurants = $restaurants->orHavingRaw('distance > ? AND distance <= ?', [30, 40]);                                    
+                $restaurants = $restaurants->orHavingRaw('distance > ? AND distance <= ?', [30, 40]);
                 break;
             case 5:
-                $restaurants = $restaurants->orHavingRaw('distance > ?', [40]);                                    
+                $restaurants = $restaurants->orHavingRaw('distance > ?', [40]);
                 break;
             default:
                 break;
@@ -169,7 +170,8 @@ class RestaurantController extends Controller
         return $restaurants;
     }
 
-    public function getRestaurants(Request $request) {
+    public function getRestaurants(Request $request)
+    {
         // Style filter
         $styleId = $request->query('style_id') ?? null;
         $styleIds = $request->query('style_ids') ?? null;
@@ -228,7 +230,7 @@ class RestaurantController extends Controller
         if ($rating) {
             $minRating = $rating - 0.5;
             $maxRating = $rating + 0.5;
-            $restaurants = $restaurants->havingRaw('reviews_avg_rating > ? AND reviews_avg_rating <= ?', [$minRating, $maxRating]);     
+            $restaurants = $restaurants->havingRaw('reviews_avg_rating > ? AND reviews_avg_rating <= ?', [$minRating, $maxRating]);
         } else if ($ratings) {
             $ratingsArray = explode(',', $ratings);
             $restaurants->having(function ($query) use ($ratingsArray) {
@@ -274,10 +276,10 @@ class RestaurantController extends Controller
         // Price sort
         if ($sort_price === "asc") {
             $restaurants = $restaurants->select('*', DB::raw('((price_start + price_end) / 2) as avg_price'))
-            ->orderBy('avg_price', 'asc');
+                ->orderBy('avg_price', 'asc');
         } else if ($sort_price === "desc") {
             $restaurants = $restaurants->select('*', DB::raw('((price_start + price_end) / 2) as avg_price'))
-            ->orderBy('avg_price', 'desc');
+                ->orderBy('avg_price', 'desc');
         }
 
         // Rating sort
@@ -327,62 +329,43 @@ class RestaurantController extends Controller
             'open_time' => 'required|string',
             'close_time' => 'required|string',
         ]);
-
         if ($validator->fails()) {
             return response()->json([
                 'message' => 'Dữ liệu không hợp lệ',
                 'errors' => $validator->errors()
             ], 422);
         }
-
-        // Location
-        $address = $request->input('address');
-        $locations = $this->locationService->getCoordinates($address);
-        if (!$locations) {
-            return response()->json([
-                'message' => 'Địa chỉ không hợp lệ',
-            ], 422);
-        } 
-
         $avatarPath = null;
         if ($request->hasFile('avatar')) {
-            // Tạo request mới cho avatar
-            $avatarRequest = new Request();
-            $avatarRequest->files->set('image', $request->file('avatar'));
-            $avatarResponse = (new UploadController)->uploadImage($avatarRequest);
-            $avatarPath = json_decode($avatarResponse->getContent())->image;
+            $avatar = $request->file('avatar');
+            $avatarName = time() . '_avatar_' . uniqid() . '.' . $avatar->extension();
+            $avatar->storeAs('images', $avatarName, 'public');
+            $avatarPath = "/storage/images/$avatarName";
         }
-
         $mediaPaths = [];
         if ($request->hasFile('media')) {
-            // Tạo request mới cho media
-            $mediaRequest = new Request();
-            $mediaRequest->files->set('images', $request->file('media'));
-            $mediaResponse = (new UploadController)->uploadImages($mediaRequest);
-            $mediaPaths = json_decode($mediaResponse->getContent())->images;
+            foreach ($request->file('media') as $mediaFile) {
+                $mediaName = time() . '_media_' . uniqid() . '.' . $mediaFile->extension();
+                $mediaFile->storeAs('images', $mediaName, 'public');
+                $mediaPaths[] = "/storage/images/$mediaName";
+            }
         }
-
         $restaurant = Restaurant::create([
             'name' => $request->input('name'),
             'email' => $request->input('email'),
             'phone' => $request->input('phone'),
             'address' => $request->input('address'),
-            'longitude' => $locations['lng'],
-            'latitude' => $locations['lat'],
             'avatar' => $avatarPath,
-            'media' => json_encode($mediaPaths, true),
+            'media' => json_encode($mediaPaths),
             'description' => $request->input('description'),
             'price_start' => $request->input('price_start'),
             'price_end' => $request->input('price_end'),
             'open_time' => $request->input('open_time'),
             'close_time' => $request->input('close_time'),
         ]);
-
         return response()->json([
             'message' => 'Nhà hàng đã được tạo thành công!',
             'restaurant' => $restaurant,
-            'a' => $locations,
-            'add' => $address
         ], 200);
     }
 
