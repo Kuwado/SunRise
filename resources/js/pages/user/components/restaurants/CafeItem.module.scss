@@ -1,13 +1,15 @@
 .cafe-item {
+    display: flex;
+    flex-direction: column;
     border: 1px solid #ddd;
     border-radius: 8px;
     overflow: hidden;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     transition: transform 0.2s ease;
-    &:hover {
-        transform: scale(1.01);
+    &.list{
+        flex-direction: row; /* Dạng danh sách */
+        align-items: center;
     }
-
     .image-container {
         position: relative;
 
@@ -27,8 +29,11 @@
             padding: 5px;
             cursor: pointer;
             transition: color 0.2s ease;
-            width: 32px;
-            height: 33px;
+            width: 30px;
+            height: 29px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
 
             &.active {
                 color: red;

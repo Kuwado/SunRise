@@ -13,6 +13,8 @@ import Rating from '~/components/Rating';
 const cx = classNames.bind(styles);
 
 const FindRestaurant = () => {
+    const [isGridView, setIsGridView] = useState(true);
+
     const [cafes, setCafes] = useState([
         {
             image: images.restaurantItem1,
@@ -104,8 +106,16 @@ const FindRestaurant = () => {
                         <div>6 - 10</div>
                         <div>11 - 15</div>
                     </Dropdown>
-                    <FontAwesomeIcon icon={faThLarge} className={cx('view-icon')} />
-                    <FontAwesomeIcon icon={faBars} className={cx('view-icon')} />
+                    <FontAwesomeIcon
+                        icon={faThLarge}
+                        className={cx('view-icon', { active: isGridView })}
+                        onClick={() => setIsGridView(true)}
+                    />
+                    <FontAwesomeIcon
+                        icon={faBars}
+                        className={cx('view-icon', { active: !isGridView })}
+                        onClick={() => setIsGridView(false)}
+                    />
                 </div>
             </div>
 
@@ -158,7 +168,7 @@ const FindRestaurant = () => {
                 </div>
 
                 {/* List of Cafes */}
-                <div className={cx('cafe-list')}>
+                <div className={cx('cafe-list', { 'grid-view': isGridView, 'list-view': !isGridView })}>
                     {cafes.map((cafe, index) => (
                         <CafeItem
                             key={index}
@@ -168,6 +178,7 @@ const FindRestaurant = () => {
                             priceRange={cafe.priceRange}
                             rating={cafe.rating}
                             reviews={cafe.reviews}
+                            isListView={!isGridView}
                         />
                     ))}
                 </div>
