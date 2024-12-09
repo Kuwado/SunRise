@@ -12,6 +12,7 @@ import cfImage2 from './cf_image_2.png';
 import headerUser from './header-user-infor.png'
 import avatarUser from './avatar_user.png'
 import iconUserInfor1 from './icon-user-infor1.png'
+import caffeeRestaurant from './cf_restaurant.jpg'
 const images = {
     logo: Logo,
     register: register,
@@ -26,7 +27,8 @@ const images = {
     cfImage2: cfImage2,
     headerUser: headerUser,
     avatarUser: avatarUser,
-    iconUserInfor1: iconUserInfor1
+    iconUserInfor1: iconUserInfor1,
+    caffeeRestaurant: caffeeRestaurant
 };
 
 export default images;
