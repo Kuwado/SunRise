@@ -14,6 +14,8 @@ class Restaurant extends Model
         'email',
         'phone',
         'address',
+        'latitude',
+        'longitude',
         'avatar',
         'media',
         'description',
@@ -22,6 +24,7 @@ class Restaurant extends Model
         'open_time',
         'close_time',
     ];
+
 
     public function reviews()
     {

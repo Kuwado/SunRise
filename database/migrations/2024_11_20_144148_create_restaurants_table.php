@@ -17,11 +17,13 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('phone')->unique();
             $table->text('address');
+            $table->decimal('latitude', 10, 7)->nullable();
+            $table->decimal('longitude', 10, 7)->nullable();
             $table->string('avatar')->nullable();
             $table->text('media')->nullable();
             $table->string('description');
-            $table->string('price_start');
-            $table->string('price_end');
+            $table->integer('price_start');
+            $table->integer('price_end');
             $table->time('open_time');
             $table->time('close_time');
             $table->timestamps();

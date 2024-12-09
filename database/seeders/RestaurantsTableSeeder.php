@@ -22,6 +22,8 @@ class RestaurantsTableSeeder extends Seeder
                 'email' => $faker->unique()->safeEmail,
                 'phone' => $faker->unique()->phoneNumber,
                 'address' => $faker->address,
+                'latitude' => $faker->latitude(20.8, 21.2),  // Tọa độ vĩ độ trong phạm vi Hà Nội
+                'longitude' => $faker->longitude(105.7, 106.0),  // Tọa độ kinh độ trong phạm vi Hà Nội
                 'description' => $faker->sentence,
                 'price_start' => $faker->numberBetween(10, 50),
                 'price_end' => $faker->numberBetween(60, 200),
