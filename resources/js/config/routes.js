@@ -1,4 +1,4 @@
-import FindRestaurant from "~/pages/user/FindRestaurant";
+import FindRestaurant from '~/pages/user/FindRestaurant';
 
 const routes = {
     admin: {
@@ -12,7 +12,7 @@ const routes = {
     user: {
         home: '/home',
         productList: '/products',
-        productDetail: '/product/:productId/:variantId',
+        restaurantDetail: '/restaurant/:restaurantId',
         cart: '/cart',
         userInfor: '/userInfor',
         findRestaurant: '/findRestaurant',
