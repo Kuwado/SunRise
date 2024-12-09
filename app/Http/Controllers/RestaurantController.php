@@ -62,19 +62,14 @@ class RestaurantController extends Controller
         return $restaurants;
     }
 
-    public function sortRestaurantsByRating($restaurants, $rating) {
-        $restaurants = $restaurants->orWhereRaw('reviews_avg_rating > ? AND reviews_avg_rating <= ?', [$rating - 1, $rating]);
-        return $restaurants;
-    }
-
     public function getRestaurants(Request $request) {
         $styleId = $request->query('style_id') ?? null;
         $styleIds = $request->query('style_ids') ?? null;
-        $type = $request->query('type') ?? null;
-        $types = $request->query('types') ?? null;
         $rating = $request->query('rating') ?? null;
         $ratings = $request->query('ratings') ?? null;
         $name = $request->query('name') ?? null;
+        $start = $request->query('start') ?? null;
+        $end = $request->query('end') ?? null;
 
         $perPage = $request->query('per_page') ?? 10;
 
@@ -92,31 +87,29 @@ class RestaurantController extends Controller
             });
         }
 
-        // Type
-        if ($type) {
-            $restaurants = $this->sortRestaurantsByType($restaurants, $type);
-        } else if ($types) {
-            $typeArray = explode(',', $types);
-            foreach ($typeArray as $t) {
-                $restaurants = $this->sortRestaurantsByType($restaurants, $t);
-            }
-        }
-
         //Rating
         if ($rating) {
-            $minRating = $rating - 1;
-            $maxRating = $rating;
-            $restaurants = $restaurants->having('reviews_avg_rating', '>', $minRating)
-                                       ->having('reviews_avg_rating', '<=', $maxRating);        
+            $minRating = $rating - 0.5;
+            $maxRating = $rating + 0.5;
+            $restaurants = $restaurants->havingRaw('reviews_avg_rating > ? AND reviews_avg_rating <= ?', [$minRating, $maxRating]);     
         } else if ($ratings) {
             $ratingsArray = explode(',', $ratings);
             $restaurants->where(function ($query) use ($ratingsArray) {
                 foreach ($ratingsArray as $rating) {
-                    $minRating = $rating - 1;
-                    $maxRating = $rating;
+                    $minRating = $rating - 0.5;
+                    $maxRating = $rating + 0.5;
                     $query->orHavingRaw('reviews_avg_rating > ? AND reviews_avg_rating <= ?', [$minRating, $maxRating]);
                 }
             });
+        }
+
+        // Price
+        if ($start && $end) {
+            $restaurants = $restaurants->whereRaw('(price_start < ? AND price_end > ?) OR (price_end < ? AND price_end > ?)', [$end, $end, $end, $start]);
+        } else if ($start) {
+            $restaurants = $restaurants->where('price_end', '>=', $start);
+        } else if ($end) {
+            $restaurants = $restaurants->where('price_start', '<=', $end);
         }
 
         // Name
