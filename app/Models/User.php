@@ -23,6 +23,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'latitude',
+        'longitude'
     ];
 
     /**
@@ -61,5 +63,10 @@ class User extends Authenticatable
     public function favorites()
     {
         return $this->hasMany(Favorite::class);
+    }
+
+    public function style()
+    {
+        return $this->belongsTo(Style::class, 'style_id');
     }
 }
