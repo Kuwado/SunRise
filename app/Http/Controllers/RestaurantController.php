@@ -11,12 +11,68 @@ use Illuminate\Support\Facades\Storage;
 
 class RestaurantController extends Controller
 {
-    //
-
-    public function updateRestaurant(Request $request) {}
-
-    public function getRestaurant(Request $request)
+    
+    public function updateRestaurant(Request $request, $id)
     {
+        try {
+            // Tìm cửa hàng theo ID
+            $restaurant = Restaurant::find($id);
+    
+            if (!$restaurant) {
+                return response()->json(['message' => 'Restaurant not found'], 404);
+            }
+    
+            // Validate dữ liệu đầu vào
+            $validatedData = $request->validate([
+                'name' => 'required|string|max:255|unique:restaurants,name,' . $id,
+                'email' => 'required|email|max:255|unique:restaurants,email,' . $id,
+                'phone' => 'required|string|max:20|unique:restaurants,phone,' . $id,
+                'address' => 'required|string',
+                'description' => 'nullable|string',
+                'price_start' => 'required|numeric',
+                'price_end' => 'required|numeric',
+                'open_time' => 'required|date_format:H:i',
+                'close_time' => 'required|date_format:H:i',
+                'avatar' => 'nullable|string',
+                'media' => 'nullable|string',
+            ]);
+    
+            // Kiểm tra điều kiện giá bắt đầu < giá kết thúc
+            if ($validatedData['price_start'] >= $validatedData['price_end']) {
+                return response()->json([
+                    'message' => 'Giá bắt đầu phải nhỏ hơn giá kết thúc.',
+                ], 422); // HTTP 422: Unprocessable Entity
+            }
+    
+            // Kiểm tra điều kiện thời gian mở < thời gian đóng
+            if ($validatedData['open_time'] >= $validatedData['close_time']) {
+                return response()->json([
+                    'message' => 'Thời gian mở phải nhỏ hơn thời gian đóng.',
+                ], 422); // HTTP 422: Unprocessable Entity
+            }
+    
+            // Cập nhật thông tin cửa hàng
+            $restaurant->update($validatedData);
+    
+            // Trả về kết quả thành công
+            return response()->json([
+                'message' => 'Restaurant updated successfully',
+                'restaurant' => $restaurant,
+            ], 200);
+    
+        } catch (\Exception $e) {
+            // Xử lý lỗi không mong muốn
+            return response()->json([
+                'message' => 'An error occurred while updating the restaurant.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+    
+    
+
+    public function getRestaurant(Request $request) {
+
         $id = $request->query('id');
         $restaurant = Restaurant::where('id', $id)->get();
 

@@ -23,6 +23,7 @@ class Restaurant extends Model
         'close_time',
     ];
 
+
     public function reviews()
     {
         return $this->hasMany(Review::class);
