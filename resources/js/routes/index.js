@@ -13,6 +13,7 @@ const publicRoutes = [
     { path: config.routes.other.register, component: pages.other.register, layout: layouts.other.noHeader },
     { path: config.routes.other.test, component: pages.other.test, layout: layouts.other.noHeader },
     { path: config.routes.user.userInfor, component: pages.user.userInfor, layout: layouts.user.default },
+    { path: config.routes.user.findRestaurant, component: pages.user.findRestaurant, layout: layouts.user.default },
 ];
 
 const privateRoutes = [
