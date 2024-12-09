@@ -54,20 +54,71 @@ class RestaurantController extends Controller
         ], 200);
     }
 
+    private function getDistance($restaurants, $type) {
+        switch ($type) {
+            case 1:
+                $restaurants = $restaurants->orHavingRaw('distance <= ?', [10]);
+                break;
+            case 2:
+                $restaurants = $restaurants->orHavingRaw('distance > ? AND distance <= ?', [10, 20]);                   
+                break;
+            case 3:
+                $restaurants = $restaurants->orHavingRaw('distance > ? AND distance <= ?', [20, 30]);                                    
+                break;
+            case 4:
+                $restaurants = $restaurants->orHavingRaw('distance > ? AND distance <= ?', [30, 40]);                                    
+                break;
+            case 5:
+                $restaurants = $restaurants->orHavingRaw('distance > ?', [40]);                                    
+                break;
+            default:
+                break;
+        }
+        return $restaurants;
+    }
+
     public function getRestaurants(Request $request) {
+        // Style filter
         $styleId = $request->query('style_id') ?? null;
         $styleIds = $request->query('style_ids') ?? null;
+        // Rating filter
         $rating = $request->query('rating') ?? null;
         $ratings = $request->query('ratings') ?? null;
+        // Distance filter
+        $distanceType = $request->query('distance_type') ?? null;
+        $distanceTypes = $request->query('distance_types') ?? null;
+        // Name filter
         $name = $request->query('name') ?? null;
+        // Price filter
         $start = $request->query('start') ?? null;
         $end = $request->query('end') ?? null;
+        // Sort
         $sort_rating = $request->query('sort_rating') ?? null;
         $sort_price = $request->query('sort_price') ?? null;
+        $sort_distance = $request->query('sort_distance') ?? null;
+        $userId = $request->query('user_id') ?? null;
 
         $perPage = $request->query('per_page') ?? 10;
 
         $restaurants = Restaurant::withAvg('reviews', 'rating');
+
+        // Add distance
+        if ($userId) {
+            $user = User::find($userId);
+            $lat = 21.0170210;
+            $lng = 105.7834800;
+            if ($user) {
+                $lat = $user->latitude;
+                $lng = $user->longitude;
+            }
+            $restaurants = $restaurants->addSelect(DB::raw("
+                (6371 * acos(
+                    cos(radians($lat)) * cos(radians(latitude)) * 
+                    cos(radians(longitude) - radians($lng)) + 
+                    sin(radians($lat)) * sin(radians(latitude))
+                )) AS distance
+            "));
+        }
 
         // Style filter
         if ($styleId) {
@@ -107,6 +158,16 @@ class RestaurantController extends Controller
             $restaurants = $restaurants->where('price_start', '<=', $end);
         }
 
+        // Distance filter
+        if ($distanceType) {
+            $restaurants = $this->getDistance($restaurants, $distanceType);
+        } else if ($distanceTypes) {
+            $typeArray = explode(',', $distanceTypes);
+            foreach ($typeArray as $t) {
+                $restaurants = $this->getDistance($restaurants, $t);
+            }
+        }
+
         // Name filter
         if ($name) {
             $restaurants = $restaurants->where('name', 'like', "%{$name}%");
@@ -117,8 +178,6 @@ class RestaurantController extends Controller
                 ], 200);
             }
         }
-
-        // Distance
 
         // Price sort
         if ($sort_price === "asc") {
@@ -136,12 +195,21 @@ class RestaurantController extends Controller
             $restaurants = $restaurants->orderBy('reviews_avg_rating', 'desc');
         }
 
+        // Distance sort
+        if ($sort_distance === "asc") {
+            $restaurants = $restaurants->orderBy('distance', 'asc');
+        } else if ($sort_distance === "desc") {
+            $restaurants = $restaurants->orderBy('distance', 'desc');
+        }
+
+
         $restaurants = $restaurants->paginate($perPage);
 
         return response()->json([
             'message' => 'Lấy thành công danh sách cửa hàng',
             'restaurants' => [
                 'data' => RestaurantResource::collection($restaurants),
+                // 'data' => $restaurants,
                 'meta' => [
                     'current_page' => $restaurants->currentPage(),
                     'last_page' => $restaurants->lastPage(),
