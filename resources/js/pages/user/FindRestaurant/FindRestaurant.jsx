@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import HeaderUser from '../components/header/HeaderUser';
 import CafeItem from '../components/restaurants/CafeItem';
 import styles from './FindRestaurant.module.scss';
 import classNames from 'classnames/bind';
@@ -29,12 +28,19 @@ const FindRestaurant = () => {
 
     const [filterDrPrice, setFilterDrPrice] = useState('評価: 低から高', '高から低');
     const [filterDrRating, setFilterDrRating] = useState('1 - 5', '5 - 1');
+    console.log(filterDrPrice);
 
     useEffect(() => {
         const fetchProducts = async () => {
             try {
                 const response = await axios.get(`/api/restaurants`, {
-                    params: { styleIds: styles.toString() },
+                    params: {
+                        styleIds: styles.toString(),
+                        sort_price: filterDrPrice === '評価: 低から高' ? 'asc' : 'desc',
+                        sort_rating: filterDrRating === '1 - 5' ? 'asc' : 'desc',
+                        page: currentPage,
+                        per_page: 9,
+                    },
                 });
                 if (response.status === 200) {
                     setProducts(response.data.restaurants.data);
@@ -46,17 +52,53 @@ const FindRestaurant = () => {
         };
 
         fetchProducts();
-    }, [types, ratings, currentPage]);
+    }, [types, ratings, currentPage, filterDrPrice, filterDrRating]);
     const handlePageChange = (page) => {
         setCurrentPage(page);
+    };
+
+    const handleTypeChange = (productType) => {
+        setTypes((prevTypes) => {
+            const newTypes = [...prevTypes];
+            if (newTypes.includes(productType)) {
+                newTypes.splice(newTypes.indexOf(productType), 1);
+            } else {
+                newTypes.push(productType);
+            }
+            setCurrentPage(1);
+            return newTypes;
+        });
+    };
+
+    const handleStyleChange = (styleId) => {
+        setTypes((prevStyles) => {
+            const newStyles = [...prevStyles];
+            if (newStyles.includes(styleId)) {
+                newStyles.splice(newStyles.indexOf(styleId), 1);
+            } else {
+                newStyles.push(styleId);
+            }
+            setCurrentPage(1);
+            return newStyles;
+        });
+    };
+
+    const handleRatingChange = (productRating) => {
+        setRatings((prevRatings) => {
+            const newRatings = [...prevRatings];
+            if (newRatings.includes(productRating)) {
+                newRatings.splice(newRatings.indexOf(productRating), 1);
+            } else {
+                newRatings.push(productRating);
+            }
+            setCurrentPage(1);
+            return newRatings;
+        });
     };
     console.log(products);
 
     return (
         <div className={cx('find-restaurant')}>
-            {/* Header */}
-            <HeaderUser />
-
             {/* Banner */}
             <div className={cx('banner')}>
                 <img src={images.headerFindRestaurant} alt="Restaurant Banner" />
@@ -68,6 +110,9 @@ const FindRestaurant = () => {
                         className={cx('search-bar')}
                         placeholder="名前、料理、場所からレストランを検索"
                     />
+                    {/* <button className={cx('btn-search')}>
+                        <FontAwesomeIcon icon={faSearch} className={cx('search-icon-2')} />
+                    </button> */}
                 </div>
             </div>
             <div className={cx('filters-container')}>
@@ -109,35 +154,85 @@ const FindRestaurant = () => {
                 <div className={cx('filter')}>
                     <div className={cx('filter-option')}>
                         <h3>価格（円）</h3>
-                        <CheckboxInput id="1">安い (20)</CheckboxInput>
-                        <CheckboxInput id="2">手頃な価格 (20)</CheckboxInput>
-                        <CheckboxInput id="3">高い (50)</CheckboxInput>
-                        <CheckboxInput id="4">高価なものはすべて (5)</CheckboxInput>
+                        <CheckboxInput id="1" checked={types.includes(1)} onChange={() => handleTypeChange(1)}>
+                            安い (20)
+                        </CheckboxInput>
+                        <CheckboxInput id="2" checked={types.includes(2)} onChange={() => handleTypeChange(2)}>
+                            手頃な価格 (20)
+                        </CheckboxInput>
+                        <CheckboxInput id="3" checked={types.includes(3)} onChange={() => handleTypeChange(3)}>
+                            高い (50)
+                        </CheckboxInput>
+                        <CheckboxInput id="4" checked={types.includes(4)} onChange={() => handleTypeChange(4)}>
+                            高価なものはすべて (5)
+                        </CheckboxInput>
                     </div>
                     <div className={cx('filter-option')}>
                         <h3>料理/食品の種類</h3>
-                        <CheckboxInput id="5">エスプレッソ (200)</CheckboxInput>
-                        <CheckboxInput id="6">アメリカ人 (20)</CheckboxInput>
-                        <CheckboxInput id="7">カプチーノ (50)</CheckboxInput>
-                        <CheckboxInput id="8">マキアートコーヒー (5)</CheckboxInput>
-                        <CheckboxInput id="9">ラテ (15)</CheckboxInput>
-                        <CheckboxInput id="10">モカ (5)</CheckboxInput>
+                        <CheckboxInput id="5" checked={styles.includes(1)} onChange={() => handleStyleChange(1)}>
+                            エスプレッソ (200)
+                        </CheckboxInput>
+                        <CheckboxInput id="6" checked={styles.includes(2)} onChange={() => handleStyleChange(2)}>
+                            アメリカ人 (20)
+                        </CheckboxInput>
+                        <CheckboxInput id="7" checked={styles.includes(3)} onChange={() => handleStyleChange(3)}>
+                            カプチーノ (50)
+                        </CheckboxInput>
+                        <CheckboxInput id="8" checked={styles.includes(4)} onChange={() => handleStyleChange(4)}>
+                            マキアートコーヒー (5)
+                        </CheckboxInput>
+                        <CheckboxInput id="9" checked={styles.includes(5)} onChange={() => handleStyleChange(5)}>
+                            ラテ (15)
+                        </CheckboxInput>
+                        <CheckboxInput id="10" checked={styles.includes(6)} onChange={() => handleStyleChange(6)}>
+                            モカ (5)
+                        </CheckboxInput>
                     </div>
                     <div className={cx('filter-option')}>
                         <h3>評価</h3>
-                        <CheckboxInput id="11">
+                        <CheckboxInput
+                            id="11"
+                            checked={ratings.includes(1)}
+                            onChange={() => {
+                                handleRatingChange(1);
+                            }}
+                        >
                             <Rating small rate={1}></Rating>
                         </CheckboxInput>
-                        <CheckboxInput id="12">
+                        <CheckboxInput
+                            id="12"
+                            checked={ratings.includes(2)}
+                            onChange={() => {
+                                handleRatingChange(2);
+                            }}
+                        >
                             <Rating small rate={2}></Rating>
                         </CheckboxInput>
-                        <CheckboxInput id="13">
+                        <CheckboxInput
+                            id="13"
+                            checked={ratings.includes(3)}
+                            onChange={() => {
+                                handleRatingChange(3);
+                            }}
+                        >
                             <Rating small rate={3}></Rating>
                         </CheckboxInput>
-                        <CheckboxInput id="14">
+                        <CheckboxInput
+                            id="14"
+                            checked={ratings.includes(4)}
+                            onChange={() => {
+                                handleRatingChange(4);
+                            }}
+                        >
                             <Rating small rate={4}></Rating>
                         </CheckboxInput>
-                        <CheckboxInput id="15">
+                        <CheckboxInput
+                            id="15"
+                            checked={ratings.includes(5)}
+                            onChange={() => {
+                                handleRatingChange(5);
+                            }}
+                        >
                             <Rating small rate={5}></Rating>
                         </CheckboxInput>
                     </div>

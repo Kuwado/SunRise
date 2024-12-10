@@ -16,7 +16,7 @@ Route::get('/user', function (Request $request) {
 Route::post('/register', [UserController::class, 'register']);
 Route::post('/login', [UserController::class, 'login']);
 Route::post('/user/update/{id}', [UserController::class, 'updateUser']);
-Route::get('/user/{id}', [UserController::class, 'getUser']);
+Route::get('/user', [UserController::class, 'getUser']);
 
 // Restaurant
 Route::post('/restaurant/create', [RestaurantController::class, 'createRestaurant']);
@@ -24,7 +24,7 @@ Route::post('/restaurant/update/{id}', [RestaurantController::class, 'updateRest
 Route::delete('/restaurant/delete/{id}', [RestaurantController::class, 'deleteRestaurant']);
 Route::get('/restaurant', [RestaurantController::class, 'getRestaurant']);
 Route::get('/restaurants', [RestaurantController::class, 'getRestaurants']);
-Route::get('/getReview', [ReviewController::class, 'getReview']);
+Route::get('/reviews', [ReviewController::class, 'getReviews']);
 
 
 

@@ -7,7 +7,6 @@ import { CustomInput, PasswordInput } from '~/components/Input';
 import { CheckboxInput } from '~/components/Checkbox';
 import images from '~/assets/images';
 import axios from 'axios';
-import HeaderUser from '../components/header/HeaderUser';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { DefaultInput } from '~/components/Input';
 import Dropdown from '~/components/Dropdown';
@@ -33,7 +32,6 @@ export default function UserInfor() {
     const tasteOptions = ['Sweet', 'Salty', 'Spicy'];
     return (
         <>
-            <HeaderUser />
             <div className={cx('container')}>
                 <img className={cx('header-image')} src={images.headerUser} alt="headerUser" />
                 <div className={cx('header-title')}>

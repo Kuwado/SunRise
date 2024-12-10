@@ -27,10 +27,13 @@ const Login = () => {
             // Call API
             const response = await axios.post('http://127.0.0.1:8000/api/login', payload);
             if (response.status === 200) {
-                alert('ログインが成功しました');
-                navigate('/');
+                const role = response.data.user.role;
+                if (role === 'user') {
+                    navigate(config.routes.user.home);
+                } else if (role === 'admin') {
+                    navigate(config.routes.admin.dashboard);
+                }
             }
-
             console.log(response);
         } catch (error) {
             alert(error.response.data.message);
