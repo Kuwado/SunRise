@@ -83,6 +83,18 @@ class RestaurantController extends Controller
                 ], 422);
             }
 
+            if ($request->filled('address')) {
+                $locations = $this->locationService->getCoordinates($request->input('address'));
+                if (!$locations) {
+                    return response()->json([
+                        'message' => 'Địa chỉ không hợp lệ',
+                    ], 422);
+                }
+   
+                $restaurant->longitude = $locations['lng'];
+                $restaurant->latitude = $locations['lat'];
+            }
+
             // Xử lý ảnh avatar (nếu có)
             if ($request->hasFile('avatar')) {
                 $avatar = $request->file('avatar');
