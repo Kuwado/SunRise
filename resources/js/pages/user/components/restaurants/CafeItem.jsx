@@ -18,12 +18,12 @@ const CafeItem = ({ image, name, location, priceRange, rating, reviews, isListVi
     return (
         <div className={cx('cafe-item', { list: isListView })}>
             <div className={cx('image-container')}>
-                <img src={image} alt={name} className={cx('image')} />
+                <img src={images.restaurantItem1} alt={name} className={cx('image')} />
                 <div className={cx('favorite-icon', { active: isFavorite })} onClick={toggleFavorite}>
                     <FontAwesomeIcon icon={faHeart} />
                 </div>
             </div>
-            <div className={cx('details')}>
+            <div className={cx('details', { list: isListView })}>
                 <h3>{name}</h3>
                 <p>{location}</p>
                 <h4>{priceRange}</h4>

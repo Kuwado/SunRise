@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import HeaderUser from '../components/header/HeaderUser';
 import CafeItem from '../components/restaurants/CafeItem';
 import styles from './FindRestaurant.module.scss';
@@ -6,66 +6,51 @@ import classNames from 'classnames/bind';
 import images from '~/assets/images';
 import { DefaultInput } from '~/components/Input';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch, faRedo, faThLarge, faBars } from '@fortawesome/free-solid-svg-icons';
+import { faSearch, faRedo, faThLarge, faBars, faAngleRight, faAngleLeft } from '@fortawesome/free-solid-svg-icons';
 import Dropdown from '~/components/Dropdown';
 import { CheckboxInput } from '~/components/Checkbox';
 import Rating from '~/components/Rating';
+import Button from '~/components/Button';
 const cx = classNames.bind(styles);
 
 const FindRestaurant = () => {
     const [isGridView, setIsGridView] = useState(true);
 
-    const [cafes, setCafes] = useState([
-        {
-            image: images.restaurantItem1,
-            name: 'Anchor & James',
-            location: 'American | Downtown Union Street',
-            priceRange: '300円以下',
-            rating: 4.5,
-            reviews: 1897,
-        },
-        {
-            image: images.restaurantItem1,
-            name: 'Anchor & James',
-            location: 'American | Downtown Union Street',
-            priceRange: '500円以上',
-            rating: 4.0,
-            reviews: 1597,
-        },
-        {
-            image: images.restaurantItem1,
-            name: 'Anchor & James',
-            location: 'American | Downtown Union Street',
-            priceRange: '500円以上',
-            rating: 4.0,
-            reviews: 1597,
-        },
-        {
-            image: images.restaurantItem1,
-            name: 'Anchor & James',
-            location: 'American | Downtown Union Street',
-            priceRange: '500円以上',
-            rating: 4.0,
-            reviews: 1597,
-        },
-        {
-            image: images.restaurantItem1,
-            name: 'Anchor & James',
-            location: 'American | Downtown Union Street',
-            priceRange: '500円以上',
-            rating: 4.0,
-            reviews: 1597,
-        },
-        {
-            image: images.restaurantItem1,
-            name: 'Anchor & James',
-            location: 'American | Downtown Union Street',
-            priceRange: '500円以上',
-            rating: 4.0,
-            reviews: 1597,
-        },
-        // Thêm dữ liệu quán cafe khác vào đây...
-    ]);
+    const [isShowAddPopup, setIsShowAddPopup] = useState(false);
+    const [products, setProducts] = useState([]);
+    const [ratings, setRatings] = useState([]);
+    const [types, setTypes] = useState([]);
+    const [styles, setStyles] = useState([1, 2, 3]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [sortPrice, setSortPrice] = useState('asc');
+
+    //state filter
+
+    const [filterDrPrice, setFilterDrPrice] = useState('評価: 低から高', '高から低');
+    const [filterDrRating, setFilterDrRating] = useState('1 - 5', '5 - 1');
+
+    useEffect(() => {
+        const fetchProducts = async () => {
+            try {
+                const response = await axios.get(`/api/restaurants`, {
+                    params: { styleIds: styles.toString() },
+                });
+                if (response.status === 200) {
+                    setProducts(response.data.restaurants.data);
+                    setTotalPages(response.data.restaurants.meta.last_page);
+                }
+            } catch (error) {
+                console.error('Error fetching products:', error);
+            }
+        };
+
+        fetchProducts();
+    }, [types, ratings, currentPage]);
+    const handlePageChange = (page) => {
+        setCurrentPage(page);
+    };
+    console.log(products);
 
     return (
         <div className={cx('find-restaurant')}>
@@ -96,15 +81,14 @@ const FindRestaurant = () => {
                 </div>
                 <div className={cx('filters-right')}>
                     <h3>並べ替え:</h3>
-                    <Dropdown title="並べ替え" width="150px">
+                    <Dropdown title="並べ替え" width="151px" setValue={setFilterDrPrice} selected={filterDrPrice}>
                         <div>評価: 低から高</div>
                         <div>評価: 高から低</div>
                     </Dropdown>
                     <h3>結果:</h3>
-                    <Dropdown title="結果" width="100px">
+                    <Dropdown title="結果" width="100px" setValue={setFilterDrRating} selected={filterDrRating}>
                         <div>1 - 5</div>
-                        <div>6 - 10</div>
-                        <div>11 - 15</div>
+                        <div>5 - 1</div>
                     </Dropdown>
                     <FontAwesomeIcon
                         icon={faThLarge}
@@ -169,19 +153,41 @@ const FindRestaurant = () => {
 
                 {/* List of Cafes */}
                 <div className={cx('cafe-list', { 'grid-view': isGridView, 'list-view': !isGridView })}>
-                    {cafes.map((cafe, index) => (
+                    {products.map((cafe, index) => (
                         <CafeItem
                             key={index}
                             image={cafe.image}
                             name={cafe.name}
-                            location={cafe.location}
-                            priceRange={cafe.priceRange}
+                            location={cafe.address}
+                            priceRange={cafe.price_start}
                             rating={cafe.rating}
                             reviews={cafe.reviews}
                             isListView={!isGridView}
                         />
                     ))}
                 </div>
+            </div>
+            <div className={cx('pagination')}>
+                {products.length > 0 && (
+                    <>
+                        <Button onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>
+                            <FontAwesomeIcon icon={faAngleLeft} />
+                        </Button>
+                        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                            <Button
+                                key={page}
+                                onClick={() => handlePageChange(page)}
+                                primary={currentPage === page}
+                                small
+                            >
+                                {page}
+                            </Button>
+                        ))}
+                        <Button onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages}>
+                            <FontAwesomeIcon icon={faAngleRight} />
+                        </Button>
+                    </>
+                )}
             </div>
         </div>
     );
