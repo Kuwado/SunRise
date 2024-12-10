@@ -9,7 +9,6 @@ import Button from '../Button';
 
 import styles from './Popup.module.scss';
 import classNames from 'classnames/bind';
-
 const cx = classNames.bind(styles);
 
 const AddPopup = ({ onClose, onReFetch }) => {
@@ -20,7 +19,7 @@ const AddPopup = ({ onClose, onReFetch }) => {
     const [email, setEmail] = useState('');
     const [priceStart, setPriceStart] = useState('');
     const [priceEnd, setPriceEnd] = useState('');
-    const [avatar, setAvatar] = useState(null);
+    const [avatar, setAvatar] = useState();
     const [images, setImages] = useState([]);
     const [imagesFile, setImagesFile] = useState([]);
     const [openTime, setOpenTime] = useState('');
@@ -42,7 +41,7 @@ const AddPopup = ({ onClose, onReFetch }) => {
         e.preventDefault();
         try {
             const data = await axios.post('/api/restaurant/create',
-                { name, description: desc, address, phone, email, price_start: priceStart, price_end: priceEnd, avatar : avatar.file, media: imagesFile, open_time: openTime, close_time: closeTime },
+                { name, description: desc, address, phone, email, price_start: priceStart, price_end: priceEnd, avatar : avatar?.file, media: imagesFile.length > 0 ? imagesFile : null, open_time: openTime, close_time: closeTime },
                 {
                     headers: {
                         'Content-Type': 'multipart/form-data'
@@ -55,7 +54,7 @@ const AddPopup = ({ onClose, onReFetch }) => {
                 onReFetch();
             });
         } catch (error) {
-            console.error("Error fetching products:", error);
+            console.error("Error adding restaurant:", error);
             alert('Error adding restaurant' + error?.response?.data?.message);
         }
     }
@@ -132,7 +131,6 @@ const AddPopup = ({ onClose, onReFetch }) => {
                                         {({
                                             imageList,
                                             onImageUpload,
-                                            onImageRemoveAll,
                                             onImageUpdate,
                                             onImageRemove,
                                         }) => (

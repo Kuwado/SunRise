@@ -11,12 +11,12 @@ import { AddPopup } from '~/components/Popup';
 import Button from '~/components/Button';
 import Search from '~/components/Search';
 
-import styles from './ProductList.module.scss';
+import styles from './RestaurantList.module.scss';
 import classNames from 'classnames/bind';
 
 const cx = classNames.bind(styles);
 
-const ProductList = () => {
+const RestaurantList = () => {
     const [isShowAddPopup, setIsShowAddPopup] = useState(false);
     const [products, setProducts] = useState([]);
     const [ratings, setRatings] = useState([]);
@@ -253,4 +253,4 @@ const ProductList = () => {
     );
 };
 
-export default ProductList;
+export default RestaurantList;

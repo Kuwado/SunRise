@@ -1,7 +1,7 @@
-import ProductList from "./ProductList";
+import RestaurantList from "./RestaurantList";
 
 const admin = {
-    productList: ProductList,
+    restaurantList: RestaurantList,
 };
 
 export default admin;

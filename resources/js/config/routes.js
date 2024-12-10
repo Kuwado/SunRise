@@ -4,7 +4,7 @@ const routes = {
     admin: {
         dashboard: '/admin',
         productDetail: '/admin/product/:id',
-        productList: '/admin/products',
+        restaurantList: '/admin/products',
         productCreate: '/admin/product/create',
         customers: '/admin/customers',
     },
