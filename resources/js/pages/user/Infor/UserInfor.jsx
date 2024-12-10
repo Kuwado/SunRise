@@ -11,25 +11,28 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { DefaultInput } from '~/components/Input';
 import Dropdown from '~/components/Dropdown';
 import { useEffect } from 'react';
+import ImageUploading from 'react-images-uploading';
 const cx = classNames.bind(styles);
 export default function UserInfor() {
+    const [avatar, setAvatar] = useState(null);
     const [name, setName] = useState('モビナ・ミルバゲリ');
     const [email, setEmail] = useState('');
     const [birthDate, setBirthDate] = useState('');
     const [phone, setPhone] = useState('');
+    const [headPhone, setHeadPhone] = useState('');
     const [address, setAddress] = useState('');
     const [city, setCity] = useState('');
     const [distance, setDistance] = useState('');
-    const [priceRange, setPriceRange] = useState('');
+    const priceRangeOptions = ['0-40', '40-90', '90-150'];
+    const [priceRange, setPriceRange] = useState(priceRangeOptions);
     const [workplace, setWorkplace] = useState('Keangnam');
-    const [country, setCountry] = useState('Vietnam');
-    const [taste, setTaste] = useState('');
+    const [country, setCountry] = useState('Vietnam', 'Japan');
 
     const [user, setUser] = useState({
         name: '',
         email: '',
         birth: '',
-        phone: '',
+        phone: ``,
         address: '',
         city: '',
         desired_distance: '',
@@ -41,45 +44,32 @@ export default function UserInfor() {
     });
 
     const cityOptions = ['Tokyo', 'Osaka', 'Kyoto'];
-    const distanceOptions = ['5km', '10km', '20km'];
-    const priceRangeOptions = ['Low', 'Medium', 'High'];
+    const distanceOptions = ['2', '3', '4'];
     const workplaceOptions = ['Keangnam', 'Landmark', 'Bitexco'];
     const countryOptions = ['Vietnam', 'Japan'];
-    const tasteOptions = ['Sweet', 'Salty', 'Spicy'];
+    // const styleOptions = ['エスプレッソ', 'アメリカ人', 'カプチーノ', 'マキアートコーヒー', 'ラテ', 'フラットホワイト'];
+    const headPhoneOptions = ['+01', '+91', '+84'];
+    const styleOptions = [
+        { id: 1, label: 'エスプレッソ' },
+        { id: 2, label: 'アメリカ人' },
+        { id: 3, label: 'カプチーノ' },
+        { id: 4, label: 'マキアートコーヒー' },
+        { id: 5, label: 'ラテ' },
+        { id: 6, label: 'フラットホワイト' },
+    ];
 
-    // const handleUpdateUser = async () => {
-    //     const formData = new FormData();
-    //     formData.append('name', user.name);
-    //     formData.append('email', user.email);
-    //     formData.append('birth', user.birth);
-    //     formData.append('phone', user.phone);
-    //     formData.append('address', user.address);
-    //     formData.append('city', user.city);
-    //     formData.append('desired_distance', user.desired_distance);
-    //     formData.append('price_start', user.price_start);
-    //     formData.append('price_end', user.price_end);
-    //     formData.append('workplace', user.workplace);
-    //     formData.append('nationality', user.nationality);
-    //     formData.append('style_id', user.style_id);
-    //     if (avatar) formData.append('avatar', avatar);
+    console.log(user);
 
-    //     try {
-    //         const response = await axios.post(`/api/user/update/1`, formData, {
-    //             headers: {
-    //                 'Content-Type': 'multipart/form-data',
-    //             },
-    //         });
-    //         alert(response.data.message);
-    //     } catch (error) {
-    //         console.error('Error updating user info:', error);
-    //     }
-    // };
+    const onAvatarChange = (image) => {
+        // console.log(image);
+        setAvatar(image);
+    };
 
     useEffect(() => {
         const fetchUserInfo = async () => {
             try {
                 const response = await axios.get(`/api/user`, {
-                    params: { id: 1 }, // Thay ID bằng ID user
+                    params: { id: 2 }, // Thay ID bằng ID user
                 });
                 setUser(response.data.user);
                 // setAvatarPreview(response.data.user.avatar);
@@ -89,6 +79,34 @@ export default function UserInfor() {
         };
         fetchUserInfo();
     }, []);
+
+    const handleUpdateUser = async () => {
+        const formData = new FormData();
+        formData.append('name', user.name);
+        formData.append('email', user.email);
+        formData.append('birth', user.birth);
+        formData.append('phone', user.phone);
+        formData.append('address', user.address);
+        formData.append('city', user.city);
+        formData.append('desired_distance', user.desired_distance);
+        formData.append('price_start', user.price_start);
+        formData.append('price_end', user.price_end);
+        formData.append('workplace', user.workplace);
+        formData.append('nationality', user.nationality);
+        formData.append('style_id', user.style_id);
+        // if (avatar) formData.append('avatar', avatar);
+
+        try {
+            const response = await axios.post(`/api/user/update/2`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+            alert(response.data.message);
+        } catch (error) {
+            console.error('Error updating user info:', error);
+        }
+    };
     console.log(user);
 
     return (
@@ -97,6 +115,23 @@ export default function UserInfor() {
                 <img className={cx('header-image')} src={images.headerUser} alt="headerUser" />
                 <div className={cx('header-title')}>
                     <div className={cx('header-avatar')}>
+                        {/* <ImageUploading
+                            value={avatar ? [avatar] : []}
+                            onChange={(imageList) => onAvatarChange(imageList[0])}
+                        >
+                            {({ onImageUpload, onImageUpdate }) => (
+                                <div className={cx('upload__avatar-wrapper')}>
+                                    {avatar ? (
+                                        <img src={avatar.dataURL} width="100" height="100" onClick={onImageUpdate} />
+                                    ) : (
+                                        <button onClick={onImageUpload}>
+                                            <FontAwesomeIcon icon={faCamera}></FontAwesomeIcon>
+                                        </button>
+                                    )}
+                                </div>
+                            )}
+                        </ImageUploading> */}
+
                         <img src={images.avatarUser} alt="avatarUser" />
                         <div className={cx('camera-icon')}>
                             <FontAwesomeIcon icon={faCamera} />
@@ -117,14 +152,14 @@ export default function UserInfor() {
                         <div className={cx('input-column')}>
                             <DefaultInput
                                 value={user.name}
-                                setValue={setName}
+                                setValue={(value) => setUser({ ...user, name: value })}
                                 placeholder="名前"
                                 label="名前"
                                 inputClassName={cx('input')}
                             />
                             <DefaultInput
                                 value={user.birth}
-                                setValue={setBirthDate}
+                                setValue={(value) => setUser({ ...user, birth: value })}
                                 placeholder="生年月日"
                                 label="生年月日"
                                 inputClassName={cx('input')}
@@ -140,7 +175,7 @@ export default function UserInfor() {
                                 className={cx('dropdownInfor')}
                                 title="市"
                                 selected={user.city}
-                                setValue={setCity}
+                                setValue={(value) => setUser({ ...user, city: value })}
                                 width="100%"
                                 label="市"
                             >
@@ -153,7 +188,7 @@ export default function UserInfor() {
                             <Dropdown
                                 title="希望の距離"
                                 selected={user.desired_distance}
-                                setValue={setDistance}
+                                setValue={(value) => setUser({ ...user, desired_distance: value })}
                                 width="100%"
                                 label="希望の距離"
                             >
@@ -163,8 +198,12 @@ export default function UserInfor() {
                             </Dropdown>
                             <Dropdown
                                 title="値を入力"
-                                selected={priceRange}
-                                setValue={setPriceRange}
+                                selected={`${user.price_start}-${user.price_end}`}
+                                // setValue={setPriceRange}
+                                setValue={(value) => {
+                                    const [start, end] = value.split('-'); // Phân tách chuỗi thành giá trị start và end
+                                    setUser({ ...user, price_start: parseInt(start), price_end: parseInt(end) }); // Cập nhật state
+                                }}
                                 width="100%"
                                 label="好きな価格帯"
                             >
@@ -176,26 +215,21 @@ export default function UserInfor() {
                         <div className={cx('input-column')}>
                             <DefaultInput
                                 value={user.email}
-                                setValue={setEmail}
+                                setValue={(value) => setUser({ ...user, email: value })}
                                 placeholder="メール"
                                 label="メール"
                                 inputClassName={cx('input')}
                             />
                             <div className={cx('phone-input')}>
-                                <Dropdown
-                                    title="+98"
-                                    selected={user.phone}
-                                    setValue={setPhone}
-                                    label="電話番号"
-                                    height="98%"
-                                >
-                                    {['+01', '+91', '+84'].map((code, index) => (
+                                <Dropdown title="+84" selected={headPhone} setValue={setHeadPhone} label="電話番号">
+                                    {headPhoneOptions.map((code, index) => (
                                         <div key={index}>{code}</div>
                                     ))}
                                 </Dropdown>
                                 <DefaultInput
                                     value={user.phone}
-                                    setValue={setPhone}
+                                    setValue={(value) => setUser({ ...user, phone: value })}
+                                    // setValue={setPhone}
                                     placeholder="9120000000"
                                     width="100%"
                                     inputClassName={cx('input')}
@@ -204,7 +238,7 @@ export default function UserInfor() {
                             <Dropdown
                                 title="職場"
                                 selected={user.workplace}
-                                setValue={setWorkplace}
+                                setValue={(value) => setUser({ ...user, workplace: value })}
                                 width="100%"
                                 label="職場"
                             >
@@ -212,26 +246,40 @@ export default function UserInfor() {
                                     <div key={index}>{option}</div>
                                 ))}
                             </Dropdown>
-                            <Dropdown title="国" selected={country} setValue={setCountry} width="100%" label="国">
+                            <Dropdown
+                                title="国"
+                                selected={user.nationality}
+                                setValue={(value) => setUser({ ...user, nationality: value })}
+                                width="100%"
+                                label="国"
+                            >
                                 {countryOptions.map((option, index) => (
                                     <div key={index}>{option}</div>
                                 ))}
                             </Dropdown>
                             <Dropdown
                                 title="好きな味"
-                                selected={taste}
-                                setValue={setTaste}
+                                selected={
+                                    styleOptions.find((option) => option.id === user.style_id)?.label ||
+                                    '選択してください'
+                                }
+                                setValue={(value) => {
+                                    const selectedOption = styleOptions.find((option) => option.label === value);
+                                    if (selectedOption) {
+                                        setUser({ ...user, style_id: selectedOption.id });
+                                    }
+                                }}
                                 width="100%"
                                 label="好きな味"
                             >
-                                {tasteOptions.map((option, index) => (
-                                    <div key={index}>{option}</div>
+                                {styleOptions.map((option, index) => (
+                                    <div key={index}>{option.label}</div>
                                 ))}
                             </Dropdown>
                         </div>
                     </div>
                     <div className={cx('button-submit')}>
-                        <Button large secondary shadow width="140px">
+                        <Button large secondary shadow width="140px" onClick={handleUpdateUser}>
                             保存
                         </Button>
                         <Button large secondary shadow width="140px">

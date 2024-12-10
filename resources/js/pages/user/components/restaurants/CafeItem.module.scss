@@ -53,8 +53,18 @@
         gap: 10px;
 
         &.list {
-            margin-left: 150px;
+            margin-left: 45px;
             gap: 10px;
+            p{
+                font-size: 15px;
+            }
+            h3{
+                font-size: 24px;
+            }
+            .wrap-time{
+                display: flex;
+                gap:25px
+            }
         }
 
         h3 {
