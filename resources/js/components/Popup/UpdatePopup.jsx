@@ -24,6 +24,7 @@ const UpdatePopup = ({ id, onClose, onReFetch }) => {
     const [avatar, setAvatar] = useState(null);
     const [avatarFile, setAvatarFile] = useState(null);
     const [images, setImages] = useState([]);
+    const [imagesFile, setImagesFile] = useState([]);
     const [openTime, setOpenTime] = useState('');
     const [closeTime, setCloseTime] = useState('');
     const maxNumber = 4;
@@ -44,7 +45,7 @@ const UpdatePopup = ({ id, onClose, onReFetch }) => {
                 setPriceStart(response.data.restaurant.price_start);
                 setEmail(response.data.restaurant.email);
                 setAvatar(response.data.restaurant.avatar);
-                setImages(response.data.restaurant.images);
+                setImages(response.data.restaurant.media);
                 setOpenTime(response.data.restaurant.open_time);
                 setCloseTime(response.data.restaurant.close_time);
             }
@@ -66,13 +67,14 @@ const UpdatePopup = ({ id, onClose, onReFetch }) => {
     const onChange = (imageList, addUpdateIndex) => {
         // console.log(imageList, addUpdateIndex);
         setImages(imageList);
+        setImagesFile(imageList.map((image) => image?.file || image));
     };
 
     const onSubmitHandler = async (e) => {
         e.preventDefault();
         try {
             const data = await axios.post(`/api/restaurant/update/${id}`,
-                { name, description: desc, address, phone, email, price_start: priceStart, price_end: priceEnd, avatar: avatarFile, images, open_time: openTime, close_time: closeTime },
+                { name, description: desc, address, phone, email, price_start: priceStart, price_end: priceEnd, avatar: avatarFile, media: imagesFile, open_time: openTime, close_time: closeTime },
                 {
                     headers: {
                         'Content-Type': 'multipart/form-data'
@@ -85,7 +87,7 @@ const UpdatePopup = ({ id, onClose, onReFetch }) => {
                 onReFetch();
             });
         } catch (error) {
-            alert('Error updating product: ' + error.response.data.message);
+            alert('Error updating product: ' + error?.response?.data?.message);
             console.error("Error fetching products:", error);
         }
     }
@@ -113,7 +115,7 @@ const UpdatePopup = ({ id, onClose, onReFetch }) => {
                                 <h3 className={cx('title')}>連絡先</h3>
                                 <DefaultInput setValue={setAddress} value={address} id='' label='住所'></DefaultInput>
                                 <div className={cx('flex-row')} style={{ marginTop: 6 }}>
-                                    <DefaultInput setValue={setPhone} value={phone} type='number' id='' label='電話番号'></DefaultInput>
+                                    <DefaultInput setValue={setPhone} value={phone} type='tel' id='' label='電話番号'></DefaultInput>
                                     <DefaultInput setValue={setEmail} value={email} type='email' id='' label='メール' width={'60%'}></DefaultInput>
                                 </div>
                             </div>
@@ -173,7 +175,7 @@ const UpdatePopup = ({ id, onClose, onReFetch }) => {
                                                 <div className={cx('image-list')}>
                                                     {imageList.map((image, index) => (
                                                         <div key={index} className={cx('image-item')}>
-                                                            <img src={image['data_url']} alt="" width="100" onClick={() => onImageUpdate(index)} />
+                                                            <img src={image.data_url || image} alt="" width="100" height='75' onClick={() => onImageUpdate(index)} />
                                                             <div className={cx('image-item__btn-wrapper')}>
                                                                 <button onClick={() => onImageRemove(index)}>
                                                                     <FontAwesomeIcon icon={faTimes}></FontAwesomeIcon>

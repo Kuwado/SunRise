@@ -19,6 +19,7 @@ const Dropdown = ({
     required,
     className,
     children,
+    handleClick,
 }) => {
     const [show, setShow] = useState(false);
     const dropRef = useRef(null);
@@ -39,6 +40,7 @@ const Dropdown = ({
 
     const handleOptionClick = (option) => {
         setValue(option);
+        handleClick && handleClick();
         setTimeout(() => {
             setShow(false);
         }, 0);
