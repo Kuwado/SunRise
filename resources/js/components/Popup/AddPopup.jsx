@@ -22,6 +22,7 @@ const AddPopup = ({ onClose, onReFetch }) => {
     const [priceEnd, setPriceEnd] = useState('');
     const [avatar, setAvatar] = useState(null);
     const [images, setImages] = useState([]);
+    const [imagesFile, setImagesFile] = useState([]);
     const [openTime, setOpenTime] = useState('');
     const [closeTime, setCloseTime] = useState('');
     const maxNumber = 4;
@@ -34,13 +35,14 @@ const AddPopup = ({ onClose, onReFetch }) => {
     const onChange = (imageList, addUpdateIndex) => {
         // console.log(imageList, addUpdateIndex);
         setImages(imageList);
+        setImagesFile(imageList.map((image) => image.file));
     };
 
     const onSubmitHandler = async (e) => {
         e.preventDefault();
         try {
             const data = await axios.post('/api/restaurant/create',
-                { name, description: desc, address, phone, email, price_start: priceStart, price_end: priceEnd, avatar : avatar.file, images, open_time: openTime, close_time: closeTime },
+                { name, description: desc, address, phone, email, price_start: priceStart, price_end: priceEnd, avatar : avatar.file, media: imagesFile, open_time: openTime, close_time: closeTime },
                 {
                     headers: {
                         'Content-Type': 'multipart/form-data'
@@ -54,7 +56,7 @@ const AddPopup = ({ onClose, onReFetch }) => {
             });
         } catch (error) {
             console.error("Error fetching products:", error);
-            alert('Error adding restaurant' + error.response.data.message);
+            alert('Error adding restaurant' + error?.response?.data?.message);
         }
     }
 
@@ -81,7 +83,7 @@ const AddPopup = ({ onClose, onReFetch }) => {
                                 <h3 className={cx('title')}>連絡先</h3>
                                 <DefaultInput setValue={setAddress} value={address} id='' label='住所'></DefaultInput>
                                 <div className={cx('flex-row')} style={{ marginTop: 6 }}>
-                                    <DefaultInput setValue={setPhone} value={phone} type='number' id='' label='電話番号'></DefaultInput>
+                                    <DefaultInput setValue={setPhone} value={phone} type='tel' id='' label='電話番号'></DefaultInput>
                                     <DefaultInput setValue={setEmail} value={email} type='email' id='' label='メール' width={'60%'}></DefaultInput>
                                 </div>
                             </div>
@@ -141,7 +143,7 @@ const AddPopup = ({ onClose, onReFetch }) => {
                                                 <div className={cx('image-list')}>
                                                     {imageList.map((image, index) => (
                                                         <div key={index} className={cx('image-item')}>
-                                                            <img src={image['data_url']} alt="" width="100" onClick={() => onImageUpdate(index)} />
+                                                            <img src={image['data_url']} alt="" width="100" height='75' onClick={() => onImageUpdate(index)} />
                                                             <div className={cx('image-item__btn-wrapper')}>
                                                                 <button onClick={() => onImageRemove(index)}>
                                                                     <FontAwesomeIcon icon={faTimes}></FontAwesomeIcon>
