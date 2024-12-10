@@ -7,10 +7,10 @@ import { CustomInput, PasswordInput } from '~/components/Input';
 import { CheckboxInput } from '~/components/Checkbox';
 import images from '~/assets/images';
 import axios from 'axios';
-import HeaderUser from '../components/header/HeaderUser';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { DefaultInput } from '~/components/Input';
 import Dropdown from '~/components/Dropdown';
+import { useEffect } from 'react';
 const cx = classNames.bind(styles);
 export default function UserInfor() {
     const [name, setName] = useState('モビナ・ミルバゲリ');
@@ -25,15 +25,74 @@ export default function UserInfor() {
     const [country, setCountry] = useState('Vietnam');
     const [taste, setTaste] = useState('');
 
+    const [user, setUser] = useState({
+        name: '',
+        email: '',
+        birth: '',
+        phone: '',
+        address: '',
+        city: '',
+        desired_distance: '',
+        price_start: '',
+        price_end: '',
+        workplace: '',
+        nationality: '',
+        style_id: '',
+    });
+
     const cityOptions = ['Tokyo', 'Osaka', 'Kyoto'];
     const distanceOptions = ['5km', '10km', '20km'];
     const priceRangeOptions = ['Low', 'Medium', 'High'];
     const workplaceOptions = ['Keangnam', 'Landmark', 'Bitexco'];
     const countryOptions = ['Vietnam', 'Japan'];
     const tasteOptions = ['Sweet', 'Salty', 'Spicy'];
+
+    // const handleUpdateUser = async () => {
+    //     const formData = new FormData();
+    //     formData.append('name', user.name);
+    //     formData.append('email', user.email);
+    //     formData.append('birth', user.birth);
+    //     formData.append('phone', user.phone);
+    //     formData.append('address', user.address);
+    //     formData.append('city', user.city);
+    //     formData.append('desired_distance', user.desired_distance);
+    //     formData.append('price_start', user.price_start);
+    //     formData.append('price_end', user.price_end);
+    //     formData.append('workplace', user.workplace);
+    //     formData.append('nationality', user.nationality);
+    //     formData.append('style_id', user.style_id);
+    //     if (avatar) formData.append('avatar', avatar);
+
+    //     try {
+    //         const response = await axios.post(`/api/user/update/1`, formData, {
+    //             headers: {
+    //                 'Content-Type': 'multipart/form-data',
+    //             },
+    //         });
+    //         alert(response.data.message);
+    //     } catch (error) {
+    //         console.error('Error updating user info:', error);
+    //     }
+    // };
+
+    useEffect(() => {
+        const fetchUserInfo = async () => {
+            try {
+                const response = await axios.get(`/api/user`, {
+                    params: { id: 1 }, // Thay ID bằng ID user
+                });
+                setUser(response.data.user);
+                // setAvatarPreview(response.data.user.avatar);
+            } catch (error) {
+                console.error('Error fetching user info:', error);
+            }
+        };
+        fetchUserInfo();
+    }, []);
+    console.log(user);
+
     return (
         <>
-            <HeaderUser />
             <div className={cx('container')}>
                 <img className={cx('header-image')} src={images.headerUser} alt="headerUser" />
                 <div className={cx('header-title')}>
@@ -57,21 +116,21 @@ export default function UserInfor() {
                     <div className={cx('list-input')}>
                         <div className={cx('input-column')}>
                             <DefaultInput
-                                value={name}
+                                value={user.name}
                                 setValue={setName}
                                 placeholder="名前"
                                 label="名前"
                                 inputClassName={cx('input')}
                             />
                             <DefaultInput
-                                value={birthDate}
+                                value={user.birth}
                                 setValue={setBirthDate}
                                 placeholder="生年月日"
                                 label="生年月日"
                                 inputClassName={cx('input')}
                             />
                             <DefaultInput
-                                value={address}
+                                value={user.address}
                                 setValue={setAddress}
                                 placeholder="住所"
                                 label="住所"
@@ -80,7 +139,7 @@ export default function UserInfor() {
                             <Dropdown
                                 className={cx('dropdownInfor')}
                                 title="市"
-                                selected={city}
+                                selected={user.city}
                                 setValue={setCity}
                                 width="100%"
                                 label="市"
@@ -93,7 +152,7 @@ export default function UserInfor() {
                             </Dropdown>
                             <Dropdown
                                 title="希望の距離"
-                                selected={distance}
+                                selected={user.desired_distance}
                                 setValue={setDistance}
                                 width="100%"
                                 label="希望の距離"
@@ -116,7 +175,7 @@ export default function UserInfor() {
                         </div>
                         <div className={cx('input-column')}>
                             <DefaultInput
-                                value={email}
+                                value={user.email}
                                 setValue={setEmail}
                                 placeholder="メール"
                                 label="メール"
@@ -125,7 +184,7 @@ export default function UserInfor() {
                             <div className={cx('phone-input')}>
                                 <Dropdown
                                     title="+98"
-                                    selected={phone}
+                                    selected={user.phone}
                                     setValue={setPhone}
                                     label="電話番号"
                                     height="98%"
@@ -135,7 +194,7 @@ export default function UserInfor() {
                                     ))}
                                 </Dropdown>
                                 <DefaultInput
-                                    value={phone}
+                                    value={user.phone}
                                     setValue={setPhone}
                                     placeholder="9120000000"
                                     width="100%"
@@ -144,7 +203,7 @@ export default function UserInfor() {
                             </div>
                             <Dropdown
                                 title="職場"
-                                selected={workplace}
+                                selected={user.workplace}
                                 setValue={setWorkplace}
                                 width="100%"
                                 label="職場"

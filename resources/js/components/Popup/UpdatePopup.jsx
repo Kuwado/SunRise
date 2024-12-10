@@ -1,19 +1,18 @@
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlus, faTimes, faPen } from '@fortawesome/free-solid-svg-icons';
 import ImageUploading from 'react-images-uploading';
+import axios from 'axios';
 
 import { DefaultInput } from '../Input';
 import Button from '../Button';
 
-import images from '~/assets/images';
 import styles from './Popup.module.scss';
 import classNames from 'classnames/bind';
 
 const cx = classNames.bind(styles);
 
-const UpdatePopup = ({ id, onClose }) => {
+const UpdatePopup = ({ id, onClose, onReFetch }) => {
     const [restaurant, setRestaurant] = useState({});
     const [name, setName] = useState('');
     const [desc, setDesc] = useState('');
@@ -25,36 +24,37 @@ const UpdatePopup = ({ id, onClose }) => {
     const [avatar, setAvatar] = useState(null);
     const [avatarFile, setAvatarFile] = useState(null);
     const [images, setImages] = useState([]);
+    const [imagesFile, setImagesFile] = useState([]);
     const [openTime, setOpenTime] = useState('');
     const [closeTime, setCloseTime] = useState('');
     const maxNumber = 4;
 
-    useEffect(() => {
-        const fetchProducts = async () => {
-            try {
-                const response = await axios.get(
-                    `http://127.0.0.1:8000/api/restaurant?id=${id}`
-                );
-                if (response.status === 200) {
-                    setRestaurant(response.data.restaurant);
-                    setName(response.data.restaurant.name);
-                    setDesc(response.data.restaurant.description);
-                    setAddress(response.data.restaurant.address);
-                    setPhone(response.data.restaurant.phone);
-                    setPriceStart(response.data.restaurant.price_start);
-                    setPriceEnd(response.data.restaurant.price_end);
-                    setPriceStart(response.data.restaurant.price_start);
-                    setEmail(response.data.restaurant.email);
-                    setAvatar(response.data.restaurant.avatar);
-                    setImages(response.data.restaurant.images);
-                    setOpenTime(response.data.restaurant.open_time);
-                    setCloseTime(response.data.restaurant.close_time);
-                }
-            } catch (error) {
-                console.error("Error fetching products:", error);
+    const fetchProducts = async () => {
+        try {
+            const response = await axios.get(
+                `/api/restaurant?id=${id}`
+            );
+            if (response.status === 200) {
+                setRestaurant(response.data.restaurant);
+                setName(response.data.restaurant.name);
+                setDesc(response.data.restaurant.description);
+                setAddress(response.data.restaurant.address);
+                setPhone(response.data.restaurant.phone);
+                setPriceStart(response.data.restaurant.price_start);
+                setPriceEnd(response.data.restaurant.price_end);
+                setPriceStart(response.data.restaurant.price_start);
+                setEmail(response.data.restaurant.email);
+                setAvatar(response.data.restaurant.avatar);
+                setImages(response.data.restaurant.media);
+                setOpenTime(response.data.restaurant.open_time);
+                setCloseTime(response.data.restaurant.close_time);
             }
-        };
+        } catch (error) {
+            console.error("Error fetching products:", error);
+        }
+    };
 
+    useEffect(() => {
         fetchProducts();
     }, []);
 
@@ -67,24 +67,27 @@ const UpdatePopup = ({ id, onClose }) => {
     const onChange = (imageList, addUpdateIndex) => {
         // console.log(imageList, addUpdateIndex);
         setImages(imageList);
+        setImagesFile(imageList.map((image) => image?.file || image));
     };
 
     const onSubmitHandler = async (e) => {
         e.preventDefault();
         try {
-            const data = await axios.post(`http://127.0.0.1:8000/api/restaurant/update/${id}`,
-                { name, description: desc, address, phone, email, price_start: priceStart, price_end: priceEnd, avatar: avatarFile, images, open_time: openTime, close_time: closeTime },
+            const data = await axios.post(`/api/restaurant/update/${id}`,
+                { name, description: desc, address, phone, email, price_start: priceStart, price_end: priceEnd, avatar: avatarFile, media: imagesFile, open_time: openTime, close_time: closeTime },
                 {
                     headers: {
                         'Content-Type': 'multipart/form-data'
                     }
                 }
             ).then((response) => {
-                console.log(response);
+                // console.log(response);
+                alert(response.data.message);
                 onClose();
-                parent.location.reload();
+                onReFetch();
             });
         } catch (error) {
+            alert('Error updating product: ' + error?.response?.data?.message);
             console.error("Error fetching products:", error);
         }
     }
@@ -112,7 +115,7 @@ const UpdatePopup = ({ id, onClose }) => {
                                 <h3 className={cx('title')}>連絡先</h3>
                                 <DefaultInput setValue={setAddress} value={address} id='' label='住所'></DefaultInput>
                                 <div className={cx('flex-row')} style={{ marginTop: 6 }}>
-                                    <DefaultInput setValue={setPhone} value={phone} type='number' id='' label='電話番号'></DefaultInput>
+                                    <DefaultInput setValue={setPhone} value={phone} type='tel' id='' label='電話番号'></DefaultInput>
                                     <DefaultInput setValue={setEmail} value={email} type='email' id='' label='メール' width={'60%'}></DefaultInput>
                                 </div>
                             </div>
@@ -172,7 +175,7 @@ const UpdatePopup = ({ id, onClose }) => {
                                                 <div className={cx('image-list')}>
                                                     {imageList.map((image, index) => (
                                                         <div key={index} className={cx('image-item')}>
-                                                            <img src={image['data_url']} alt="" width="100" onClick={() => onImageUpdate(index)} />
+                                                            <img src={image.data_url || image} alt="" width="100" height='75' onClick={() => onImageUpdate(index)} />
                                                             <div className={cx('image-item__btn-wrapper')}>
                                                                 <button onClick={() => onImageRemove(index)}>
                                                                     <FontAwesomeIcon icon={faTimes}></FontAwesomeIcon>

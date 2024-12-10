@@ -5,7 +5,7 @@ import FindRestaurant from './FindRestaurant';
 
 const user = {
     home: Home,
-    productdetail: ProductDetail,
+    restaurantdetail: ProductDetail,
     userInfor: UserInfor,
     findRestaurant: FindRestaurant,
 };

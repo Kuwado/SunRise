@@ -42,7 +42,7 @@
     }
 
     button {
-        padding: 5px 6px;
+        padding: 5px 8px;
         background-color: #666;
         border-radius: 50%;
         color: #FFFFFF80;
@@ -153,6 +153,7 @@
 
                     img {
                         border-radius: 4px;
+                        object-fit: contain;
                     }
     
                     button {

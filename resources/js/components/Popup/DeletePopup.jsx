@@ -1,17 +1,17 @@
 import { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlus, faTimes, faPen } from '@fortawesome/free-solid-svg-icons';
+import axios from 'axios';
 
 import { DefaultInput } from '../Input';
 import Button from '../Button';
 
 import styles from './Popup.module.scss';
 import classNames from 'classnames/bind';
-import axios from 'axios';
 
 const cx = classNames.bind(styles);
 
-const DeletePopup = ({ id, onClose }) => {
+const DeletePopup = ({ id, onClose, onReFetch }) => {
     const [restaurant, setRestaurant] = useState({});
     const [name, setName] = useState('');
     const [desc, setDesc] = useState('');
@@ -29,7 +29,7 @@ const DeletePopup = ({ id, onClose }) => {
         const fetchProducts = async () => {
             try {
                 const response = await axios.get(
-                    `http://127.0.0.1:8000/api/restaurant?id=${id}`
+                    `/api/restaurant?id=${id}`
                 );
                 if (response.status === 200) {
                     setRestaurant(response.data.restaurant);
@@ -41,7 +41,7 @@ const DeletePopup = ({ id, onClose }) => {
                     setPriceEnd(response.data.restaurant.price_end);
                     setMail(response.data.restaurant.email);
                     setAvatar(response.data.restaurant.avatar);
-                    // setImages(response.data.restaurant.images);
+                    setImages(response.data.restaurant.media);
                     setOpenTime(response.data.restaurant.open_time);
                     setCloseTime(response.data.restaurant.close_time);
                 }
@@ -52,22 +52,21 @@ const DeletePopup = ({ id, onClose }) => {
 
         fetchProducts();
     }, []);
-    console.log(restaurant);
 
     const onSubmitHandler = async () => {
         try {
             const response = await axios.delete(
-                `http://127.0.0.1:8000/api/restaurant/delete/${id}`
+                `/api/restaurant/delete/${id}`
             );
             if (response.status === 200) {
                 // console.log(response);
                 alert(response.data.message);
                 onClose();
-                parent.location.reload();
+                onReFetch();
             }
         } catch (error) {
             console.error("Error fetching products:", error);
-            alert('Error');
+            alert('Error deleting restaurant' + error?.response?.data?.message);
         }
     };
 
@@ -95,7 +94,7 @@ const DeletePopup = ({ id, onClose }) => {
                                 <h3 className={cx('title')}>連絡先</h3>
                                 <DefaultInput readOnly value={address} id='' label='住所'></DefaultInput>
                                 <div className={cx('flex-row')} style={{ marginTop: 6 }}>
-                                    <DefaultInput readOnly value={phone} type='number' id='' label='電話番号'></DefaultInput>
+                                    <DefaultInput readOnly value={phone} type='tel' id='' label='電話番号'></DefaultInput>
                                     <DefaultInput readOnly value={mail} type='mail' id='' label='メール' width={'60%'}></DefaultInput>
                                 </div>
                             </div>
@@ -123,7 +122,7 @@ const DeletePopup = ({ id, onClose }) => {
                                     <div className={cx('image-list')}>
                                         {images.map((image, index) => (
                                             <div key={index} className={cx('image-item')}>
-                                                <img src={image['data_url']} alt="" width="100" />
+                                                <img src={image} alt="" width="100" height='75'/>
                                             </div>
                                         ))}
                                     </div>
