@@ -35,7 +35,7 @@ class RestaurantController extends Controller
                 'name' => 'required|string|max:255|unique:restaurants,name,',
                 'email' => 'required|email|max:255|unique:restaurants,email,',
                 'phone' => 'required|string|max:20|unique:restaurants,phone,',
-                'address' => 'required|string',
+                'address' => 'required|string|max:255',
                 'description' => 'nullable|string',
                 'price_start' => 'required|numeric',
                 'price_end' => 'required|numeric',
