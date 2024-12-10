@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Services\LocationService;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\QueryException;
@@ -14,6 +15,11 @@ use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
+    private $locationService;
+    public function __construct(LocationService $locationService)
+    {
+        $this->locationService = $locationService;
+    }
     //
     public function register(Request $request)
     {
@@ -137,11 +143,9 @@ class UserController extends Controller
         $validator = Validator::make($request->all(), [
             'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'name' => 'nullable|string|max:255',
-            // 'email' => 'nullable|email|unique:users,email' . $id,
             'email' => 'nullable|email|unique:users,email,' . $id,
             'phone' => 'nullable|numeric|unique:users,phone,' . $id,
             'birth' => 'nullable|date',
-            // 'phone' => 'nullable|numeric|unique:users,phone' . $id,
             'address' => 'nullable|string|max:255',
             'workplace' => 'nullable|string|max:255',
             'nationality' => 'nullable|string|max:255',
@@ -173,6 +177,7 @@ class UserController extends Controller
 
             $user->avatar = $imagePath;
         }
+
         $user->name = $request->input('name', $user->name);
         $user->email = $request->input('email', $user->email);
         $user->birth = $request->input('birth', $user->birth);
@@ -185,6 +190,19 @@ class UserController extends Controller
         $user->price_start = $request->input('price_start', $user->price_start);
         $user->price_end = $request->input('price_end', $user->price_end);
         $user->style_id = $request->input('style_id', $user->style_id);
+
+        if ($request->filled('address')) {
+            $locations = $this->locationService->getCoordinates($request->input('address'));
+            if (!$locations) {
+                return response()->json([
+                    'message' => 'Địa chỉ không hợp lệ',
+                ], 422);
+            }
+
+            $user->longitude = $locations['lng'];
+            $user->latitude = $locations['lat'];
+        }
+
         $user->save();
 
         return response()->json([
