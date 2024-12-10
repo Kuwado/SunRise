@@ -25,16 +25,16 @@ class RestaurantController extends Controller
         try {
             // Tìm cửa hàng theo ID
             $restaurant = Restaurant::find($id);
-
+    
             if (!$restaurant) {
                 return response()->json(['message' => 'Restaurant not found'], 404);
             }
-
-            // Validate dữ liệu đầu vào
-            $validatedData = $request->validate([
-                'name' => 'required|string|max:255|unique:restaurants,name,' . $id,
-                'email' => 'required|email|max:255|unique:restaurants,email,' . $id,
-                'phone' => 'required|string|max:20|unique:restaurants,phone,' . $id,
+    
+            // Định nghĩa các quy tắc validate
+            $rules = [
+                'name' => 'required|string|max:255|unique:restaurants,name,',
+                'email' => 'required|email|max:255|unique:restaurants,email,',
+                'phone' => 'required|string|max:20|unique:restaurants,phone,',
                 'address' => 'required|string',
                 'description' => 'nullable|string',
                 'price_start' => 'required|numeric',
@@ -43,35 +43,57 @@ class RestaurantController extends Controller
                 'close_time' => 'required|date_format:H:i:s',
                 'avatar' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
                 'media.*' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-            ]);
-
+            ];
+    
+            // Tùy chỉnh thông báo lỗi (nếu cần)
+            $messages = [
+                'name.required' => 'Tên cửa hàng là bắt buộc.',
+                'email.required' => 'Email là bắt buộc.',
+                'price_start.required' => 'Giá bắt đầu là bắt buộc.',
+                'price_start.numeric' => 'Giá bắt đầu phải là số.',
+                'price_end.required' => 'Giá kết thúc là bắt buộc.',
+                'price_end.numeric' => 'Giá kết thúc phải là số.',
+            ];
+    
+            // Thực hiện validate
+            $validator = Validator::make($request->all(), $rules, $messages);
+    
+            if ($validator->fails()) {
+                return response()->json([
+                    'message' => 'Dữ liệu không hợp lệ',
+                    'errors' => $validator->errors(),
+                ], 422); // HTTP 422: Unprocessable Entity
+            }
+    
+            $validatedData = $validator->validated();
+    
             // Kiểm tra điều kiện giá bắt đầu < giá kết thúc
             if ($validatedData['price_start'] >= $validatedData['price_end']) {
                 return response()->json([
                     'message' => 'Giá bắt đầu phải nhỏ hơn giá kết thúc.',
-                ], 422); // HTTP 422: Unprocessable Entity
+                ], 422);
             }
-
+    
             // Kiểm tra điều kiện thời gian mở < thời gian đóng
             if ($validatedData['open_time'] >= $validatedData['close_time']) {
                 return response()->json([
                     'message' => 'Thời gian mở phải nhỏ hơn thời gian đóng.',
-                ], 422); // HTTP 422: Unprocessable Entity
+                ], 422);
             }
-
+    
             // Xử lý ảnh avatar (nếu có)
             if ($request->hasFile('avatar')) {
                 $avatar = $request->file('avatar');
                 $avatarName = time() . '_avatar_' . uniqid() . '.' . $avatar->extension();
                 $avatar->storeAs('images', $avatarName, 'public');
                 $validatedData['avatar'] = "/storage/images/$avatarName";
-
+    
                 // Xóa ảnh avatar cũ (nếu cần)
                 if ($restaurant->avatar && file_exists(public_path($restaurant->avatar))) {
                     unlink(public_path($restaurant->avatar));
                 }
             }
-
+    
             // Xử lý media (nếu có)
             if ($request->hasFile('media')) {
                 $mediaPaths = [];
@@ -80,10 +102,10 @@ class RestaurantController extends Controller
                     $media->storeAs('images', $mediaName, 'public');
                     $mediaPaths[] = "/storage/images/$mediaName";
                 }
-
+    
                 // Lưu các đường dẫn media mới vào cơ sở dữ liệu
                 $validatedData['media'] = json_encode($mediaPaths);
-
+    
                 // Xóa media cũ (nếu cần)
                 if ($restaurant->media) {
                     $oldMedia = json_decode($restaurant->media, true);
@@ -94,24 +116,23 @@ class RestaurantController extends Controller
                     }
                 }
             }
-
-
+    
             // Cập nhật thông tin cửa hàng
             $restaurant->update($validatedData);
-
-            // Trả về kết quả thành công
+    
             return response()->json([
-                'message' => 'Restaurant updated successfully',
+                'message' => 'Cập nhật nhà hàng thành công',
                 'restaurant' => $restaurant,
             ], 200);
+    
         } catch (\Exception $e) {
-            // Xử lý lỗi không mong muốn
             return response()->json([
                 'message' => 'An error occurred while updating the restaurant.',
                 'error' => $e->getMessage(),
             ], 500);
         }
     }
+    
 
     public function getRestaurant(Request $request)
     {
