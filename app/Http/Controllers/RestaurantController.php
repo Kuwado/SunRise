@@ -43,7 +43,7 @@ class RestaurantController extends Controller
                 'open_time' => 'required|date_format:H:i:s',
                 'close_time' => 'required|date_format:H:i:s',
                 'avatar' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-                'media.*' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+                'media.*' => 'nullable|image||mimes:jpg,jpeg,png|max:2048',
             ];
     
             // Tùy chỉnh thông báo lỗi (nếu cần)
