@@ -403,6 +403,8 @@ class RestaurantController extends Controller
             'email' => $request->input('email'),
             'phone' => $request->input('phone'),
             'address' => $request->input('address'),
+            'longitude' => $locations['lng'],
+            'latitude' => $locations['lat'],
             'avatar' => $avatarPath,
             'media' => json_encode($mediaPaths),
             'description' => $request->input('description'),
