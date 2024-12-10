@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\RestaurantResource;
 use App\Models\Restaurant;
+use App\Models\Style;
 use App\Models\User;
 use App\Services\LocationService;
 use Illuminate\Http\Request;
@@ -132,7 +133,6 @@ class RestaurantController extends Controller
             ], 500);
         }
     }
-    
 
     public function getRestaurant(Request $request)
     {
@@ -303,14 +303,6 @@ class RestaurantController extends Controller
             }
         }
 
-        // Price sort
-        // if ($sort_price === "asc") {
-        //     $restaurants = $restaurants->select('*', DB::raw('((price_start + price_end) / 2) as avg_price'))
-        //         ->orderBy('avg_price', 'asc');
-        // } else if ($sort_price === "desc") {
-        //     $restaurants = $restaurants->select('*', DB::raw('((price_start + price_end) / 2) as avg_price'))
-        //         ->orderBy('avg_price', 'desc');
-        // }
         if ($sort_price === "asc") {
             $restaurants = $restaurants->orderBy('price_avg', 'asc');
         } else if ($sort_price === "desc") {
@@ -418,7 +410,6 @@ class RestaurantController extends Controller
             'restaurant' => $restaurant,
         ], 200);
     }
-
     public function deleteRestaurant($id)
     {
         try {
@@ -450,5 +441,76 @@ class RestaurantController extends Controller
                 'message' => 'Không tìm thấy nhà hàng!',
             ], 404);
         }
+    }
+
+    public function getCounts(Request $request) {
+        $userId = $request->query('user_id');
+        $start = $request->query('start') ?? null;
+        $end = $request->query('end') ?? null;
+
+        $distances = [];
+        if ($userId) {
+            $user = User::find($userId);
+            $lat = 21.0170210;
+            $lng = 105.7834800;
+            if ($user) {
+                $lat = $user->latitude;
+                $lng = $user->longitude;
+            }
+            $restaurantsQuery = Restaurant::addSelect(DB::raw("
+                (6371 * acos(
+                    cos(radians($lat)) * cos(radians(latitude)) * 
+                    cos(radians(longitude) - radians($lng)) + 
+                    sin(radians($lat)) * sin(radians(latitude))
+                )) AS distance
+            "));
+        
+            $distances = [
+                "1" => (clone $restaurantsQuery)->havingRaw('distance <= ?', [10])->count(),
+                "2" => (clone $restaurantsQuery)->havingRaw('distance > ? AND distance <= ?', [10, 20])->count(),
+                "3" => (clone $restaurantsQuery)->havingRaw('distance > ? AND distance <= ?', [20, 30])->count(),
+                "4" => (clone $restaurantsQuery)->havingRaw('distance > ? AND distance <= ?', [30, 40])->count(),
+                "5" => (clone $restaurantsQuery)->havingRaw('distance > ?', [40])->count(),
+            ];
+        }
+
+        // Styles
+        $styleIds = Style::pluck('id');
+        $styles = [];
+        foreach ($styleIds as $styleId) {
+            $styles[$styleId] = Restaurant::whereHas('styles', function ($query) use ($styleId) {
+                $query->where('style_id', $styleId);
+            })->count();
+        }
+
+        // Rating
+        $ratingArray = [1, 2, 3, 4, 5];
+        $ratings = [];
+        foreach ($ratingArray as $rating) {
+            $start = $rating - 0.5;
+            $end = $rating + 0.5;
+            $ratings[$rating] = Restaurant::withAvg('reviews', 'rating')
+                                            ->havingRaw('reviews_avg_rating <= ? AND reviews_avg_rating > ?', [$end, $start])
+                                            ->count();
+        }
+
+        // Price
+        $prices = [];
+        $prices["1"] = Restaurant::where('price_start', '<=', $end)->count();
+        $prices["2"] = Restaurant::whereRaw(
+            '(price_start < ? AND price_end > ?) OR (price_end < ? AND price_end > ?)', 
+            [$end, $end, $end, $start]
+        )->count();
+        $prices["3"] = Restaurant::where('price_end', '>=', $start)->count();
+        $prices["4"] = Restaurant::count();
+
+        
+        return response()->json([
+            'styles' => $styles,
+            'ratings' => $ratings,
+            'prices' => $prices,
+            'distances' => $distances,
+        ], 200);
+        
     }
 }
