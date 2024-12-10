@@ -2,86 +2,87 @@
     padding: 50px;
     padding-top: 0;
 }
-    
-    .header-image {
-        width: 100%;
-        height: 200px; /* Chiều cao cố định cho header */
-        border-radius: 8px; /* Tạo góc bo cho hình */
-    }
 
-    .header-title {
-        display: flex;
+.header-image {
+    width: 100%;
+    height: 200px; /* Chiều cao cố định cho header */
+    border-radius: 8px; /* Tạo góc bo cho hình */
+}
+
+.header-title {
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+    padding: 0px 160px;
+
+    .header-avatar {
         position: relative;
-        padding: 0px 160px;
-        .header-avatar {
+        overflow: hidden;
+        margin-top: -70px;
+
+        .avatar-container {
             position: relative;
-            overflow: hidden;
-            margin-top: -70px; /* Kéo avatar lên chồng lên hình nền */
-            
-            img {
-                border-radius: 50%;
-                width: 55%;
-                object-fit: cover;
-            }
-
-            .camera-icon {
-                position: absolute;
-                bottom: 14px;
-                right: 188px;
-                width: 36px;
-                height: 36px;
-                background-color: #ff914d; /* Màu nền cam cho icon */
-                border-radius: 50%;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                border: 2px solid white; /* Viền trắng quanh icon */
-                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-
-                svg {
-                    color: white;
-                    font-size: 16px;
-                }
-            }
         }
-        
-        .title{
+
+        .camera-icon {
+            position: absolute;
+            top: 85%;
+            left: 85%;
+            transform: translate(-50%, -50%);
+            width: 36px;
+            height: 36px;
+            background-color: #ff914d; /* Màu nền cam cho icon */
+            border-radius: 50%;
             display: flex;
-            flex-direction: column;
-            margin-left: -70px;
-            margin-right: 189px;
-        }
+            justify-content: center;
+            align-items: center;
+            border: 2px solid white; /* Viền trắng quanh icon */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 
-        .title1 {
-            margin-top: 10px;
-            font-size: 24px;
-            font-weight: bold;
-            color: #083A50;
-        }
+            svg {
+                color: white;
+                font-size: 16px;
+            }
 
-        .title2 {
-            font-size: 18px;
-            color: #083A50;
-            margin-top: 8px;
-            text-align: center;
-            font-weight: 700; 
-            letter-spacing: 2px;
-            margin-right: 10px;
-        }
-        .icon1{
-            width: 50px;
-            height: 50px;
-            margin-top: 20px;
+            cursor: pointer;
         }
     }
-.container-input{
+
+    .title {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .title1 {
+        margin-top: 10px;
+        font-size: 24px;
+        font-weight: bold;
+        color: #083a50;
+    }
+
+    .title2 {
+        font-size: 18px;
+        color: #083a50;
+        margin-top: 8px;
+        text-align: center;
+        font-weight: 700;
+        letter-spacing: 2px;
+        margin-right: 10px;
+    }
+    .icon1 {
+        width: 50px;
+        height: 50px;
+        margin-top: 20px;
+    }
+}
+.container-input {
     padding: 30px 160px;
     // color: #CACED8;
 }
-.header-profile-tile{
+.header-profile-tile {
     display: flex;
     justify-content: space-between;
-    color: #CACED8;
+    color: #caced8;
 }
 .list-input {
     display: flex;
@@ -100,37 +101,37 @@
         }
     }
 }
-.input{
+.input {
     height: 47px;
     font-weight: 700;
-    color: #083A50;
-    border: 1px solid #CACED8;
+    color: #083a50;
+    border: 1px solid #caced8;
 }
 input::placeholder {
-    color: #CACED8;
+    color: #caced8;
     font-weight: 400;
-  }
-.container label{
-    color: #083A50;
 }
-.label{
-    color: #083A50;;
+.container label {
+    color: #083a50;
 }
-.dropdown-box{
+.label {
+    color: #083a50;
+}
+.dropdown-box {
     background-color: #ff914d;
 }
-.button-submit{
+.button-submit {
     display: flex;
     gap: 30px;
     margin-top: 66px;
 }
-.button-submit button{
+.button-submit button {
     background-color: var(--cl-primary);
     height: 50px;
     color: white;
 }
 
-.selection-dropdown{
+.selection-dropdown {
     width: 100%;
 }
 // .default-input label{
@@ -139,3 +140,10 @@ input::placeholder {
 // .dropdown .label{
 //     color: #083A50;
 // }
+.avatar {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    object-fit: contain;
+    border: 2px solid var(--cl-primary);
+}
