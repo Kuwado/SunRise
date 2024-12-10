@@ -1,17 +1,17 @@
 import { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlus, faTimes, faPen } from '@fortawesome/free-solid-svg-icons';
+import axios from 'axios';
 
 import { DefaultInput } from '../Input';
 import Button from '../Button';
 
 import styles from './Popup.module.scss';
 import classNames from 'classnames/bind';
-import axios from 'axios';
 
 const cx = classNames.bind(styles);
 
-const DeletePopup = ({ id, onClose }) => {
+const DeletePopup = ({ id, onClose, onReFetch }) => {
     const [restaurant, setRestaurant] = useState({});
     const [name, setName] = useState('');
     const [desc, setDesc] = useState('');
@@ -29,7 +29,7 @@ const DeletePopup = ({ id, onClose }) => {
         const fetchProducts = async () => {
             try {
                 const response = await axios.get(
-                    `http://127.0.0.1:8000/api/restaurant?id=${id}`
+                    `/api/restaurant?id=${id}`
                 );
                 if (response.status === 200) {
                     setRestaurant(response.data.restaurant);
@@ -57,17 +57,17 @@ const DeletePopup = ({ id, onClose }) => {
     const onSubmitHandler = async () => {
         try {
             const response = await axios.delete(
-                `http://127.0.0.1:8000/api/restaurant/delete/${id}`
+                `/api/restaurant/delete/${id}`
             );
             if (response.status === 200) {
                 // console.log(response);
                 alert(response.data.message);
                 onClose();
-                parent.location.reload();
+                onReFetch();
             }
         } catch (error) {
             console.error("Error fetching products:", error);
-            alert('Error');
+            alert('Error deleting restaurant' + error.response.data.message);
         }
     };
 
