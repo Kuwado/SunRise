@@ -107,7 +107,8 @@ class UserController extends Controller
         }
     }
 
-    public function getUser(Request $request){
+    public function getUser(Request $request)
+    {
         $id = $request->query('id');
         $user = User::with('style')->find($id);
 
@@ -136,9 +137,11 @@ class UserController extends Controller
         $validator = Validator::make($request->all(), [
             'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'name' => 'nullable|string|max:255',
-            'email' => 'nullable|email|unique:users,email',
+            // 'email' => 'nullable|email|unique:users,email' . $id,
+            'email' => 'nullable|email|unique:users,email,' . $id,
+            'phone' => 'nullable|numeric|unique:users,phone,' . $id,
             'birth' => 'nullable|date',
-            'phone' => 'nullable|numeric|unique:users,phone',
+            // 'phone' => 'nullable|numeric|unique:users,phone' . $id,
             'address' => 'nullable|string|max:255',
             'workplace' => 'nullable|string|max:255',
             'nationality' => 'nullable|string|max:255',
@@ -157,19 +160,31 @@ class UserController extends Controller
         }
 
         if ($request->hasFile('avatar')) {
-            $image = $request->file('image');
-            $imageName = time() . '_' . uniqid() . '.' . $image->extension();
+            $image = $request->file('avatar');
+            $imageName = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
             $image->storeAs('images', $imageName, 'public');
-            $imageName = "/storage/images/$imageName";
+            $imagePath = "/storage/images/$imageName";
 
+            // Xóa ảnh cũ nếu tồn tại
             if ($user->avatar) {
-                $imageName = basename($user->avatar);
-                Storage::delete("public/images/$imageName");
-            }    
-        }
+                $oldImageName = basename($user->avatar);
+                Storage::delete("public/images/$oldImageName");
+            }
 
-        $user->avatar = $imageName;
-        $user->email = $request->input('email');
+            $user->avatar = $imagePath;
+        }
+        $user->name = $request->input('name', $user->name);
+        $user->email = $request->input('email', $user->email);
+        $user->birth = $request->input('birth', $user->birth);
+        $user->phone = $request->input('phone', $user->phone);
+        $user->address = $request->input('address', $user->address);
+        $user->workplace = $request->input('workplace', $user->workplace);
+        $user->nationality = $request->input('nationality', $user->nationality);
+        $user->city = $request->input('city', $user->city);
+        $user->desired_distance = $request->input('desired_distance', $user->desired_distance);
+        $user->price_start = $request->input('price_start', $user->price_start);
+        $user->price_end = $request->input('price_end', $user->price_end);
+        $user->style_id = $request->input('style_id', $user->style_id);
         $user->save();
 
         return response()->json([
