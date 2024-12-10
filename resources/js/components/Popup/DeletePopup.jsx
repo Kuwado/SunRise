@@ -41,7 +41,7 @@ const DeletePopup = ({ id, onClose, onReFetch }) => {
                     setPriceEnd(response.data.restaurant.price_end);
                     setMail(response.data.restaurant.email);
                     setAvatar(response.data.restaurant.avatar);
-                    // setImages(response.data.restaurant.images);
+                    setImages(response.data.restaurant.media);
                     setOpenTime(response.data.restaurant.open_time);
                     setCloseTime(response.data.restaurant.close_time);
                 }
@@ -52,7 +52,6 @@ const DeletePopup = ({ id, onClose, onReFetch }) => {
 
         fetchProducts();
     }, []);
-    console.log(restaurant);
 
     const onSubmitHandler = async () => {
         try {
@@ -67,7 +66,7 @@ const DeletePopup = ({ id, onClose, onReFetch }) => {
             }
         } catch (error) {
             console.error("Error fetching products:", error);
-            alert('Error deleting restaurant' + error.response.data.message);
+            alert('Error deleting restaurant' + error?.response?.data?.message);
         }
     };
 
@@ -95,7 +94,7 @@ const DeletePopup = ({ id, onClose, onReFetch }) => {
                                 <h3 className={cx('title')}>連絡先</h3>
                                 <DefaultInput readOnly value={address} id='' label='住所'></DefaultInput>
                                 <div className={cx('flex-row')} style={{ marginTop: 6 }}>
-                                    <DefaultInput readOnly value={phone} type='number' id='' label='電話番号'></DefaultInput>
+                                    <DefaultInput readOnly value={phone} type='tel' id='' label='電話番号'></DefaultInput>
                                     <DefaultInput readOnly value={mail} type='mail' id='' label='メール' width={'60%'}></DefaultInput>
                                 </div>
                             </div>
@@ -123,7 +122,7 @@ const DeletePopup = ({ id, onClose, onReFetch }) => {
                                     <div className={cx('image-list')}>
                                         {images.map((image, index) => (
                                             <div key={index} className={cx('image-item')}>
-                                                <img src={image['data_url']} alt="" width="100" />
+                                                <img src={image} alt="" width="100" height='75'/>
                                             </div>
                                         ))}
                                     </div>

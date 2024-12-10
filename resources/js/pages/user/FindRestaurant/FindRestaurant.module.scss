@@ -3,6 +3,10 @@
     flex-direction: column;
 }
 
+svg {
+    vertical-align: 0.125em;
+}
+
 .banner {
     position: relative;
     width: 100%;
@@ -119,7 +123,7 @@
         }
 
         a {
-            font-size: 18px;
+            font-size: 14px;
             color: #666;
             display: flex;
             align-items: center;

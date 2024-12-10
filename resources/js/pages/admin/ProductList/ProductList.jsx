@@ -9,7 +9,6 @@ import ProductItem from '~/components/ProductItem';
 import { CheckboxInput } from '~/components/Checkbox';
 import { AddPopup } from '~/components/Popup';
 import Button from '~/components/Button';
-import HeaderAdmin from '../components/header/HeaderAdmin';
 import Search from '~/components/Search';
 
 import styles from './ProductList.module.scss';
@@ -21,7 +20,6 @@ const ProductList = () => {
     const [isShowAddPopup, setIsShowAddPopup] = useState(false);
     const [products, setProducts] = useState([]);
     const [ratings, setRatings] = useState([]);
-    const [types, setTypes] = useState([]);
     const [styles, setStyles] = useState([]);
     const [search, setSearch] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
@@ -89,7 +87,7 @@ const ProductList = () => {
     const searchProducts = async () => {
         try {
             const response = await axios.get('/api/restaurants', {
-                params: { search: search },
+                params: { name: search },
             });
             if (response.status === 200) {
                 setProducts(response.data.restaurants.data);
@@ -105,7 +103,6 @@ const ProductList = () => {
         <>
             {isShowAddPopup && <AddPopup onReFetch={handleReFetch} onClose={() => setIsShowAddPopup(false)}></AddPopup>}
             <div className={cx('container')}>
-                <HeaderAdmin />
                 <div className={cx('head')}>
                     <h3>
                         すべての<span>カフェ</span>

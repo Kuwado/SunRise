@@ -1,29 +1,31 @@
 import React, { useState, useEffect } from 'react';
-import CafeItem from '../components/restaurants/CafeItem';
-import styles from './FindRestaurant.module.scss';
-import classNames from 'classnames/bind';
-import images from '~/assets/images';
-import { DefaultInput } from '~/components/Input';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch, faRedo, faThLarge, faBars, faAngleRight, faAngleLeft } from '@fortawesome/free-solid-svg-icons';
+import { faRedo, faThLarge, faBars, faAngleRight, faAngleLeft } from '@fortawesome/free-solid-svg-icons';
+import axios from 'axios';
+
+import CafeItem from '../components/restaurants/CafeItem';
+import images from '~/assets/images';
 import Dropdown from '~/components/Dropdown';
 import { CheckboxInput } from '~/components/Checkbox';
 import Rating from '~/components/Rating';
 import Button from '~/components/Button';
+
 import Search from '~/components/Search';
+import classNames from 'classnames/bind';
+import styles from './FindRestaurant.module.scss';
 const cx = classNames.bind(styles);
 
 const FindRestaurant = () => {
     const [isGridView, setIsGridView] = useState(true);
-
-    const [isShowAddPopup, setIsShowAddPopup] = useState(false);
     const [products, setProducts] = useState([]);
+    const [totalProducts, setTotalProducts] = useState(0);
+    const [user, setUser] = useState({});
     const [ratings, setRatings] = useState([]);
     const [types, setTypes] = useState([]);
     const [styles, setStyles] = useState([]);
+    const [distances, setDistances] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
-    const [sortPrice, setSortPrice] = useState('asc');
     const [search, setSearch] = useState('');
 
     //state filter
@@ -31,6 +33,7 @@ const FindRestaurant = () => {
     const [filterDrPrice, setFilterDrPrice] = useState('評価: 低から高', '高から低');
     const [filterDrRating, setFilterDrRating] = useState('1 - 5', '5 - 1');
     const [priceRange, setPriceRange] = useState({ start: null, end: null });
+    const [priceType, setPriceType] = useState();
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -38,20 +41,23 @@ const FindRestaurant = () => {
                 const response = await axios.get(`/api/restaurants`, {
                     params: {
                         style_ids: styles.toString(),
-                        sort_price: filterDrPrice === '評価: 低から高' ? 'asc' : 'desc',
-                        sort_rating: filterDrRating === '1 - 5' ? 'asc' : 'desc',
+                        sort_price: filterDrPrice === '' ? '' : filterDrPrice === '評価: 低から高' ? 'asc' : 'desc',
+                        sort_rating: filterDrRating === '' ? '' : filterDrRating === '1 - 5' ? 'asc' : 'desc',
                         page: currentPage,
                         per_page: 9,
                         ratings: ratings.toString(),
-                        start: priceRange.start, // Thêm tham số price_start
-                        end: priceRange.end, // Thêm tham số price_end
+                        start: priceRange.start || '',
+                        end: priceRange.end || '',
+                        distance_type: distances.toString(),
+                        user_id: user.id,
                     },
                 });
 
                 if (response.status === 200) {
                     setProducts(response.data.restaurants.data);
                     setTotalPages(response.data.restaurants.meta.last_page);
-                    console.log(response.data.restaurants.data);
+                    setTotalProducts(response.data.restaurants.meta.total);
+                    // console.log(response.data.restaurants.data);
                 }
             } catch (error) {
                 console.error('Error fetching products:', error);
@@ -59,19 +65,33 @@ const FindRestaurant = () => {
         };
 
         fetchProducts();
-    }, [types, ratings, styles, currentPage, filterDrPrice, filterDrRating, priceRange]);
+    }, [types, ratings, styles, currentPage, filterDrPrice, filterDrRating, priceType, distances]);
+
     const handlePageChange = (page) => {
         setCurrentPage(page);
     };
 
-    const handlePriceChange = (start, end) => {
-        setPriceRange((prev) => {
-            if (prev.start === start && prev.end === end) {
-                return { start: null, end: null }; // Bỏ chọn nếu đã chọn
+    const handlePriceTypeChange = (typeId) => {
+        if (typeId === priceType) {
+            setPriceRange({ start: null, end: null });
+            setPriceType(0);
+        } else {
+            switch (typeId) {
+                case 1:
+                    setPriceRange({ start: null, end: user.price_start });
+                    break;
+                case 2:
+                    setPriceRange({ start: user.price_start, end: user.price_end });
+                    break;
+                case 3:
+                    setPriceRange({ start: user.price_end, end: null });
+                    break;
+                case 4:
+                    setPriceRange({ start: user.price_end, end: null });
             }
-            return { start, end }; // Cập nhật giá trị mới
-        });
-        setCurrentPage(1); // Reset về trang đầu tiên
+            setPriceType(typeId);
+        };
+        setCurrentPage(1);
     };
 
     const handleStyleChange = (styleId) => {
@@ -100,6 +120,19 @@ const FindRestaurant = () => {
         });
     };
 
+    const handleDistanceChange = (distanceId) => {
+        setDistances((prevDistances) => {
+            const newDistances = [...prevDistances];
+            if (newDistances.includes(distanceId)) {
+                newDistances.splice(newDistances.indexOf(distanceId), 1);
+            } else {
+                newDistances.push(distanceId);
+            }
+            setCurrentPage(1);
+            return newDistances;
+        });
+    };
+
     const searchProducts = async () => {
         try {
             const response = await axios.get('/api/restaurants', {
@@ -115,33 +148,54 @@ const FindRestaurant = () => {
         }
     };
 
+    useEffect(() => {
+        const fetchUser = async () => {
+            try {
+                const response = await axios.get('/api/user', {
+                    params: { id: 1 },
+                });
+                if (response.status === 200) {
+                    // console.log(response);
+                    setUser(response.data.user);
+                }
+            } catch (error) {
+                alert('Error fetching user' + error?.response?.data?.message);
+            }
+        };
+
+        fetchUser();
+    }, []);
+
     const handleClearFilter = () => {
         setStyles([]);
         setRatings([]);
         setCurrentPage(1);
         setPriceRange({});
+        setPriceType(0);
     };
+
+    const handleSortPrice = () => {
+        setFilterDrRating('');
+    }
+
+    const handleSortRating = () => {
+        setFilterDrPrice('');
+    }
 
     return (
         <div className={cx('find-restaurant')}>
-            {/* Banner */}
             <div className={cx('banner')}>
                 <img src={images.headerFindRestaurant} alt="Restaurant Banner" />
                 <h1>カフェを探すのはやめて、見つけましょう。</h1>
                 <div className={cx('search-bar-wrapper')}>
-                    {/* <FontAwesomeIcon icon={faSearch} className={cx('search-icon')} /> */}
                     <Search
                         type="text"
-                        // className={cx('search-bar')}
                         width="100%"
                         placeholder="名前、料理、場所からレストランを検索"
                         value={search}
                         setValue={setSearch}
                         onKeyDown={searchProducts}
                     />
-                    {/* <button className={cx('btn-search')}>
-                        <FontAwesomeIcon icon={faSearch} className={cx('search-icon-2')} />
-                    </button> */}
                 </div>
             </div>
             <div className={cx('filters-container')}>
@@ -151,16 +205,16 @@ const FindRestaurant = () => {
                         <FontAwesomeIcon icon={faRedo} />
                         フィルターをクリア
                     </a>
-                    <h3>54秒で376件の結果が見つかりました</h3>
+                    <h3>{`5秒で${totalProducts}件の結果が見つかりました`}</h3>
                 </div>
                 <div className={cx('filters-right')}>
                     <h3>並べ替え:</h3>
-                    <Dropdown title="並べ替え" width="151px" setValue={setFilterDrPrice} selected={filterDrPrice}>
+                    <Dropdown title="並べ替え" width="151px" setValue={setFilterDrPrice} selected={filterDrPrice} handleClick={handleSortPrice}>
                         <div>評価: 低から高</div>
                         <div>評価: 高から低</div>
                     </Dropdown>
                     <h3>結果:</h3>
-                    <Dropdown title="結果" width="100px" setValue={setFilterDrRating} selected={filterDrRating}>
+                    <Dropdown title="結果" width="100px" setValue={setFilterDrRating} selected={filterDrRating} handleClick={handleSortRating}>
                         <div>1 - 5</div>
                         <div>5 - 1</div>
                     </Dropdown>
@@ -177,36 +231,35 @@ const FindRestaurant = () => {
                 </div>
             </div>
 
-            {/* Main content */}
             <div className={cx('content')}>
-                {/* Filter Section */}
                 <div className={cx('filter')}>
                     <div className={cx('filter-option')}>
                         <h3>価格（円）</h3>
                         <CheckboxInput
                             id="1"
-                            checked={priceRange.start === 0 && priceRange.end === 100}
-                            onChange={() => handlePriceChange(0, 100)}
+                            checked={priceType === 1}
+                            onChange={() => handlePriceTypeChange(1)}
                         >
                             安い (20)
                         </CheckboxInput>
                         <CheckboxInput
                             id="2"
-                            checked={priceRange.start === 101 && priceRange.end === 150}
-                            onChange={() => handlePriceChange(101, 150)}
+                            checked={priceType === 2}
+                            onChange={() => handlePriceTypeChange(2)}
                         >
                             手頃な価格 (20)
                         </CheckboxInput>
                         <CheckboxInput
-                            checked={priceRange.start === 151 && priceRange.end === 180}
-                            onChange={() => handlePriceChange(151, 180)}
+                            id='3'
+                            checked={priceType === 3}
+                            onChange={() => handlePriceTypeChange(3)}
                         >
                             高い (50)
                         </CheckboxInput>
                         <CheckboxInput
                             id="4"
-                            checked={priceRange.start === 181 && priceRange.end === null}
-                            onChange={() => handlePriceChange(181, null)}
+                            checked={priceType === 4}
+                            onChange={() => handlePriceTypeChange(4)}
                         >
                             高価なものはすべて (5)
                         </CheckboxInput>
@@ -282,15 +335,14 @@ const FindRestaurant = () => {
                     </div>
                     <div className={cx('filter-option')}>
                         <h3>距離</h3>
-                        <CheckboxInput id="16">0.5km 以内 </CheckboxInput>
-                        <CheckboxInput id="17">0.5～1km </CheckboxInput>
-                        <CheckboxInput id="18">1～1.5km</CheckboxInput>
-                        <CheckboxInput id="19">1.5～2km</CheckboxInput>
-                        <CheckboxInput id="20">2km 以上</CheckboxInput>
+                        <CheckboxInput id="16" onChange={() => handleDistanceChange(1)}>0.5km 以内 </CheckboxInput>
+                        <CheckboxInput id="17" onChange={() => handleDistanceChange(2)}>0.5～1km </CheckboxInput>
+                        <CheckboxInput id="18" onChange={() => handleDistanceChange(3)}>1～1.5km</CheckboxInput>
+                        <CheckboxInput id="19" onChange={() => handleDistanceChange(4)}>1.5～2km</CheckboxInput>
+                        <CheckboxInput id="20" onChange={() => handleDistanceChange(5)}>2km 以上</CheckboxInput>
                     </div>
                 </div>
 
-                {/* List of Cafes */}
                 <div className={cx('cafe-list', { 'grid-view': isGridView, 'list-view': !isGridView })}>
                     {products.map((cafe, index) => (
                         <CafeItem
