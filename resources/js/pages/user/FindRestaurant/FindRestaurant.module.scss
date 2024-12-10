@@ -174,3 +174,46 @@
 .filter-option>div {
     margin: 8px 0;
 }
+.pagination {
+    display: flex;
+    justify-content: right;
+    margin-top: 20px;
+    gap: 10px;
+    margin-bottom: 30px;
+    margin-right: 50px;
+
+    .active {
+        background-color: var(--cl-primary-50);
+        color: var(--text-color-50);
+    }
+}
+
+.btn-search {
+    // color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease;
+
+    &:hover {
+        background-color: var(--cl-primary-70); /* Tăng độ đậm khi hover */
+    }
+
+    &:active {
+        background-color: var(--cl-primary-90); /* Màu sắc khi click */
+    }
+
+    &:focus {
+        outline: 2px solid var(--cl-primary-50);
+        outline-offset: 2px;
+    }
+
+    .search-icon-2 {
+        background-color:var(--cl-primary-50) ;
+        font-size: 18px;
+    }
+}

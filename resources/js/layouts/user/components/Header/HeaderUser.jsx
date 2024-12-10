@@ -5,6 +5,8 @@ import images from '~/assets/images';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import config from '~/config';
 const cx = classNames.bind(styles);
 
 export default function HeaderUser() {
@@ -29,7 +31,9 @@ export default function HeaderUser() {
         <div className={cx('header')}>
             <h1 className={styles.logoText}>SunRise</h1>
             <div className={cx('tab-menu')}>
-                <div className={cx('tab-home')}>ホーム</div>
+                <Link to={config.routes.other.landing} className={cx('tab-home')}>
+                    ホーム
+                </Link>
                 <div className={cx('tab-restaurant')}>レストラン</div>
                 <div className={cx('tab-restaurant')}>地図</div>
             </div>

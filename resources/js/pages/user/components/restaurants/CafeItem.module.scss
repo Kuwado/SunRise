@@ -7,8 +7,9 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     transition: transform 0.2s ease;
     &.list{
-        flex-direction: row; /* Dạng danh sách */
-        align-items: center;
+        flex-direction: row;
+        /* align-items: center; */
+        height: 240px;
     }
     .image-container {
         position: relative;
@@ -46,7 +47,10 @@
         display: flex;
         flex-direction: column;
         gap: 10px;
-
+        &.list{
+            margin-left: 150px;
+            gap: 10px;
+        }
         h3 {
             font-size: 18px;
             font-weight: bold;
