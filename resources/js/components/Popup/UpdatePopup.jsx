@@ -1,19 +1,18 @@
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlus, faTimes, faPen } from '@fortawesome/free-solid-svg-icons';
 import ImageUploading from 'react-images-uploading';
+import axios from 'axios';
 
 import { DefaultInput } from '../Input';
 import Button from '../Button';
 
-import images from '~/assets/images';
 import styles from './Popup.module.scss';
 import classNames from 'classnames/bind';
 
 const cx = classNames.bind(styles);
 
-const UpdatePopup = ({ id, onClose }) => {
+const UpdatePopup = ({ id, onClose, onReFetch }) => {
     const [restaurant, setRestaurant] = useState({});
     const [name, setName] = useState('');
     const [desc, setDesc] = useState('');
@@ -29,32 +28,32 @@ const UpdatePopup = ({ id, onClose }) => {
     const [closeTime, setCloseTime] = useState('');
     const maxNumber = 4;
 
-    useEffect(() => {
-        const fetchProducts = async () => {
-            try {
-                const response = await axios.get(
-                    `http://127.0.0.1:8000/api/restaurant?id=${id}`
-                );
-                if (response.status === 200) {
-                    setRestaurant(response.data.restaurant);
-                    setName(response.data.restaurant.name);
-                    setDesc(response.data.restaurant.description);
-                    setAddress(response.data.restaurant.address);
-                    setPhone(response.data.restaurant.phone);
-                    setPriceStart(response.data.restaurant.price_start);
-                    setPriceEnd(response.data.restaurant.price_end);
-                    setPriceStart(response.data.restaurant.price_start);
-                    setEmail(response.data.restaurant.email);
-                    setAvatar(response.data.restaurant.avatar);
-                    setImages(response.data.restaurant.images);
-                    setOpenTime(response.data.restaurant.open_time);
-                    setCloseTime(response.data.restaurant.close_time);
-                }
-            } catch (error) {
-                console.error("Error fetching products:", error);
+    const fetchProducts = async () => {
+        try {
+            const response = await axios.get(
+                `/api/restaurant?id=${id}`
+            );
+            if (response.status === 200) {
+                setRestaurant(response.data.restaurant);
+                setName(response.data.restaurant.name);
+                setDesc(response.data.restaurant.description);
+                setAddress(response.data.restaurant.address);
+                setPhone(response.data.restaurant.phone);
+                setPriceStart(response.data.restaurant.price_start);
+                setPriceEnd(response.data.restaurant.price_end);
+                setPriceStart(response.data.restaurant.price_start);
+                setEmail(response.data.restaurant.email);
+                setAvatar(response.data.restaurant.avatar);
+                setImages(response.data.restaurant.images);
+                setOpenTime(response.data.restaurant.open_time);
+                setCloseTime(response.data.restaurant.close_time);
             }
-        };
+        } catch (error) {
+            console.error("Error fetching products:", error);
+        }
+    };
 
+    useEffect(() => {
         fetchProducts();
     }, []);
 
@@ -72,7 +71,7 @@ const UpdatePopup = ({ id, onClose }) => {
     const onSubmitHandler = async (e) => {
         e.preventDefault();
         try {
-            const data = await axios.post(`http://127.0.0.1:8000/api/restaurant/update/${id}`,
+            const data = await axios.post(`/api/restaurant/update/${id}`,
                 { name, description: desc, address, phone, email, price_start: priceStart, price_end: priceEnd, avatar: avatarFile, images, open_time: openTime, close_time: closeTime },
                 {
                     headers: {
@@ -80,11 +79,13 @@ const UpdatePopup = ({ id, onClose }) => {
                     }
                 }
             ).then((response) => {
-                console.log(response);
+                // console.log(response);
+                alert(response.data.message);
                 onClose();
-                parent.location.reload();
+                onReFetch();
             });
         } catch (error) {
+            alert('Error updating product: ' + error.response.data.message);
             console.error("Error fetching products:", error);
         }
     }

@@ -2,18 +2,17 @@ import { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlus, faTimes, faPen } from '@fortawesome/free-solid-svg-icons';
 import ImageUploading from 'react-images-uploading';
+import axios from 'axios';
 
 import { DefaultInput } from '../Input';
 import Button from '../Button';
 
-import images from '~/assets/images';
 import styles from './Popup.module.scss';
 import classNames from 'classnames/bind';
-import axios from 'axios';
 
 const cx = classNames.bind(styles);
 
-const AddPopup = ({ onClose }) => {
+const AddPopup = ({ onClose, onReFetch }) => {
     const [name, setName] = useState('');
     const [desc, setDesc] = useState('');
     const [address, setAddress] = useState('');
@@ -40,7 +39,7 @@ const AddPopup = ({ onClose }) => {
     const onSubmitHandler = async (e) => {
         e.preventDefault();
         try {
-            const data = await axios.post('http://127.0.0.1:8000/api/restaurant/create',
+            const data = await axios.post('/api/restaurant/create',
                 { name, description: desc, address, phone, email, price_start: priceStart, price_end: priceEnd, avatar : avatar.file, images, open_time: openTime, close_time: closeTime },
                 {
                     headers: {
@@ -51,11 +50,11 @@ const AddPopup = ({ onClose }) => {
                 // console.log(response);
                 alert(response.data.message);
                 onClose();
-                parent.location.reload();
+                onReFetch();
             });
         } catch (error) {
             console.error("Error fetching products:", error);
-            alert('Error');
+            alert('Error adding restaurant' + error.response.data.message);
         }
     }
 
