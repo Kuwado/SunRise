@@ -32,9 +32,9 @@ class RestaurantController extends Controller
     
             // Định nghĩa các quy tắc validate
             $rules = [
-                'name' => 'required|string|max:255|unique:restaurants,name,',
-                'email' => 'required|email|max:255|unique:restaurants,email,',
-                'phone' => 'required|string|max:20|unique:restaurants,phone,',
+                'name' => 'required|string|max:255,',
+                'email' => 'required|email|max:255,',
+                'phone' => 'required|string|max:20,',
                 'address' => 'required|string|max:255',
                 'description' => 'nullable|string',
                 'price_start' => 'required|numeric',
