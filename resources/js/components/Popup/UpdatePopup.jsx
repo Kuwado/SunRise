@@ -175,7 +175,7 @@ const UpdatePopup = ({ id, onClose, onReFetch }) => {
                                                 <div className={cx('image-list')}>
                                                     {imageList.map((image, index) => (
                                                         <div key={index} className={cx('image-item')}>
-                                                            <img src={image.data_url || image} alt="" width="100" height='75' onClick={() => onImageUpdate(index)} />
+                                                            <img src={image.data_url ? image?.data_url : image} alt="" width="100" height='75' onClick={() => onImageUpdate(index)} />
                                                             <div className={cx('image-item__btn-wrapper')}>
                                                                 <button onClick={() => onImageRemove(index)}>
                                                                     <FontAwesomeIcon icon={faTimes}></FontAwesomeIcon>
