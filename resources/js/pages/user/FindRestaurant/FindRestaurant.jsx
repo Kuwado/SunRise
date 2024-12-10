@@ -90,7 +90,7 @@ const FindRestaurant = () => {
                     setPriceRange({ start: user.price_end, end: null });
             }
             setPriceType(typeId);
-        };
+        }
         setCurrentPage(1);
     };
 
@@ -176,11 +176,12 @@ const FindRestaurant = () => {
 
     const handleSortPrice = () => {
         setFilterDrRating('');
-    }
+    };
 
     const handleSortRating = () => {
         setFilterDrPrice('');
-    }
+    };
+    console.log(products);
 
     return (
         <div className={cx('find-restaurant')}>
@@ -209,12 +210,24 @@ const FindRestaurant = () => {
                 </div>
                 <div className={cx('filters-right')}>
                     <h3>並べ替え:</h3>
-                    <Dropdown title="並べ替え" width="151px" setValue={setFilterDrPrice} selected={filterDrPrice} handleClick={handleSortPrice}>
+                    <Dropdown
+                        title="並べ替え"
+                        width="151px"
+                        setValue={setFilterDrPrice}
+                        selected={filterDrPrice}
+                        handleClick={handleSortPrice}
+                    >
                         <div>評価: 低から高</div>
                         <div>評価: 高から低</div>
                     </Dropdown>
                     <h3>結果:</h3>
-                    <Dropdown title="結果" width="100px" setValue={setFilterDrRating} selected={filterDrRating} handleClick={handleSortRating}>
+                    <Dropdown
+                        title="結果"
+                        width="100px"
+                        setValue={setFilterDrRating}
+                        selected={filterDrRating}
+                        handleClick={handleSortRating}
+                    >
                         <div>1 - 5</div>
                         <div>5 - 1</div>
                     </Dropdown>
@@ -235,32 +248,16 @@ const FindRestaurant = () => {
                 <div className={cx('filter')}>
                     <div className={cx('filter-option')}>
                         <h3>価格（円）</h3>
-                        <CheckboxInput
-                            id="1"
-                            checked={priceType === 1}
-                            onChange={() => handlePriceTypeChange(1)}
-                        >
+                        <CheckboxInput id="1" checked={priceType === 1} onChange={() => handlePriceTypeChange(1)}>
                             安い (20)
                         </CheckboxInput>
-                        <CheckboxInput
-                            id="2"
-                            checked={priceType === 2}
-                            onChange={() => handlePriceTypeChange(2)}
-                        >
+                        <CheckboxInput id="2" checked={priceType === 2} onChange={() => handlePriceTypeChange(2)}>
                             手頃な価格 (20)
                         </CheckboxInput>
-                        <CheckboxInput
-                            id='3'
-                            checked={priceType === 3}
-                            onChange={() => handlePriceTypeChange(3)}
-                        >
+                        <CheckboxInput id="3" checked={priceType === 3} onChange={() => handlePriceTypeChange(3)}>
                             高い (50)
                         </CheckboxInput>
-                        <CheckboxInput
-                            id="4"
-                            checked={priceType === 4}
-                            onChange={() => handlePriceTypeChange(4)}
-                        >
+                        <CheckboxInput id="4" checked={priceType === 4} onChange={() => handlePriceTypeChange(4)}>
                             高価なものはすべて (5)
                         </CheckboxInput>
                     </div>
@@ -335,11 +332,21 @@ const FindRestaurant = () => {
                     </div>
                     <div className={cx('filter-option')}>
                         <h3>距離</h3>
-                        <CheckboxInput id="16" onChange={() => handleDistanceChange(1)}>0.5km 以内 </CheckboxInput>
-                        <CheckboxInput id="17" onChange={() => handleDistanceChange(2)}>0.5～1km </CheckboxInput>
-                        <CheckboxInput id="18" onChange={() => handleDistanceChange(3)}>1～1.5km</CheckboxInput>
-                        <CheckboxInput id="19" onChange={() => handleDistanceChange(4)}>1.5～2km</CheckboxInput>
-                        <CheckboxInput id="20" onChange={() => handleDistanceChange(5)}>2km 以上</CheckboxInput>
+                        <CheckboxInput id="16" onChange={() => handleDistanceChange(1)}>
+                            0.5km 以内{' '}
+                        </CheckboxInput>
+                        <CheckboxInput id="17" onChange={() => handleDistanceChange(2)}>
+                            0.5～1km{' '}
+                        </CheckboxInput>
+                        <CheckboxInput id="18" onChange={() => handleDistanceChange(3)}>
+                            1～1.5km
+                        </CheckboxInput>
+                        <CheckboxInput id="19" onChange={() => handleDistanceChange(4)}>
+                            1.5～2km
+                        </CheckboxInput>
+                        <CheckboxInput id="20" onChange={() => handleDistanceChange(5)}>
+                            2km 以上
+                        </CheckboxInput>
                     </div>
                 </div>
 
@@ -350,7 +357,10 @@ const FindRestaurant = () => {
                             image={cafe.image}
                             name={cafe.name}
                             location={cafe.address}
-                            priceRange={cafe.price_start}
+                            price_start={cafe.price_start}
+                            price_end={cafe.price_end}
+                            open_time={cafe.open_time}
+                            close_time={cafe.close_time}
                             rating={cafe.rating}
                             reviews={cafe.reviews}
                             isListView={!isGridView}

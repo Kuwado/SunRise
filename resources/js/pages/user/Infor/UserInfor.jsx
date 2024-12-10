@@ -11,8 +11,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { DefaultInput } from '~/components/Input';
 import Dropdown from '~/components/Dropdown';
 import { useEffect } from 'react';
+import ImageUploading from 'react-images-uploading';
 const cx = classNames.bind(styles);
 export default function UserInfor() {
+    const [avatar, setAvatar] = useState(null);
     const [name, setName] = useState('モビナ・ミルバゲリ');
     const [email, setEmail] = useState('');
     const [birthDate, setBirthDate] = useState('');
@@ -30,7 +32,7 @@ export default function UserInfor() {
         name: '',
         email: '',
         birth: '',
-        phone: `${headPhone}${phone}`,
+        phone: ``,
         address: '',
         city: '',
         desired_distance: '',
@@ -38,7 +40,7 @@ export default function UserInfor() {
         price_end: '',
         workplace: '',
         nationality: '',
-        style_id: [],
+        style_id: '',
     });
 
     const cityOptions = ['Tokyo', 'Osaka', 'Kyoto'];
@@ -58,17 +60,18 @@ export default function UserInfor() {
 
     console.log(user);
 
+    const onAvatarChange = (image) => {
+        // console.log(image);
+        setAvatar(image);
+    };
+
     useEffect(() => {
         const fetchUserInfo = async () => {
             try {
                 const response = await axios.get(`/api/user`, {
                     params: { id: 2 }, // Thay ID bằng ID user
                 });
-                const userData = response.data.user;
-                setUser({
-                    ...userData,
-                    style_id: Array.isArray(userData.style_id) ? userData.style_id : [], // Đảm bảo style_id là mảng
-                });
+                setUser(response.data.user);
                 // setAvatarPreview(response.data.user.avatar);
             } catch (error) {
                 console.error('Error fetching user info:', error);
@@ -104,15 +107,6 @@ export default function UserInfor() {
             console.error('Error updating user info:', error);
         }
     };
-
-    const handleStyleChange = (styleId) => {
-        setUser((prevUser) => {
-            const updatedStyles = prevUser.style_id.includes(styleId)
-                ? prevUser.style_id.filter((id) => id !== styleId) // Loại bỏ nếu đã có
-                : [...prevUser.style_id, styleId]; // Thêm nếu chưa có
-            return { ...prevUser, style_id: updatedStyles };
-        });
-    };
     console.log(user);
 
     return (
@@ -121,6 +115,23 @@ export default function UserInfor() {
                 <img className={cx('header-image')} src={images.headerUser} alt="headerUser" />
                 <div className={cx('header-title')}>
                     <div className={cx('header-avatar')}>
+                        {/* <ImageUploading
+                            value={avatar ? [avatar] : []}
+                            onChange={(imageList) => onAvatarChange(imageList[0])}
+                        >
+                            {({ onImageUpload, onImageUpdate }) => (
+                                <div className={cx('upload__avatar-wrapper')}>
+                                    {avatar ? (
+                                        <img src={avatar.dataURL} width="100" height="100" onClick={onImageUpdate} />
+                                    ) : (
+                                        <button onClick={onImageUpload}>
+                                            <FontAwesomeIcon icon={faCamera}></FontAwesomeIcon>
+                                        </button>
+                                    )}
+                                </div>
+                            )}
+                        </ImageUploading> */}
+
                         <img src={images.avatarUser} alt="avatarUser" />
                         <div className={cx('camera-icon')}>
                             <FontAwesomeIcon icon={faCamera} />
@@ -210,7 +221,7 @@ export default function UserInfor() {
                                 inputClassName={cx('input')}
                             />
                             <div className={cx('phone-input')}>
-                                <Dropdown title="+98" selected={headPhone} setValue={setHeadPhone} label="電話番号">
+                                <Dropdown title="+84" selected={headPhone} setValue={setHeadPhone} label="電話番号">
                                     {headPhoneOptions.map((code, index) => (
                                         <div key={index}>{code}</div>
                                     ))}
@@ -249,23 +260,20 @@ export default function UserInfor() {
                             <Dropdown
                                 title="好きな味"
                                 selected={
-                                    user.style_id
-                                        .map((id) => styleOptions.find((option) => option.id === id)?.label)
-                                        .join(', ') || '選択してください'
+                                    styleOptions.find((option) => option.id === user.style_id)?.label ||
+                                    '選択してください'
                                 }
                                 setValue={(value) => {
                                     const selectedOption = styleOptions.find((option) => option.label === value);
                                     if (selectedOption) {
-                                        handleStyleChange(selectedOption.id);
+                                        setUser({ ...user, style_id: selectedOption.id });
                                     }
                                 }}
                                 width="100%"
                                 label="好きな味"
                             >
                                 {styleOptions.map((option, index) => (
-                                    <div key={index}>
-                                        {user.style_id.includes(option.id) ? '✅ ' : ''} {option.label}
-                                    </div>
+                                    <div key={index}>{option.label}</div>
                                 ))}
                             </Dropdown>
                         </div>

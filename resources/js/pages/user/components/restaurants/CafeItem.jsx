@@ -8,7 +8,18 @@ import { faHeart } from '@fortawesome/free-solid-svg-icons';
 
 const cx = classNames.bind(styles);
 
-const CafeItem = ({ image, name, location, priceRange, rating, reviews, isListView }) => {
+const CafeItem = ({
+    image,
+    name,
+    location,
+    price_start,
+    price_end,
+    rating,
+    reviews,
+    isListView,
+    open_time,
+    close_time,
+}) => {
     const [isFavorite, setIsFavorite] = useState(false);
 
     const toggleFavorite = () => {
@@ -26,7 +37,16 @@ const CafeItem = ({ image, name, location, priceRange, rating, reviews, isListVi
             <div className={cx('details', { list: isListView })}>
                 <h3>{name}</h3>
                 <p>{location}</p>
-                <h4>{priceRange}</h4>
+                <h4>
+                    {price_start} ~ {price_end} 円以下
+                </h4>
+                {isListView && (
+                    <div className={cx('wrap-time')}>
+                        <p>Open: {open_time ? open_time.slice(0, 5) : ''}</p>
+                        <p>Close: {close_time ? close_time.slice(0, 5) : ''}</p>
+                    </div>
+                )}
+
                 <div className={cx('rating')}>
                     <Rating small rate={rating} />
                     <span>({reviews} レビュー)</span>
