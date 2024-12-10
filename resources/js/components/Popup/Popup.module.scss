@@ -136,11 +136,11 @@
             padding: 10px;
             margin-top: 6px;
 
-           .add-btn {
-                    top: 50%;
-                    left: 50%;
-                    transform: translate(-50%, -20%);
-                }
+            .add-btn {
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -20%);
+            }
 
             .image-list {
                 display: grid;
@@ -155,11 +155,11 @@
                         border-radius: 4px;
                         object-fit: contain;
                     }
-    
+
                     button {
                         top: -8px;
                         right: -9px;
-                        padding: 0 4px;
+                        padding: 1px 4px;
                         border-radius: 50%;
                     }
                 }

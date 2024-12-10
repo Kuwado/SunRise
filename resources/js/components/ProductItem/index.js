@@ -1,3 +1,3 @@
-import ProductItem from './ProductItem';
+import RestaurantItem from './RestaurantItem';
 
-export default ProductItem;
+export default RestaurantItem;

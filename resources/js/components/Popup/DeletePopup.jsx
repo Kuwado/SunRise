@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPlus, faTimes, faPen } from '@fortawesome/free-solid-svg-icons';
+import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 
 import { DefaultInput } from '../Input';
@@ -8,7 +8,6 @@ import Button from '../Button';
 
 import styles from './Popup.module.scss';
 import classNames from 'classnames/bind';
-
 const cx = classNames.bind(styles);
 
 const DeletePopup = ({ id, onClose, onReFetch }) => {
@@ -26,7 +25,7 @@ const DeletePopup = ({ id, onClose, onReFetch }) => {
     const [closeTime, setCloseTime] = useState('');
 
     useEffect(() => {
-        const fetchProducts = async () => {
+        const fetchRestaurant = async () => {
             try {
                 const response = await axios.get(
                     `/api/restaurant?id=${id}`
@@ -41,16 +40,16 @@ const DeletePopup = ({ id, onClose, onReFetch }) => {
                     setPriceEnd(response.data.restaurant.price_end);
                     setMail(response.data.restaurant.email);
                     setAvatar(response.data.restaurant.avatar);
-                    setImages(response.data.restaurant.media);
+                    setImages(response.data.restaurant.media ? response.data.restaurant.media : []);
                     setOpenTime(response.data.restaurant.open_time);
                     setCloseTime(response.data.restaurant.close_time);
                 }
             } catch (error) {
-                console.error("Error fetching products:", error);
+                console.error("Error fetching restaurant:", error);
             }
         };
 
-        fetchProducts();
+        fetchRestaurant();
     }, []);
 
     const onSubmitHandler = async () => {
@@ -65,7 +64,7 @@ const DeletePopup = ({ id, onClose, onReFetch }) => {
                 onReFetch();
             }
         } catch (error) {
-            console.error("Error fetching products:", error);
+            console.error("Error deleting restaurant:", error);
             alert('Error deleting restaurant' + error?.response?.data?.message);
         }
     };
@@ -120,7 +119,7 @@ const DeletePopup = ({ id, onClose, onReFetch }) => {
                                 <label className={cx('label')}>フォトギャラリー</label>
                                 <div className={cx('upload__image-wrapper')}>
                                     <div className={cx('image-list')}>
-                                        {images.map((image, index) => (
+                                        { images.length > 0 && images.map((image, index) => (
                                             <div key={index} className={cx('image-item')}>
                                                 <img src={image} alt="" width="100" height='75'/>
                                             </div>
