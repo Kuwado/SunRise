@@ -372,6 +372,15 @@ class RestaurantController extends Controller
             ], 422);
         }
 
+        // Location
+        $address = $request->input('address');
+        $locations = $this->locationService->getCoordinates($address);
+        if (!$locations) {
+            return response()->json([
+                'message' => 'Địa chỉ không hợp lệ',
+            ], 422);
+        } 
+
         $avatarPath = null;
         if ($request->hasFile('avatar')) {
             $avatar = $request->file('avatar');
