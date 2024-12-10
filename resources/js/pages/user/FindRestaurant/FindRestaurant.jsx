@@ -10,6 +10,7 @@ import Dropdown from '~/components/Dropdown';
 import { CheckboxInput } from '~/components/Checkbox';
 import Rating from '~/components/Rating';
 import Button from '~/components/Button';
+import Search from '~/components/Search';
 const cx = classNames.bind(styles);
 
 const FindRestaurant = () => {
@@ -19,32 +20,38 @@ const FindRestaurant = () => {
     const [products, setProducts] = useState([]);
     const [ratings, setRatings] = useState([]);
     const [types, setTypes] = useState([]);
-    const [styles, setStyles] = useState([1, 2, 3]);
+    const [styles, setStyles] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [sortPrice, setSortPrice] = useState('asc');
+    const [search, setSearch] = useState('');
 
     //state filter
 
     const [filterDrPrice, setFilterDrPrice] = useState('評価: 低から高', '高から低');
     const [filterDrRating, setFilterDrRating] = useState('1 - 5', '5 - 1');
-    console.log(filterDrPrice);
+    const [priceRange, setPriceRange] = useState({ start: null, end: null });
 
     useEffect(() => {
         const fetchProducts = async () => {
             try {
                 const response = await axios.get(`/api/restaurants`, {
                     params: {
-                        styleIds: styles.toString(),
+                        style_ids: styles.toString(),
                         sort_price: filterDrPrice === '評価: 低から高' ? 'asc' : 'desc',
                         sort_rating: filterDrRating === '1 - 5' ? 'asc' : 'desc',
                         page: currentPage,
                         per_page: 9,
+                        ratings: ratings.toString(),
+                        start: priceRange.start, // Thêm tham số price_start
+                        end: priceRange.end, // Thêm tham số price_end
                     },
                 });
+
                 if (response.status === 200) {
                     setProducts(response.data.restaurants.data);
                     setTotalPages(response.data.restaurants.meta.last_page);
+                    console.log(response.data.restaurants.data);
                 }
             } catch (error) {
                 console.error('Error fetching products:', error);
@@ -52,26 +59,23 @@ const FindRestaurant = () => {
         };
 
         fetchProducts();
-    }, [types, ratings, currentPage, filterDrPrice, filterDrRating]);
+    }, [types, ratings, styles, currentPage, filterDrPrice, filterDrRating, priceRange]);
     const handlePageChange = (page) => {
         setCurrentPage(page);
     };
 
-    const handleTypeChange = (productType) => {
-        setTypes((prevTypes) => {
-            const newTypes = [...prevTypes];
-            if (newTypes.includes(productType)) {
-                newTypes.splice(newTypes.indexOf(productType), 1);
-            } else {
-                newTypes.push(productType);
+    const handlePriceChange = (start, end) => {
+        setPriceRange((prev) => {
+            if (prev.start === start && prev.end === end) {
+                return { start: null, end: null }; // Bỏ chọn nếu đã chọn
             }
-            setCurrentPage(1);
-            return newTypes;
+            return { start, end }; // Cập nhật giá trị mới
         });
+        setCurrentPage(1); // Reset về trang đầu tiên
     };
 
     const handleStyleChange = (styleId) => {
-        setTypes((prevStyles) => {
+        setStyles((prevStyles) => {
             const newStyles = [...prevStyles];
             if (newStyles.includes(styleId)) {
                 newStyles.splice(newStyles.indexOf(styleId), 1);
@@ -95,7 +99,28 @@ const FindRestaurant = () => {
             return newRatings;
         });
     };
-    console.log(products);
+
+    const searchProducts = async () => {
+        try {
+            const response = await axios.get('/api/restaurants', {
+                params: { name: search },
+            });
+            if (response.status === 200) {
+                setProducts(response.data.restaurants.data);
+                setTotalPages(response.data.restaurants.meta.last_page);
+            }
+        } catch (error) {
+            alert('Error fetching products' + error.response.data.message);
+            console.error('Error fetching products:', error);
+        }
+    };
+
+    const handleClearFilter = () => {
+        setStyles([]);
+        setRatings([]);
+        setCurrentPage(1);
+        setPriceRange({});
+    };
 
     return (
         <div className={cx('find-restaurant')}>
@@ -104,11 +129,15 @@ const FindRestaurant = () => {
                 <img src={images.headerFindRestaurant} alt="Restaurant Banner" />
                 <h1>カフェを探すのはやめて、見つけましょう。</h1>
                 <div className={cx('search-bar-wrapper')}>
-                    <FontAwesomeIcon icon={faSearch} className={cx('search-icon')} />
-                    <input
+                    {/* <FontAwesomeIcon icon={faSearch} className={cx('search-icon')} /> */}
+                    <Search
                         type="text"
-                        className={cx('search-bar')}
+                        // className={cx('search-bar')}
+                        width="100%"
                         placeholder="名前、料理、場所からレストランを検索"
+                        value={search}
+                        setValue={setSearch}
+                        onKeyDown={searchProducts}
                     />
                     {/* <button className={cx('btn-search')}>
                         <FontAwesomeIcon icon={faSearch} className={cx('search-icon-2')} />
@@ -118,7 +147,7 @@ const FindRestaurant = () => {
             <div className={cx('filters-container')}>
                 <div className={cx('filters-left')}>
                     <h4>フィルター</h4>
-                    <a href="#">
+                    <a onClick={() => handleClearFilter()} href="#">
                         <FontAwesomeIcon icon={faRedo} />
                         フィルターをクリア
                     </a>
@@ -154,16 +183,31 @@ const FindRestaurant = () => {
                 <div className={cx('filter')}>
                     <div className={cx('filter-option')}>
                         <h3>価格（円）</h3>
-                        <CheckboxInput id="1" checked={types.includes(1)} onChange={() => handleTypeChange(1)}>
+                        <CheckboxInput
+                            id="1"
+                            checked={priceRange.start === 0 && priceRange.end === 100}
+                            onChange={() => handlePriceChange(0, 100)}
+                        >
                             安い (20)
                         </CheckboxInput>
-                        <CheckboxInput id="2" checked={types.includes(2)} onChange={() => handleTypeChange(2)}>
+                        <CheckboxInput
+                            id="2"
+                            checked={priceRange.start === 101 && priceRange.end === 150}
+                            onChange={() => handlePriceChange(101, 150)}
+                        >
                             手頃な価格 (20)
                         </CheckboxInput>
-                        <CheckboxInput id="3" checked={types.includes(3)} onChange={() => handleTypeChange(3)}>
+                        <CheckboxInput
+                            checked={priceRange.start === 151 && priceRange.end === 180}
+                            onChange={() => handlePriceChange(151, 180)}
+                        >
                             高い (50)
                         </CheckboxInput>
-                        <CheckboxInput id="4" checked={types.includes(4)} onChange={() => handleTypeChange(4)}>
+                        <CheckboxInput
+                            id="4"
+                            checked={priceRange.start === 181 && priceRange.end === null}
+                            onChange={() => handlePriceChange(181, null)}
+                        >
                             高価なものはすべて (5)
                         </CheckboxInput>
                     </div>

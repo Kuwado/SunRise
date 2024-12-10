@@ -31,11 +31,6 @@ const Search = ({
 
     return (
         <div className={cx('search-input', { 'no-label': !label, [className]: className })} style={{ width: width }}>
-            <label htmlFor={`search-input-${id}`}>
-                {label}
-                {required && <span className={cx('required-note')}>*</span>}
-                {!label && 'no-label'}
-            </label>
             <FontAwesomeIcon icon={faSearch} className={cx('search-icon')} />
             <input
                 id={`search-input-${id}`}
@@ -45,7 +40,7 @@ const Search = ({
                 placeholder={placeholder}
                 className={cx({ [inputClassName]: inputClassName })}
                 readOnly={readOnly}
-                autoComplete='off'
+                autoComplete="off"
                 onKeyDown={handleKeyDown}
             />
         </div>
