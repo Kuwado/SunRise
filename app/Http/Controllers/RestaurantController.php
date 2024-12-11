@@ -90,7 +90,7 @@ class RestaurantController extends Controller
                         'message' => 'Địa chỉ không hợp lệ',
                     ], 422);
                 }
-   
+
                 $restaurant->longitude = $locations['lng'];
                 $restaurant->latitude = $locations['lat'];
             }
@@ -406,11 +406,19 @@ class RestaurantController extends Controller
             'avatar' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'media.*' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'description' => 'nullable|string',
-            'price_start' => 'required|numeric',
-            'price_end' => 'required|numeric',
-            'open_time' => 'required|string',
-            'close_time' => 'required|string',
+            'price_start' => 'nullable|numeric',
+            'price_end' => 'nullable|numeric',
+            'open_time' => 'nullable|date_format:H:i:s',
+            'close_time' => 'nullable|date_format:H:i:s',
         ]);
+
+        if ($request->input('price_start') >= $request->input('price_end')) {
+            return response()->json(['message' => 'Giá bắt đầu phải nhỏ hơn giá kết thúc.',], 422);
+        } // Kiểm tra điều kiện thời gian mở < thời gian đóng 
+        if ($request->input('open_time') >= $request->input('close_time')) {
+            return response()->json(['message' => 'Thời gian mở phải nhỏ hơn thời gian đóng.',], 422);
+        }
+
 
         if ($validator->fails()) {
             return response()->json([
