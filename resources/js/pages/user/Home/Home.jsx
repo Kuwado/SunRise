@@ -1,4 +1,4 @@
-import React, { useState } from 'react'; // Import useState
+import React, { useContext, useEffect, useState } from 'react'; // Import useState
 import Card from '~/components/Card';
 import images from '~/assets/images';
 import background from '~/assets/background';
@@ -6,9 +6,48 @@ import Button from '~/components/Button';
 import styles from './Home.module.scss';
 import { Link } from 'react-router-dom';
 import config from '~/config';
+import axios from 'axios';
+import { AuthContext } from '~/context/AuthContext';
 
 const Home = () => {
-    const [search, setSearch] = useState(''); // Khai báo state search
+    const { user, userId } = useContext(AuthContext);
+    const [search, setSearch] = useState('');
+    const [newRestaurant, setNewRestaurant] = useState([]);
+    const [favoriteRestaurant, setFavoriteRestaurant] = useState([]);
+
+    console.log(newRestaurant);
+
+    useEffect(() => {
+        const fetchNew = async () => {
+            try {
+                const response = await axios.get(`/api/restaurants?sort_time=asc&per_page=4&page=1&user_id=${userId}`);
+                if (response.status === 200) {
+                    setNewRestaurant(response.data.restaurants.data);
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        };
+
+        fetchNew();
+    }, []);
+
+    useEffect(() => {
+        const fetchFavorite = async () => {
+            try {
+                const response = await axios.get(
+                    `/api/restaurants?style_id=${user.style_id}&per_page=4&page=1user_id=${userId}`,
+                );
+                if (response.status === 200) {
+                    setFavoriteRestaurant(response.data.restaurants.data);
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        };
+
+        fetchFavorite();
+    }, [user]);
 
     const searchProducts = (event) => {
         if (event.key === 'Enter') {
@@ -43,8 +82,8 @@ const Home = () => {
                     一緒にあらゆるスタイルのカフェを探検しましょう。体験する価値のある新しいカフェが常にあります。
                 </p>
                 <div className={styles.coffeeList}>
-                    {[1, 2, 3, 4].map((_, index) => (
-                        <Card key={index} />
+                    {newRestaurant.map((restaurant, index) => (
+                        <Card key={index} restaurant={restaurant} />
                     ))}
                 </div>
                 <img src={images.coffeeBlast} alt="Coffee Blast" className={styles.coffeeBlastDown} />
