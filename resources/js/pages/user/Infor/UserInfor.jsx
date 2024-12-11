@@ -13,6 +13,8 @@ import Dropdown from '~/components/Dropdown';
 import { useEffect } from 'react';
 import { AuthContext } from '~/context/AuthContext';
 import vietnamCities from './vietnamCities.json';
+import japanCities from './japanCities.json';
+
 import workPlaces from './workPlace.json';
 const cx = classNames.bind(styles);
 export default function UserInfor() {
@@ -42,10 +44,15 @@ export default function UserInfor() {
     ];
     // console.log(user);
     useEffect(() => {
-        // Gán danh sách thành phố từ file JSON vào state
-        setCityOptions(vietnamCities);
+        if (currentUser.nationality === 'Vietnam') {
+            setCityOptions(vietnamCities);
+        } else if (currentUser.nationality === 'Japan') {
+            setCityOptions(japanCities);
+        } else {
+            setCityOptions([]);
+        }
         setWorkplaceOptions(workPlaces);
-    }, []);
+    }, [currentUser.nationality]);
 
     return (
         <>

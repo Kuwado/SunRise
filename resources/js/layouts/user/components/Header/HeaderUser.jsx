@@ -11,7 +11,7 @@ import { AuthContext } from '~/context/AuthContext';
 const cx = classNames.bind(styles);
 
 export default function HeaderUser() {
-    const { user } = useContext(AuthContext);
+    const { user, handleLogout } = useContext(AuthContext);
     const navigate = useNavigate();
     const [showMenu, setShowMenu] = useState(false);
     const menuRef = useRef(null);
@@ -70,6 +70,7 @@ export default function HeaderUser() {
                             <div
                                 className={cx('menu-item')}
                                 onClick={() => {
+                                    handleLogout();
                                     navigate('/login');
                                 }}
                             >
