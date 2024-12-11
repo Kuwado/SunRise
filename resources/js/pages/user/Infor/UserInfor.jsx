@@ -12,6 +12,7 @@ import { DefaultInput } from '~/components/Input';
 import Dropdown from '~/components/Dropdown';
 import { useEffect } from 'react';
 import ImageUploading from 'react-images-uploading';
+import japanCities from './japanCities.json';
 const cx = classNames.bind(styles);
 export default function UserInfor() {
     const [avatar, setAvatar] = useState(null);
@@ -27,6 +28,7 @@ export default function UserInfor() {
     const [priceRange, setPriceRange] = useState(priceRangeOptions);
     const [workplace, setWorkplace] = useState('Keangnam');
     const [country, setCountry] = useState('Vietnam', 'Japan');
+    const [cityOptions, setCityOptions] = useState([]);
 
     const [user, setUser] = useState({
         name: '',
@@ -43,7 +45,7 @@ export default function UserInfor() {
         style_id: '',
     });
 
-    const cityOptions = ['Tokyo', 'Osaka', 'Kyoto'];
+    // const cityOptions = ['Tokyo', 'Osaka', 'Kyoto'];
     const distanceOptions = ['2', '3', '4'];
     const workplaceOptions = ['Keangnam', 'Landmark', 'Bitexco'];
     const countryOptions = ['Vietnam', 'Japan'];
@@ -77,6 +79,7 @@ export default function UserInfor() {
                 console.error('Error fetching user info:', error);
             }
         };
+        setCityOptions(japanCities);
         fetchUserInfo();
     }, []);
 
