@@ -13,6 +13,8 @@ import Dropdown from '~/components/Dropdown';
 import { useEffect } from 'react';
 import ImageUploading from 'react-images-uploading';
 import { AuthContext } from '~/context/AuthContext';
+import japanCities from './japanCities.json';
+import workPlaces from './workPlace.json';
 const cx = classNames.bind(styles);
 export default function UserInfor() {
     const { currentUser, setCurrentUser, updateUser } = useContext(AuthContext);
@@ -23,16 +25,13 @@ export default function UserInfor() {
     //     setCurrentUser({});
     // }, [user]);
 
-    const [avatar, setAvatar] = useState(null);
     const [headPhone, setHeadPhone] = useState('');
     const priceRangeOptions = ['0-40', '40-90', '90-150'];
-    const [priceRange, setPriceRange] = useState(priceRangeOptions);
-
-    const cityOptions = ['Tokyo', 'Osaka', 'Kyoto'];
+    const [cityOptions, setCityOptions] = useState([]);
+    const [workplaceOptions, setWorkplaceOptions] = useState([]);
     const distanceOptions = ['2', '3', '4'];
-    const workplaceOptions = ['Keangnam', 'Landmark', 'Bitexco'];
+    // const workplaceOptions = ['Keangnam', 'Landmark', 'Bitexco'];
     const countryOptions = ['Vietnam', 'Japan'];
-    // const styleOptions = ['エスプレッソ', 'アメリカ人', 'カプチーノ', 'マキアートコーヒー', 'ラテ', 'フラットホワイト'];
     const headPhoneOptions = ['+01', '+91', '+84'];
     const styleOptions = [
         { id: 1, label: 'エスプレッソ' },
@@ -42,13 +41,12 @@ export default function UserInfor() {
         { id: 5, label: 'ラテ' },
         { id: 6, label: 'フラットホワイト' },
     ];
-
     // console.log(user);
-
-    const onAvatarChange = (image) => {
-        // console.log(image);
-        setAvatar(image);
-    };
+    useEffect(() => {
+        // Gán danh sách thành phố từ file JSON vào state
+        setCityOptions(japanCities);
+        setWorkplaceOptions(workPlaces);
+    }, []);
 
     return (
         <>
@@ -57,28 +55,6 @@ export default function UserInfor() {
                     <img className={cx('header-image')} src={images.headerUser} alt="headerUser" />
                     <div className={cx('header-title')}>
                         <div className={cx('header-avatar')}>
-                            <ImageUploading
-                                value={currentUser.avatar ? [currentUser.avatar] : []}
-                                onChange={(imageList) => onAvatarChange(imageList[0])}
-                            >
-                                {({ onImageUpload, onImageUpdate }) => (
-                                    <div className={cx('upload__avatar-wrapper')}>
-                                        {currentUser.avatar ? (
-                                            <img
-                                                src={currentUser.avatar.dataURL}
-                                                width="100"
-                                                height="100"
-                                                onClick={onImageUpdate}
-                                            />
-                                        ) : (
-                                            <button onClick={onImageUpload}>
-                                                <FontAwesomeIcon icon={faCamera}></FontAwesomeIcon>
-                                            </button>
-                                        )}
-                                    </div>
-                                )}
-                            </ImageUploading>
-
                             <img
                                 className={cx('avatar')}
                                 src={
@@ -229,10 +205,10 @@ export default function UserInfor() {
                                     ))}
                                 </Dropdown>
                                 <Dropdown
-                                    title="好きな味"
+                                    title="エスプレッソ"
                                     selected={
                                         styleOptions.find((option) => option.id === currentUser.style_id)?.label ||
-                                        '選択してください'
+                                        'エスプレッソ'
                                     }
                                     setValue={(value) => {
                                         const selectedOption = styleOptions.find((option) => option.label === value);

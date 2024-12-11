@@ -5,10 +5,12 @@ import images from '~/assets/images';
 import Rating from '~/components/Rating';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart } from '@fortawesome/free-solid-svg-icons';
-
+import { Link } from 'react-router-dom';
+import config from '~/config';
 const cx = classNames.bind(styles);
 
 const CafeItem = ({
+    id,
     image,
     name,
     location,
@@ -27,7 +29,10 @@ const CafeItem = ({
     };
 
     return (
-        <div className={cx('cafe-item', { list: isListView })}>
+        <Link
+            to={`${config.routes.user.restaurantDetail.replace(':restaurantId', id)}`}
+            className={cx('cafe-item', { list: isListView })}
+        >
             <div className={cx('image-container')}>
                 <img src={images.restaurantItem1} alt={name} className={cx('image')} />
                 <div className={cx('favorite-icon', { active: isFavorite })} onClick={toggleFavorite}>
@@ -52,7 +57,7 @@ const CafeItem = ({
                     <span>({reviews} レビュー)</span>
                 </div>
             </div>
-        </div>
+        </Link>
     );
 };
 

@@ -38,9 +38,11 @@ const AuthProvider = ({ children }) => {
         try {
             const response = await axios.post(`/api/user/update/${currentUser.id}`, formData);
             if (response.status === 200) {
+                alert(response.data.message);
                 fetchUser();
             }
         } catch (error) {
+            alert(response.data.message);
             console.log(error);
         }
     };

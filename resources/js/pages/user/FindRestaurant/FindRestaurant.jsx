@@ -354,6 +354,7 @@ const FindRestaurant = () => {
                     {products.map((cafe, index) => (
                         <CafeItem
                             key={index}
+                            id={cafe.id}
                             image={cafe.image}
                             name={cafe.name}
                             location={cafe.address}

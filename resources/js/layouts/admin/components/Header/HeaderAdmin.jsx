@@ -44,10 +44,10 @@ export default function HeaderAdmin() {
                         <div
                             className={cx('menu-item')}
                             onClick={() => {
-                                navigate('/');
+                                navigate('/userInfor');
                             }}
                         >
-                            HomePage
+                            UserInfor
                         </div>
                         <div
                             className={cx('menu-item')}
