@@ -2,7 +2,7 @@ import classNames from 'classnames/bind';
 
 import styles from './ProductDetail.module.scss';
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import Rating from '~/components/Rating';
 
@@ -26,6 +26,7 @@ import { CustomInput } from '~/components/Input';
 const cx = classNames.bind(styles);
 
 const ProductDetail = () => {
+    const navigate = useNavigate();
     const { restaurantId } = useParams();
     const [restaurant, setRestaurant] = useState(null);
     const [reviews, setReviews] = useState([]);
@@ -74,12 +75,12 @@ const ProductDetail = () => {
                 <main className={cx('restaurant-detail')}>
                     <div className={cx('content')}>
                         <div className={cx('slider-box')}>
-                            <div className={cx('back-btn')}>
+                            <div className={cx('back-btn')} onClick={() => navigate(-1)}>
                                 <FontAwesomeIcon icon={faChevronLeft} />
                                 <span>戻る</span>
                             </div>
                             <div className={cx('line')}></div>
-                            <Slider images={restaurant.media} />
+                            <Slider images={restaurant.media ?? []} />
                         </div>
 
                         <div className={cx('detail-box')}>

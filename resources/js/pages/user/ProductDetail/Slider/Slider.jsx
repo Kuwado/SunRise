@@ -31,6 +31,7 @@ const responsive = {
 };
 
 const Slider = ({ images = [] }) => {
+    console.log(images);
     return (
         <div className={cx('slider')}>
             <Carousel
@@ -40,7 +41,7 @@ const Slider = ({ images = [] }) => {
                 keyBoardControl={true}
                 removeArrowOnDeviceType={['minitablet', 'mobile']}
             >
-                {images.length > 0 &&
+                {images && images.length > 0 &&
                     images.map((item, index) => (
                         <div key={`image-${index}`} className={cx('slider-item')}>
                             <img src={item} alt="item" />

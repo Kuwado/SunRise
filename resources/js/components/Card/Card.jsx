@@ -4,6 +4,7 @@ import styles from './Card.module.scss';
 import Rating from '../Rating';
 import Button from '../Button';
 import images from '~/assets/images';
+import { useNavigate } from 'react-router-dom';
 
 const cx = classNames.bind(styles);
 
@@ -22,7 +23,15 @@ const formatDistance = (distance) => {
     return `${Math.round(distance)} Km`;
 };
 
+
+
 const Card = ({ restaurant = Restaurant }) => {
+    const navigate = useNavigate();
+
+
+    const handleSeeDetail = () => {
+        navigate(`/restaurant/${restaurant.id}`)
+    }
     return (
         <div className={cx('card')}>
             <div className={cx('avatar')}>
@@ -45,7 +54,7 @@ const Card = ({ restaurant = Restaurant }) => {
                 </div>
             </div>
 
-            <Button className={cx('view-btn')} secondary curved shadow>
+            <Button className={cx('view-btn')} secondary curved shadow onClick={handleSeeDetail}>
                 もっと見る
             </Button>
         </div>
