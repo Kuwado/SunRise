@@ -128,8 +128,6 @@ const ProductDetail = () => {
                             <div className={cx('line')}></div>
                         </div>
 
-                        <CustomInput />
-
                         <CommentInput restaurantId={restaurantId} />
 
                         <div className={cx('comment-box')}>
