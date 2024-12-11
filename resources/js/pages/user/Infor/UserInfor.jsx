@@ -11,9 +11,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { DefaultInput } from '~/components/Input';
 import Dropdown from '~/components/Dropdown';
 import { useEffect } from 'react';
-import ImageUploading from 'react-images-uploading';
 import { AuthContext } from '~/context/AuthContext';
-import japanCities from './japanCities.json';
+import vietnamCities from './vietnamCities.json';
 import workPlaces from './workPlace.json';
 const cx = classNames.bind(styles);
 export default function UserInfor() {
@@ -44,7 +43,7 @@ export default function UserInfor() {
     // console.log(user);
     useEffect(() => {
         // Gán danh sách thành phố từ file JSON vào state
-        setCityOptions(japanCities);
+        setCityOptions(vietnamCities);
         setWorkplaceOptions(workPlaces);
     }, []);
 

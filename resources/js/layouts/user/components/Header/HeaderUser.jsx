@@ -33,7 +33,9 @@ export default function HeaderUser() {
 
     return (
         <div className={cx('header')}>
-            <h1 className={styles.logoText}>SunRise</h1>
+            <Link to={config.routes.user.home} className={styles.logoText}>
+                SunRise
+            </Link>
             <div className={cx('tab-menu')}>
                 <Link to={config.routes.user.home} className={cx('tab-home')}>
                     ホーム
