@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react'; // Import useState
 import Card from '~/components/Card';
 import images from '~/assets/images';
 import background from '~/assets/background';
@@ -8,25 +8,36 @@ import { Link } from 'react-router-dom';
 import config from '~/config';
 
 const Home = () => {
+    const [search, setSearch] = useState(''); // Khai báo state search
+
+    const searchProducts = (event) => {
+        if (event.key === 'Enter') {
+            console.log(`Searching for: ${search}`);
+            // Thực hiện logic tìm kiếm ở đây
+        }
+    };
+
     return (
         <div className={styles.homePage}>
             {/* Search Bar Section */}
-            <section 
-                className={styles.searchSection}
-                style={{ background: `url(${background.bg2}) no-repeat`, backgroundSize: 'cover' }}
-            >
-
-                <input 
-                    type="text" 
-                    className={styles.searchBar} 
-                    placeholder="名前、料理、場所からレストランを検索" 
-                />
-                
-            </section>
+            <div className={styles.banner}>
+                <img src={images.headerFindRestaurant} alt="Restaurant Banner" />
+                <h1>カフェを探すのはやめて、見つけましょう。</h1>
+                <div className={styles.searchBarWrapper}>
+                    <input
+                        type="text"
+                        style={{ width: '100%' }}
+                        placeholder="名前、料理、場所からレストランを検索"
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                        onKeyDown={searchProducts}
+                    />
+                </div>
+            </div>
 
             {/* New Cafe Style Section */}
             <section className={styles.newStyleSection}>
-            <img src={images.coffeeBlast} alt="Coffee Blast" className={styles.coffeeBlast} />
+                <img src={images.coffeeBlast} alt="Coffee Blast" className={styles.coffeeBlast} />
                 <h2 className={styles.sectionHeading}>新しいカフェスタイルを楽しむ</h2>
                 <p className={styles.sectionDescription}>
                     一緒にあらゆるスタイルのカフェを探検しましょう。体験する価値のある新しいカフェが常にあります。
@@ -42,9 +53,7 @@ const Home = () => {
             {/* Favorites Cafe Section */}
             <section className={styles.favoritesSection}>
                 <h2 className={styles.sectionHeading}>お気に入るカフェ</h2>
-                <p className={styles.sectionDescription}>
-                    あなたのお気に入りのカフェが一挙に
-                </p>
+                <p className={styles.sectionDescription}>あなたのお気に入りのカフェが一挙に</p>
                 <div className={styles.coffeeList}>
                     {[1, 2, 3, 4].map((_, index) => (
                         <Card key={index} />
@@ -61,7 +70,10 @@ const Home = () => {
                 <img src={images.cfImage2} alt="Footer Top" className={styles.cfImage2Right} />
                 <div
                     className={styles.footerContent}
-                    style={{ background: `var(--bg-secondary) url(${images.footerDown})`, backgroundSize: `contain` }}
+                    style={{
+                        background: `var(--bg-secondary) url(${images.footerDown})`,
+                        backgroundSize: `contain`,
+                    }}
                 >
                     <nav className={styles.footerNav}>
                         <div className={styles.footerDesc}>
@@ -70,7 +82,7 @@ const Home = () => {
                             <p>これまでにない豊かなフレーバーを楽しんで、特別なひとときを過ごしませんか？</p>
                             <p>Sun*の社員にぴったりのカフェを見つけて、最高の体験を提供します</p>
                         </div>
-                        <div className={styles.info}> 
+                        <div className={styles.info}>
                             <ul>
                                 <li>
                                     <strong>サービス</strong>
