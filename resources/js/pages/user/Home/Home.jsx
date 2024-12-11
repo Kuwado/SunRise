@@ -36,7 +36,7 @@ const Home = () => {
         const fetchFavorite = async () => {
             try {
                 const response = await axios.get(
-                    `/api/restaurants?style_id=${user.style_id}&per_page=4&page=1user_id=${userId}`,
+                    `/api/restaurants?style_id=${user.style_id}&per_page=4&page=1&user_id=${userId}`,
                 );
                 if (response.status === 200) {
                     setFavoriteRestaurant(response.data.restaurants.data);
@@ -94,8 +94,8 @@ const Home = () => {
                 <h2 className={styles.sectionHeading}>お気に入るカフェ</h2>
                 <p className={styles.sectionDescription}>あなたのお気に入りのカフェが一挙に</p>
                 <div className={styles.coffeeList}>
-                    {[1, 2, 3, 4].map((_, index) => (
-                        <Card key={index} />
+                    {favoriteRestaurant.map((restaurant, index) => (
+                        <Card key={index} restaurant={restaurant} />
                     ))}
                 </div>
             </section>
