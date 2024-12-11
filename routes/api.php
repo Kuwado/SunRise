@@ -24,6 +24,9 @@ Route::post('/restaurant/update/{id}', [RestaurantController::class, 'updateRest
 Route::delete('/restaurant/delete/{id}', [RestaurantController::class, 'deleteRestaurant']);
 Route::get('/restaurant', [RestaurantController::class, 'getRestaurant']);
 Route::get('/restaurants', [RestaurantController::class, 'getRestaurants']);
+Route::get('/restaurants/count', [RestaurantController::class, 'getCounts']);
+
+// Reviews
 Route::get('/reviews', [ReviewController::class, 'getReviews']);
 
 

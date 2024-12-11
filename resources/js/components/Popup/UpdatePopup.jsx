@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPlus, faTimes, faPen } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faTimes } from '@fortawesome/free-solid-svg-icons';
 import ImageUploading from 'react-images-uploading';
 import axios from 'axios';
 
@@ -9,7 +9,6 @@ import Button from '../Button';
 
 import styles from './Popup.module.scss';
 import classNames from 'classnames/bind';
-
 const cx = classNames.bind(styles);
 
 const UpdatePopup = ({ id, onClose, onReFetch }) => {
@@ -29,33 +28,34 @@ const UpdatePopup = ({ id, onClose, onReFetch }) => {
     const [closeTime, setCloseTime] = useState('');
     const maxNumber = 4;
 
-    const fetchProducts = async () => {
-        try {
-            const response = await axios.get(
-                `/api/restaurant?id=${id}`
-            );
-            if (response.status === 200) {
-                setRestaurant(response.data.restaurant);
-                setName(response.data.restaurant.name);
-                setDesc(response.data.restaurant.description);
-                setAddress(response.data.restaurant.address);
-                setPhone(response.data.restaurant.phone);
-                setPriceStart(response.data.restaurant.price_start);
-                setPriceEnd(response.data.restaurant.price_end);
-                setPriceStart(response.data.restaurant.price_start);
-                setEmail(response.data.restaurant.email);
-                setAvatar(response.data.restaurant.avatar);
-                setImages(response.data.restaurant.media);
-                setOpenTime(response.data.restaurant.open_time);
-                setCloseTime(response.data.restaurant.close_time);
-            }
-        } catch (error) {
-            console.error("Error fetching products:", error);
-        }
-    };
-
+    
     useEffect(() => {
-        fetchProducts();
+        const fetchRestaurant = async () => {
+            try {
+                const response = await axios.get(
+                    `/api/restaurant?id=${id}`
+                );
+                if (response.status === 200) {
+                    setRestaurant(response.data.restaurant);
+                    setName(response.data.restaurant.name);
+                    setDesc(response.data.restaurant.description);
+                    setAddress(response.data.restaurant.address);
+                    setPhone(response.data.restaurant.phone);
+                    setPriceStart(response.data.restaurant.price_start);
+                    setPriceEnd(response.data.restaurant.price_end);
+                    setPriceStart(response.data.restaurant.price_start);
+                    setEmail(response.data.restaurant.email);
+                    setAvatar(response.data.restaurant.avatar);
+                    setImages(response.data.restaurant.media);
+                    setOpenTime(response.data.restaurant.open_time);
+                    setCloseTime(response.data.restaurant.close_time);
+                }
+            } catch (error) {
+                console.error("Error fetching restaurants:", error);
+            }
+        };
+
+        fetchRestaurant();
     }, []);
 
     const onAvatarChange = (image) => {
@@ -72,9 +72,10 @@ const UpdatePopup = ({ id, onClose, onReFetch }) => {
 
     const onSubmitHandler = async (e) => {
         e.preventDefault();
+        console.log(imagesFile);
         try {
             const data = await axios.post(`/api/restaurant/update/${id}`,
-                { name, description: desc, address, phone, email, price_start: priceStart, price_end: priceEnd, avatar: avatarFile, media: imagesFile, open_time: openTime, close_time: closeTime },
+                { name, description: desc, address, phone, email, price_start: priceStart, price_end: priceEnd, avatar: avatarFile, media: imagesFile.length > 0 ? imagesFile : null, open_time: openTime, close_time: closeTime },
                 {
                     headers: {
                         'Content-Type': 'multipart/form-data'
@@ -87,8 +88,8 @@ const UpdatePopup = ({ id, onClose, onReFetch }) => {
                 onReFetch();
             });
         } catch (error) {
-            alert('Error updating product: ' + error?.response?.data?.message);
-            console.error("Error fetching products:", error);
+            alert('Error updating restaurant: ' + error?.response?.data?.message);
+            console.error("Error updating restaurant:", error);
         }
     }
 
@@ -164,7 +165,6 @@ const UpdatePopup = ({ id, onClose, onReFetch }) => {
                                         {({
                                             imageList,
                                             onImageUpload,
-                                            onImageRemoveAll,
                                             onImageUpdate,
                                             onImageRemove,
                                         }) => (
@@ -175,7 +175,7 @@ const UpdatePopup = ({ id, onClose, onReFetch }) => {
                                                 <div className={cx('image-list')}>
                                                     {imageList.map((image, index) => (
                                                         <div key={index} className={cx('image-item')}>
-                                                            <img src={image.data_url || image} alt="" width="100" height='75' onClick={() => onImageUpdate(index)} />
+                                                            <img src={image.data_url ? image?.data_url : image} alt="" width="100" height='75' onClick={() => onImageUpdate(index)} />
                                                             <div className={cx('image-item__btn-wrapper')}>
                                                                 <button onClick={() => onImageRemove(index)}>
                                                                     <FontAwesomeIcon icon={faTimes}></FontAwesomeIcon>

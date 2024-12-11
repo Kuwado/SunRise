@@ -11,12 +11,12 @@ import { AddPopup } from '~/components/Popup';
 import Button from '~/components/Button';
 import Search from '~/components/Search';
 
-import styles from './ProductList.module.scss';
+import styles from './RestaurantList.module.scss';
 import classNames from 'classnames/bind';
 
 const cx = classNames.bind(styles);
 
-const ProductList = () => {
+const RestaurantList = () => {
     const [isShowAddPopup, setIsShowAddPopup] = useState(false);
     const [products, setProducts] = useState([]);
     const [ratings, setRatings] = useState([]);
@@ -24,6 +24,25 @@ const ProductList = () => {
     const [search, setSearch] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
+    const [totalStyleProducts, setTotalStyleProducts] = useState([]);
+    const [totalRatingProducts, setTotalRatingProducts] = useState([]);
+
+    useEffect(() => {
+        const fetchTotalProducts = async () => {
+            try {
+                const response = await axios.get('/api/restaurants/count');
+                if (response.status === 200) {
+                    // console.log(response);
+                    setTotalStyleProducts(response.data.styles);
+                    setTotalRatingProducts(response.data.ratings);
+                }
+            } catch (error) {
+                alert('Error fetching total products' + error.response.data.message);
+                console.error('Error fetching total products:', error);
+            }
+        };
+        fetchTotalProducts();
+    }, []);
 
     const fetchProducts = async () => {
         try {
@@ -141,22 +160,22 @@ const ProductList = () => {
                         <div className={cx('filter-option')}>
                             <h3>料理/食品の種類</h3>
                             <CheckboxInput id="5" checked={styles.includes(1)} onChange={() => handleStyleChange(1)}>
-                                エスプレッソ (200)
+                                {`エスプレッソ (${totalStyleProducts[1]})`} 
                             </CheckboxInput>
                             <CheckboxInput id="6" checked={styles.includes(2)} onChange={() => handleStyleChange(2)}>
-                                アメリカ人 (20)
+                                {`アメリカ人 (${totalStyleProducts[2]}) `}
                             </CheckboxInput>
                             <CheckboxInput id="7" checked={styles.includes(3)} onChange={() => handleStyleChange(3)}>
-                                カプチーノ (50)
+                                {`カプチーノ (${totalStyleProducts[3]})`}
                             </CheckboxInput>
                             <CheckboxInput id="8" checked={styles.includes(4)} onChange={() => handleStyleChange(4)}>
-                                マキアートコーヒー (5)
+                               {` マキアートコーヒー (${totalStyleProducts[4]})`}
                             </CheckboxInput>
                             <CheckboxInput id="9" checked={styles.includes(5)} onChange={() => handleStyleChange(5)}>
-                                ラテ (15)
+                               {` ラテ (${totalStyleProducts[5]})`}
                             </CheckboxInput>
                             <CheckboxInput id="10" checked={styles.includes(6)} onChange={() => handleStyleChange(6)}>
-                                モカ (5)
+                                {`モカ (${totalStyleProducts[6]})`}
                             </CheckboxInput>
                         </div>
                         <div className={cx('filter-option')}>
@@ -253,4 +272,4 @@ const ProductList = () => {
     );
 };
 
-export default ProductList;
+export default RestaurantList;

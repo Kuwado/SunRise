@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import classNames from 'classnames/bind';
 import styles from './Login.module.scss';
 import { useNavigate } from 'react-router';
@@ -9,9 +9,11 @@ import images from '~/assets/images';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import config from '~/config';
+import { AuthContext } from '~/context/AuthContext';
 const cx = classNames.bind(styles);
 
 const Login = () => {
+    const { handleLogin } = useContext(AuthContext);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [remember, setRemember] = useState(false);
@@ -27,7 +29,9 @@ const Login = () => {
             // Call API
             const response = await axios.post('http://127.0.0.1:8000/api/login', payload);
             if (response.status === 200) {
-                const role = response.data.user.role;
+                const user = response.data.user;
+                handleLogin(user.token, user.role, user.id);
+                const role = user.role;
                 if (role === 'user') {
                     navigate(config.routes.user.home);
                 } else if (role === 'admin') {

@@ -6,6 +6,7 @@
     background-color: var(--bg-primary);
     display: flex;
     padding: 5px 50px;
+    z-index: 10;
 
     .logoText {
         font-family: 'Clicker Script', cursive !important;
@@ -52,8 +53,11 @@
     position: relative;
 
     .avatar-header {
-        width: 50px;
+        width: 45px;
+        height: 45px;
+        object-fit: contain;
         border-radius: 50%;
+        border: 2px solid var(--cl-primary);
     }
 
     .dropdown-menu {

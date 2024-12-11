@@ -4,12 +4,12 @@ import { faHouse, faTrash, faPen } from '@fortawesome/free-solid-svg-icons';
 
 import { UpdatePopup, DeletePopup } from '../Popup';
 
-import styles from './ProductItem.module.scss';
+import styles from './RestaurantItem.module.scss';
 import classNames from 'classnames/bind';
 
 const cx = classNames.bind(styles);
 
-const ProductItem = ({ restaurant = restaurant, onReFetch }) => {
+const RestaurantItem = ({ restaurant = restaurant, onReFetch }) => {
     const [isShowUpdatePopup, setIsShowUpdatePopup] = useState(false);
     const [isShowDeletePopup, setIsShowDelelePopup] = useState(false);
 
@@ -49,4 +49,4 @@ const ProductItem = ({ restaurant = restaurant, onReFetch }) => {
     );
 };
 
-export default ProductItem;
+export default RestaurantItem;

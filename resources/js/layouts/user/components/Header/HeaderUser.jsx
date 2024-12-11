@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useContext } from 'react';
 import classNames from 'classnames/bind';
 import styles from './HeaderUser.module.scss';
 import images from '~/assets/images';
@@ -7,12 +7,16 @@ import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import config from '~/config';
+import { AuthContext } from '~/context/AuthContext';
 const cx = classNames.bind(styles);
 
 export default function HeaderUser() {
+    const { user } = useContext(AuthContext);
     const navigate = useNavigate();
     const [showMenu, setShowMenu] = useState(false);
     const menuRef = useRef(null);
+
+    console.log(user);
 
     // Đóng menu khi click bên ngoài
     useEffect(() => {
@@ -31,44 +35,48 @@ export default function HeaderUser() {
         <div className={cx('header')}>
             <h1 className={styles.logoText}>SunRise</h1>
             <div className={cx('tab-menu')}>
-                <Link to={config.routes.other.landing} className={cx('tab-home')}>
+                <Link to={config.routes.user.home} className={cx('tab-home')}>
                     ホーム
                 </Link>
-                <div className={cx('tab-restaurant')}>レストラン</div>
+                <Link to={config.routes.user.findRestaurant} className={cx('tab-restaurant')}>
+                    レストラン
+                </Link>
                 <div className={cx('tab-restaurant')}>地図</div>
             </div>
-            <div className={cx('user-hugs')} ref={menuRef}>
-                <img
-                    className={cx('avatar-header')}
-                    src={images.avatarUser}
-                    alt="avatar"
-                    onClick={() => setShowMenu((prev) => !prev)}
-                />
-                <FontAwesomeIcon
-                    icon={showMenu ? faChevronUp : faChevronDown}
-                    onClick={() => setShowMenu((prev) => !prev)}
-                />
-                {showMenu && (
-                    <div className={cx('dropdown-menu')}>
-                        <div
-                            className={cx('menu-item')}
-                            onClick={() => {
-                                navigate('/');
-                            }}
-                        >
-                            HomePage
+            {user && (
+                <div className={cx('user-hugs')} ref={menuRef}>
+                    <img
+                        className={cx('avatar-header')}
+                        src={user.avatar ?? images.avatarUser}
+                        alt="avatar"
+                        onClick={() => setShowMenu((prev) => !prev)}
+                    />
+                    <FontAwesomeIcon
+                        icon={showMenu ? faChevronUp : faChevronDown}
+                        onClick={() => setShowMenu((prev) => !prev)}
+                    />
+                    {showMenu && (
+                        <div className={cx('dropdown-menu')}>
+                            <div
+                                className={cx('menu-item')}
+                                onClick={() => {
+                                    navigate('/userInfor');
+                                }}
+                            >
+                                UserInfor
+                            </div>
+                            <div
+                                className={cx('menu-item')}
+                                onClick={() => {
+                                    navigate('/login');
+                                }}
+                            >
+                                Logout
+                            </div>
                         </div>
-                        <div
-                            className={cx('menu-item')}
-                            onClick={() => {
-                                navigate('/login');
-                            }}
-                        >
-                            Logout
-                        </div>
-                    </div>
-                )}
-            </div>
+                    )}
+                </div>
+            )}
         </div>
     );
 }
