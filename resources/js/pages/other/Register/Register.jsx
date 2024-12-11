@@ -60,21 +60,6 @@ const Register = () => {
                                 <img className={cx('icon')} src={images.icon} alt="coffee-icon" />
                             </div>
                         </div>
-                        <div className={cx('google-register')}>
-                            <Button
-                                noBackground
-                                large
-                                shadow
-                                width="300px"
-                                curved
-                                leftIcon={<img style={{ width: 18 }} src={images.google} alt="ggicon"></img>}
-                            >
-                                Googleでログイン
-                            </Button>
-                        </div>
-                        <div className={cx('separate')}>
-                            <div className={cx('separate-text')}>または</div>
-                        </div>
                         <form className={cx('register-form')}>
                             <div className={cx('register-input')}>
                                 <CustomInput
