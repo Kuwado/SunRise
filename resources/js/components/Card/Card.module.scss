@@ -22,6 +22,7 @@
 .content {
     flex: 1;
     padding-top: 10px;
+    padding-bottom: 30px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -32,6 +33,7 @@
 }
 
 .name {
+    padding: 0 10px;
     max-width: var(--width);
     overflow: hidden;
     text-overflow: ellipsis;
@@ -65,7 +67,7 @@
 
 .view-btn {
     position: absolute;
-    bottom: 0;
+    top: 97%;
     left: 50%;
-    transform: translate(-50%, 50%);
+    transform: translateX(-50%);
 }

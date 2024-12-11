@@ -258,6 +258,7 @@ class RestaurantController extends Controller
         $sort_rating = $request->query('sort_rating') ?? null;
         $sort_price = $request->query('sort_price') ?? null;
         $sort_distance = $request->query('sort_distance') ?? null;
+        $sort_time = $request->query('sort_time') ?? null;
         $userId = $request->query('user_id') ?? null;
 
         $perPage = $request->query('per_page') ?? 10;
@@ -371,6 +372,12 @@ class RestaurantController extends Controller
             $restaurants = $restaurants->orderBy('distance', 'desc');
         }
 
+        // Time sort 
+        if ($sort_time === "asc") {
+            $restaurants = $restaurants->orderBy('created_at', 'asc');
+        } else if ($sort_time === "desc") {
+            $restaurants = $restaurants->orderBy('created_at', 'desc');
+        }
 
         $restaurants = $restaurants->paginate($perPage);
 
