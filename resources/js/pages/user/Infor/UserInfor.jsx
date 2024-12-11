@@ -57,28 +57,6 @@ export default function UserInfor() {
                     <img className={cx('header-image')} src={images.headerUser} alt="headerUser" />
                     <div className={cx('header-title')}>
                         <div className={cx('header-avatar')}>
-                            <ImageUploading
-                                value={currentUser.avatar ? [currentUser.avatar] : []}
-                                onChange={(imageList) => onAvatarChange(imageList[0])}
-                            >
-                                {({ onImageUpload, onImageUpdate }) => (
-                                    <div className={cx('upload__avatar-wrapper')}>
-                                        {currentUser.avatar ? (
-                                            <img
-                                                src={currentUser.avatar.dataURL}
-                                                width="100"
-                                                height="100"
-                                                onClick={onImageUpdate}
-                                            />
-                                        ) : (
-                                            <button onClick={onImageUpload}>
-                                                <FontAwesomeIcon icon={faCamera}></FontAwesomeIcon>
-                                            </button>
-                                        )}
-                                    </div>
-                                )}
-                            </ImageUploading>
-
                             <img
                                 className={cx('avatar')}
                                 src={
@@ -229,10 +207,10 @@ export default function UserInfor() {
                                     ))}
                                 </Dropdown>
                                 <Dropdown
-                                    title="好きな味"
+                                    title="エスプレッソ"
                                     selected={
                                         styleOptions.find((option) => option.id === currentUser.style_id)?.label ||
-                                        '選択してください'
+                                        'エスプレッソ'
                                     }
                                     setValue={(value) => {
                                         const selectedOption = styleOptions.find((option) => option.label === value);
