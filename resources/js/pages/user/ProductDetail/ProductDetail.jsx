@@ -21,6 +21,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import CommentInput from './CommentInput/CommentInput';
 import images from '~/assets/images';
+import { CustomInput } from '~/components/Input';
 
 const cx = classNames.bind(styles);
 
@@ -126,6 +127,8 @@ const ProductDetail = () => {
                             </div>
                             <div className={cx('line')}></div>
                         </div>
+
+                        <CustomInput />
 
                         <CommentInput restaurantId={restaurantId} />
 
