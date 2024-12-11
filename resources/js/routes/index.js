@@ -3,7 +3,7 @@ import pages from '~/pages';
 import layouts from '~/layouts';
 
 const publicRoutes = [
-    { path: config.routes.user.home, component: pages.user.home, layout: layouts.user.home },
+    { path: config.routes.user.home, component: pages.user.home, layout: layouts.user.default },
     { path: config.routes.user.restaurantDetail, component: pages.user.restaurantdetail, layout: layouts.user.default },
     // { path: config.routes.user.productList, component: pages.user.productList, layout: layouts.user.default },
     // { path: config.routes.user.cart, component: pages.user.cart, layout: layouts.user.default },

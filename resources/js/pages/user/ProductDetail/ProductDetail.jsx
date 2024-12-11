@@ -1,12 +1,13 @@
 import classNames from 'classnames/bind';
-import Comment from './Comment'; // Không cần ngoặc nhọn
-import SlideShow from './Slideshow';
 
 import styles from './ProductDetail.module.scss';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import Rating from '~/components/Rating';
+
+import Carousel from 'react-multi-carousel';
+import 'react-multi-carousel/lib/styles.css';
 
 const cx = classNames.bind(styles);
 
@@ -78,6 +79,54 @@ const ProductDetail = () => {
                     {/* Comments Section */}
                     <section className={styles.comments}>
                         <h3>レビュー</h3>
+                        {reviews.length > 0 &&
+                            reviews.map((review, index) => (
+                                <div key={index} className={styles.comment}>
+                                    <p className={styles.username}>{review.user.name}</p>
+                                    <p className={styles.userComment}>{review.comment}</p>
+                                    <Rating rate={review.rating} />
+                                </div>
+                            ))}
+                    </section>
+
+                    <section className={styles.comments}>
+                        <h4>レビュー</h4>
+                        {reviews.length > 0 &&
+                            reviews.map((review, index) => (
+                                <div key={index} className={styles.comment}>
+                                    <p className={styles.username}>{review.user.name}</p>
+                                    <p className={styles.userComment}>{review.comment}</p>
+                                    <Rating rate={review.rating} />
+                                </div>
+                            ))}
+                    </section>
+
+                    <section className={styles.comments}>
+                        <h5>レビュー</h5>
+                        {reviews.length > 0 &&
+                            reviews.map((review, index) => (
+                                <div key={index} className={styles.comment}>
+                                    <p className={styles.username}>{review.user.name}</p>
+                                    <p className={styles.userComment}>{review.comment}</p>
+                                    <Rating rate={review.rating} />
+                                </div>
+                            ))}
+                    </section>
+
+                    <section className={styles.comments}>
+                        <h6>レビュー</h6>
+                        {reviews.length > 0 &&
+                            reviews.map((review, index) => (
+                                <div key={index} className={styles.comment}>
+                                    <p className={styles.username}>{review.user.name}</p>
+                                    <p className={styles.userComment}>{review.comment}</p>
+                                    <Rating rate={review.rating} />
+                                </div>
+                            ))}
+                    </section>
+
+                    <section className={styles.comments}>
+                        <h7>レビュー</h7>
                         {reviews.length > 0 &&
                             reviews.map((review, index) => (
                                 <div key={index} className={styles.comment}>
