@@ -13,6 +13,7 @@ import Button from '~/components/Button';
 import Search from '~/components/Search';
 import classNames from 'classnames/bind';
 import styles from './FindRestaurant.module.scss';
+import RadioInput from '~/components/radio';
 const cx = classNames.bind(styles);
 
 const FindRestaurant = () => {
@@ -69,6 +70,10 @@ const FindRestaurant = () => {
 
     const handlePageChange = (page) => {
         setCurrentPage(page);
+        window.scrollTo({
+            top: 405,
+            behavior: 'smooth',
+        });
     };
 
     const handlePriceTypeChange = (typeId) => {
@@ -248,18 +253,18 @@ const FindRestaurant = () => {
                 <div className={cx('filter')}>
                     <div className={cx('filter-option')}>
                         <h3>価格（円）</h3>
-                        <CheckboxInput id="1" checked={priceType === 1} onChange={() => handlePriceTypeChange(1)}>
+                        <RadioInput id="1" checked={priceType === 1} onChange={() => handlePriceTypeChange(1)}>
                             安い (20)
-                        </CheckboxInput>
-                        <CheckboxInput id="2" checked={priceType === 2} onChange={() => handlePriceTypeChange(2)}>
+                        </RadioInput>
+                        <RadioInput id="2" checked={priceType === 2} onChange={() => handlePriceTypeChange(2)}>
                             手頃な価格 (20)
-                        </CheckboxInput>
-                        <CheckboxInput id="3" checked={priceType === 3} onChange={() => handlePriceTypeChange(3)}>
+                        </RadioInput>
+                        <RadioInput id="3" checked={priceType === 3} onChange={() => handlePriceTypeChange(3)}>
                             高い (50)
-                        </CheckboxInput>
-                        <CheckboxInput id="4" checked={priceType === 4} onChange={() => handlePriceTypeChange(4)}>
+                        </RadioInput>
+                        <RadioInput id="4" checked={priceType === 4} onChange={() => handlePriceTypeChange(4)}>
                             高価なものはすべて (5)
-                        </CheckboxInput>
+                        </RadioInput>
                     </div>
                     <div className={cx('filter-option')}>
                         <h3>料理/食品の種類</h3>

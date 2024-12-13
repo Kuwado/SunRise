@@ -3,10 +3,7 @@ import classNames from 'classnames/bind';
 import styles from './UserInfor.module.scss';
 import { faCamera } from '@fortawesome/free-solid-svg-icons';
 import Button from '~/components/Button';
-import { CustomInput, PasswordInput } from '~/components/Input';
-import { CheckboxInput } from '~/components/Checkbox';
 import images from '~/assets/images';
-import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { DefaultInput } from '~/components/Input';
 import Dropdown from '~/components/Dropdown';
@@ -14,24 +11,15 @@ import { useEffect } from 'react';
 import { AuthContext } from '~/context/AuthContext';
 import vietnamCities from './vietnamCities.json';
 import japanCities from './japanCities.json';
-
 import workPlaces from './workPlace.json';
 const cx = classNames.bind(styles);
 export default function UserInfor() {
-    const { currentUser, setCurrentUser, updateUser } = useContext(AuthContext);
-
-    console.log(currentUser);
-
-    // useEffect(() => {
-    //     setCurrentUser({});
-    // }, [user]);
-
-    const [headPhone, setHeadPhone] = useState('');
-    const priceRangeOptions = ['0-40', '40-90', '90-150'];
+    const { currentUser, setCurrentUser, updateUser, headPhone, setHeadPhone } = useContext(AuthContext);
+    // const [headPhone, setHeadPhone] = useState('');
     const [cityOptions, setCityOptions] = useState([]);
     const [workplaceOptions, setWorkplaceOptions] = useState([]);
-    const distanceOptions = ['2', '3', '4'];
-    // const workplaceOptions = ['Keangnam', 'Landmark', 'Bitexco'];
+    const priceRangeOptions = ['0-40', '40-90', '90-150'];
+    const distanceOptions = ['2 km', '3 km', '4 km'];
     const countryOptions = ['Vietnam', 'Japan'];
     const headPhoneOptions = ['+01', '+91', '+84'];
     const styleOptions = [
@@ -54,6 +42,20 @@ export default function UserInfor() {
         setWorkplaceOptions(workPlaces);
     }, [currentUser.nationality]);
 
+    useEffect(() => {
+        if (currentUser.phone) {
+            const phone = currentUser.phone;
+            if (phone.startsWith('+')) {
+                setHeadPhone(phone.slice(0, 3));
+                setCurrentUser((prev) => ({
+                    ...prev,
+                    phone: phone.slice(3),
+                }));
+            } else {
+                setHeadPhone('+84');
+            }
+        }
+    }, [currentUser.phone]);
     return (
         <>
             {currentUser && (
@@ -136,8 +138,11 @@ export default function UserInfor() {
                                 </Dropdown>
                                 <Dropdown
                                     title="希望の距離"
-                                    selected={currentUser.desired_distance}
-                                    setValue={(value) => setCurrentUser({ ...currentUser, desired_distance: value })}
+                                    selected={`${currentUser.desired_distance} km`}
+                                    setValue={(value) => {
+                                        const distance = value.replace(' km', ''); // Loại bỏ " km" để lấy giá trị số
+                                        setCurrentUser({ ...currentUser, desired_distance: parseInt(distance) });
+                                    }}
                                     width="100%"
                                     label="希望の距離"
                                 >
@@ -180,9 +185,13 @@ export default function UserInfor() {
                                         ))}
                                     </Dropdown>
                                     <DefaultInput
-                                        value={currentUser.phone}
-                                        setValue={(value) => setCurrentUser({ ...currentUser, phone: value })}
-                                        // setValue={setPhone}
+                                        value={currentUser.phone || ''} // Đảm bảo luôn có giá trị chuỗi
+                                        setValue={(value) =>
+                                            setCurrentUser({
+                                                ...currentUser,
+                                                phone: value, // Chỉ cập nhật phần số điện thoại
+                                            })
+                                        }
                                         placeholder="9120000000"
                                         width="100%"
                                         inputClassName={cx('input')}
