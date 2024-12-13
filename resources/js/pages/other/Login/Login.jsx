@@ -55,21 +55,6 @@ const Login = () => {
                             <img className={cx('icon')} src={images.icon} alt="coffee-icon" />
                         </div>
                     </div>
-                    <div className={cx('google-login')}>
-                        <Button
-                            large
-                            noBackground
-                            shadow
-                            width="300px"
-                            curved
-                            leftIcon={<img style={{ width: 18 }} src={images.google} alt="google-icon" />}
-                        >
-                            Googleでログイン
-                        </Button>
-                    </div>
-                    <div className={cx('separate')}>
-                        <div className={cx('separate-text')}>または</div>
-                    </div>
                     <form onSubmit={(e) => handleSubmit(e)} className={cx('login-form')}>
                         <div className={cx('login-input')}>
                             <CustomInput

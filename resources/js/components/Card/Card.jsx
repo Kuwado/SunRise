@@ -4,6 +4,7 @@ import styles from './Card.module.scss';
 import Rating from '../Rating';
 import Button from '../Button';
 import images from '~/assets/images';
+import { useNavigate } from 'react-router-dom';
 
 const cx = classNames.bind(styles);
 
@@ -18,30 +19,42 @@ const Restaurant = {
     rate: 3.6,
 };
 
+const formatDistance = (distance) => {
+    return `${Math.round(distance)} Km`;
+};
+
+
+
 const Card = ({ restaurant = Restaurant }) => {
+    const navigate = useNavigate();
+
+
+    const handleSeeDetail = () => {
+        navigate(`/restaurant/${restaurant.id}`)
+    }
     return (
         <div className={cx('card')}>
             <div className={cx('avatar')}>
-                <img src={restaurant.avatar} alt="avatar" />
+                <img src={restaurant.avatar ?? images.restaurant} alt="avatar" />
             </div>
 
             <div className={cx('content')}>
                 <div className={cx('name')}>{restaurant.name}</div>
                 <div className={cx('price-and-distance')}>
                     <div className={cx('price')}>
-                        {restaurant.price_start} ~ {restaurant.price_end}
+                        {restaurant.price_start}k ~ {restaurant.price_end}k
                     </div>
-                    <div className={cx('distance')}>~ {restaurant.distance}</div>
+                    <div className={cx('distance')}>~ {formatDistance(restaurant.distance)}</div>
                 </div>
                 <div className={cx('rating-box')}>
-                    <Rating rate={restaurant.rate} small />
+                    <Rating rate={restaurant.rating} />
                     <div className={cx('number')}>
                         (<span>{restaurant.number}</span>レビュー)
                     </div>
                 </div>
             </div>
 
-            <Button className={cx('view-btn')} secondary curved shadow>
+            <Button className={cx('view-btn')} secondary curved shadow onClick={handleSeeDetail}>
                 もっと見る
             </Button>
         </div>

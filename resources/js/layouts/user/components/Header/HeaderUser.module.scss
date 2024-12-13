@@ -6,7 +6,7 @@
     background-color: var(--bg-primary);
     display: flex;
     padding: 5px 50px;
-    z-index: 10;
+    z-index: 100;
 
     .logoText {
         font-family: 'Clicker Script', cursive !important;
@@ -55,7 +55,7 @@
     .avatar-header {
         width: 45px;
         height: 45px;
-        object-fit: contain;
+        object-fit: cover;
         border-radius: 50%;
         border: 2px solid var(--cl-primary);
     }

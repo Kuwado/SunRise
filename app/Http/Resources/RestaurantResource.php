@@ -35,6 +35,7 @@ class RestaurantResource extends JsonResource
             'styles' => $this->styles->pluck('name'),
             'rating' => round($this->reviews->avg('rating'), 2),
             'distance' => round($this->distance, 2) ?? null,
+            'number' => $this->reviews->count(),
         ];
     }
 }

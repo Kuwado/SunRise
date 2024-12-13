@@ -1,103 +1,140 @@
-.container {
-    width: 1179px;
-    height: 1600px;
-    margin: 0 auto;
-    background: #fff;
-    border-radius: 15px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.header {
+.restaurant-detail {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px;
-    background-color: #f8f9fa;
+    justify-content: center;
+    padding-top: 20px;
+}
 
-    .logo {
-        font-size: 24px;
-        font-weight: bold;
-        color: #ff6600;
+.content {
+    width: 90%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 10px 20px;
+    border-radius: 5px;
+    box-shadow: 0px 0px 16px 0px #00000014;
+}
+
+.line {
+    border-top: 2px solid var(--cl-primary);
+}
+
+.slider-box {
+    display: flex;
+    flex-direction: column;
+
+    .back-btn {
+        width: fit-content;
+        padding: 10px 20px;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        font-weight: 700;
+        cursor: pointer;
+
+        span {
+            font-size: 20px;
+        }
     }
 
-    .nav {
-        a {
-            margin: 0 10px;
-            text-decoration: none;
-            color: #333;
-            font-size: 16px;
-
-            &:hover {
-                color: #ff6600;
-            }
-        }
+    .line {
+        border-top: 2px solid var(--cl-primary);
+        margin-bottom: 30px;
     }
 }
 
-.main {
-    padding: 20px;
+.detail-box {
+    display: flex;
+    flex-direction: column;
 
-    .imageSlider {
-        margin-bottom: 20px;
-
-        img {
-            width: 100%;
-            height: auto;
-            border-radius: 5px;
-        }
+    .name {
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--cl-primary);
     }
 
-    .details {
-        margin-bottom: 40px;
+    .detail {
+        display: flex;
+        gap: 10px;
+        padding: 10px 0;
+    }
 
-        .cafe-name {
-            font-size: 24px;
-            font-weight: bold;
-            color: #333;
-        }
+    .detail-left {
+        width: 40%;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
 
         .address,
-        .hours,
-        .price,
-        .rating,
-        .description {
-            margin: 10px 0;
-            font-size: 16px;
-            color: #555;
+        .time,
+        .price {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+
+            svg {
+                font-size: 20px;
+                color: var(--cl-primary);
+            }
+        }
+
+        .address {
+            display: flex;
+        }
+
+        .location-btn {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            cursor: pointer;
         }
     }
 
-    .comments {
-        .comment {
-            border-bottom: 1px solid #ddd;
-            padding: 10px 0;
+    .detail-right {
+        width: 60%;
 
-            .username {
-                font-size: 18px;
-                font-weight: bold;
-                color: #333;
-            }
+        svg {
+            font-size: 20px;
+            color: var(--cl-primary);
+        }
 
-            .userComment {
-                font-size: 14px;
-                color: #555;
-            }
-
-            .rating {
-                font-size: 16px;
-                color: #ffcc00;
-            }
+        .description {
+            display: flex;
+            gap: 20px;
         }
     }
 }
 
-.footer {
-    text-align: center;
-    padding: 20px;
-    background-color: #f8f9fa;
+.comment-box {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
 
-    p {
-        margin: 5px 0;
-        color: #777;
+    .comment {
+        display: flex;
+        gap: 20px;
+    }
+
+    .comment-left {
+        width: 50px;
+        img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 2px solid var(--cl-primary);
+        }
+    }
+
+    .comment-right {
+        flex: 1;
+
+        .user-name {
+            font-weight: 600;
+            color: #07143b;
+        }
+
+        .user-comment {
+            color: #959895;
+            font-weight: 400;
+        }
     }
 }

@@ -90,7 +90,7 @@ class RestaurantController extends Controller
                         'message' => 'Địa chỉ không hợp lệ',
                     ], 422);
                 }
-   
+
                 $restaurant->longitude = $locations['lng'];
                 $restaurant->latitude = $locations['lat'];
             }
@@ -258,6 +258,7 @@ class RestaurantController extends Controller
         $sort_rating = $request->query('sort_rating') ?? null;
         $sort_price = $request->query('sort_price') ?? null;
         $sort_distance = $request->query('sort_distance') ?? null;
+        $sort_time = $request->query('sort_time') ?? null;
         $userId = $request->query('user_id') ?? null;
 
         $perPage = $request->query('per_page') ?? 10;
@@ -371,6 +372,12 @@ class RestaurantController extends Controller
             $restaurants = $restaurants->orderBy('distance', 'desc');
         }
 
+        // Time sort 
+        if ($sort_time === "asc") {
+            $restaurants = $restaurants->orderBy('created_at', 'asc');
+        } else if ($sort_time === "desc") {
+            $restaurants = $restaurants->orderBy('created_at', 'desc');
+        }
 
         $restaurants = $restaurants->paginate($perPage);
 
@@ -399,11 +406,19 @@ class RestaurantController extends Controller
             'avatar' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'media.*' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'description' => 'nullable|string',
-            'price_start' => 'required|numeric',
-            'price_end' => 'required|numeric',
-            'open_time' => 'required|string',
-            'close_time' => 'required|string',
+            'price_start' => 'nullable|numeric',
+            'price_end' => 'nullable|numeric',
+            'open_time' => 'nullable|date_format:H:i:s',
+            'close_time' => 'nullable|date_format:H:i:s',
         ]);
+
+        if ($request->input('price_start') >= $request->input('price_end')) {
+            return response()->json(['message' => 'Giá bắt đầu phải nhỏ hơn giá kết thúc.',], 422);
+        } // Kiểm tra điều kiện thời gian mở < thời gian đóng 
+        if ($request->input('open_time') >= $request->input('close_time')) {
+            return response()->json(['message' => 'Thời gian mở phải nhỏ hơn thời gian đóng.',], 422);
+        }
+
 
         if ($validator->fails()) {
             return response()->json([

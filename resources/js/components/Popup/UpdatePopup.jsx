@@ -192,8 +192,8 @@ const UpdatePopup = ({ id, onClose, onReFetch }) => {
                             <div className={cx('content-item')}>
                                 <h3 className={cx('title')}>営業時間</h3>
                                 <div className={cx('flex-row')}>
-                                    <DefaultInput setValue={setOpenTime} value={openTime} id='' label='オープン' width={'45%'}></DefaultInput>
-                                    <DefaultInput setValue={setCloseTime} value={closeTime} id='' label='クローズ' width={'45%'}></DefaultInput>
+                                    <DefaultInput setValue={setOpenTime} type='time' value={openTime} id='' label='オープン' width={'45%'}></DefaultInput>
+                                    <DefaultInput setValue={setCloseTime} type='time' value={closeTime} id='' label='クローズ' width={'45%'}></DefaultInput>
                                 </div>
                             </div>
                         </div>

@@ -151,13 +151,6 @@ const RestaurantList = () => {
                             </span>
                         </div>
                         <div className={cx('filter-option')}>
-                            <h3>価格（円）</h3>
-                            <CheckboxInput id="1">安い (20)</CheckboxInput>
-                            <CheckboxInput id="2">手頃な価格 (20)</CheckboxInput>
-                            <CheckboxInput id="3">高い (50)</CheckboxInput>
-                            <CheckboxInput id="4">高価なものはすべて (5)</CheckboxInput>
-                        </div>
-                        <div className={cx('filter-option')}>
                             <h3>料理/食品の種類</h3>
                             <CheckboxInput id="5" checked={styles.includes(1)} onChange={() => handleStyleChange(1)}>
                                 {`エスプレッソ (${totalStyleProducts[1]})`} 

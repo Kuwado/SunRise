@@ -1,16 +1,32 @@
 import classNames from 'classnames/bind';
-import Comment from './Comment'; // Không cần ngoặc nhọn
-import SlideShow from './Slideshow';
 
 import styles from './ProductDetail.module.scss';
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import Rating from '~/components/Rating';
+
+import Carousel from 'react-multi-carousel';
+import 'react-multi-carousel/lib/styles.css';
+import Slider from './Slider/Slider';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+    faBars,
+    faChevronLeft,
+    faClock,
+    faLocation,
+    faLocationArrow,
+    faLocationDot,
+    faMoneyBill,
+} from '@fortawesome/free-solid-svg-icons';
+import CommentInput from './CommentInput/CommentInput';
+import images from '~/assets/images';
+import { CustomInput } from '~/components/Input';
 
 const cx = classNames.bind(styles);
 
 const ProductDetail = () => {
+    const navigate = useNavigate();
     const { restaurantId } = useParams();
     const [restaurant, setRestaurant] = useState(null);
     const [reviews, setReviews] = useState([]);
@@ -48,48 +64,92 @@ const ProductDetail = () => {
         fetchReviews();
     }, [restaurantId]);
 
-    const formatTime = ($time) => {
-        return $time;
+    const formatTime = (time) => {
+        const [hours, minutes] = time.split(':');
+        return `${hours}:${minutes}`;
     };
 
     return (
-        <div>
+        <>
             {restaurant && (
-                <main className={cx('main')}>
-                    {/* Image Slider */}
-                    <div className={styles.imageSlider}>
-                        <img src="https://via.placeholder.com/1000x400" alt="Cafe Interior" />
-                    </div>
+                <main className={cx('restaurant-detail')}>
+                    <div className={cx('content')}>
+                        <div className={cx('slider-box')}>
+                            <div className={cx('back-btn')} onClick={() => navigate(-1)}>
+                                <FontAwesomeIcon icon={faChevronLeft} />
+                                <span>戻る</span>
+                            </div>
+                            <div className={cx('line')}></div>
+                            <Slider images={restaurant.media ?? []} />
+                        </div>
 
-                    {/* Cafe Details */}
-                    <section className={styles.details}>
-                        <h2 className={cx('cafe-name')}>{restaurant.name}</h2>
-                        <p className={styles.address}>{restaurant.address}</p>
-                        <p className={styles.hours}>
-                            {formatTime(restaurant.open_time)} AM - {formatTime(restaurant.close_time)} PM
-                        </p>
-                        <p className={styles.price}>
-                            {restaurant.price_start}円~{restaurant.price_end}円
-                        </p>
-                        <Rating rate={restaurant.rating} />
-                        <p className={styles.description}>{restaurant.description}</p>
-                    </section>
+                        <div className={cx('detail-box')}>
+                            <div className={cx('name')}>{restaurant.name}</div>
+                            <div className={cx('line')}></div>
+                            <div className={cx('detail')}>
+                                <div className={cx('detail-left')}>
+                                    <div className={cx('address')}>
+                                        <FontAwesomeIcon icon={faLocationDot} />
+                                        <div>
+                                            <span>{restaurant.address} | </span>
+                                            <span className={cx('location-btn')}>
+                                                <FontAwesomeIcon icon={faLocationArrow} />
+                                                <span style={{ fontWeight: 600 }}>方向を取得</span>
+                                            </span>
+                                        </div>
+                                    </div>
 
-                    {/* Comments Section */}
-                    <section className={styles.comments}>
-                        <h3>レビュー</h3>
-                        {reviews.length > 0 &&
-                            reviews.map((review, index) => (
-                                <div key={index} className={styles.comment}>
-                                    <p className={styles.username}>{review.user.name}</p>
-                                    <p className={styles.userComment}>{review.comment}</p>
-                                    <Rating rate={review.rating} />
+                                    <div className={cx('time')}>
+                                        <FontAwesomeIcon icon={faClock} />
+                                        <span>
+                                            <span style={{ fontWeight: 600 }}>{formatTime(restaurant.open_time)}</span>{' '}
+                                            AM -
+                                            <span style={{ fontWeight: 600 }}>{formatTime(restaurant.close_time)}</span>{' '}
+                                            PM
+                                        </span>
+                                    </div>
+
+                                    <div className={cx('price')}>
+                                        <FontAwesomeIcon icon={faMoneyBill} />
+                                        <span>
+                                            {restaurant.price_start}円~{restaurant.price_end}円
+                                        </span>
+                                    </div>
+
+                                    <Rating rate={restaurant.rating} />
                                 </div>
-                            ))}
-                    </section>
+
+                                <div className={cx('detail-right')}>
+                                    <div className={cx('description')}>
+                                        <FontAwesomeIcon icon={faBars} />
+                                        <span>{restaurant.description}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className={cx('line')}></div>
+                        </div>
+
+                        <CommentInput restaurantId={restaurantId} />
+
+                        <div className={cx('comment-box')}>
+                            {reviews.length > 0 &&
+                                reviews.map((review, index) => (
+                                    <div key={index} className={cx('comment')}>
+                                        <div className={cx('comment-left')}>
+                                            <img src={review.user.avarar ?? images.avatarUser} alt="avatar" />
+                                        </div>
+                                        <div className={cx('comment-right')}>
+                                            <p className={cx('user-name')}>{review.user.name}</p>
+                                            <p className={cx('user-comment')}>{review.comment}</p>
+                                            <Rating rate={review.rating} />
+                                        </div>
+                                    </div>
+                                ))}
+                        </div>
+                    </div>
                 </main>
             )}
-        </div>
+        </>
     );
 };
 
