@@ -29,35 +29,36 @@ const CafeItem = ({
     };
 
     return (
-        <Link
-            to={`${config.routes.user.restaurantDetail.replace(':restaurantId', id)}`}
-            className={cx('cafe-item', { list: isListView })}
-        >
-            <div className={cx('image-container')}>
-                <img src={images.restaurantItem1} alt={name} className={cx('image')} />
-                <div className={cx('favorite-icon', { active: isFavorite })} onClick={toggleFavorite}>
-                    <FontAwesomeIcon icon={faHeart} />
-                </div>
-            </div>
-            <div className={cx('details', { list: isListView })}>
-                <h3>{name}</h3>
-                <p>{location}</p>
-                <h4>
-                    {price_start} ~ {price_end} 円以下
-                </h4>
-                {isListView && (
-                    <div className={cx('wrap-time')}>
-                        <p>Open: {open_time ? open_time.slice(0, 5) : ''}</p>
-                        <p>Close: {close_time ? close_time.slice(0, 5) : ''}</p>
+        <>
+            <Link className={cx('cafe-item', { list: isListView })}>
+                <div className={cx('image-container')}>
+                    <Link to={`${config.routes.user.restaurantDetail.replace(':restaurantId', id)}`}>
+                        <img src={images.restaurantItem1} alt={name} className={cx('image')} />
+                    </Link>
+                    <div className={cx('favorite-icon', { active: isFavorite })} onClick={toggleFavorite}>
+                        <FontAwesomeIcon icon={faHeart} />
                     </div>
-                )}
-
-                <div className={cx('rating')}>
-                    <Rating small rate={rating} />
-                    <span>({reviews} レビュー)</span>
                 </div>
-            </div>
-        </Link>
+                <div className={cx('details', { list: isListView })}>
+                    <h3>{name}</h3>
+                    <p>{location}</p>
+                    <h4>
+                        {price_start} ~ {price_end} 円以下
+                    </h4>
+                    {isListView && (
+                        <div className={cx('wrap-time')}>
+                            <p>Open: {open_time ? open_time.slice(0, 5) : ''}</p>
+                            <p>Close: {close_time ? close_time.slice(0, 5) : ''}</p>
+                        </div>
+                    )}
+
+                    <div className={cx('rating')}>
+                        <Rating small rate={rating} />
+                        <span>({reviews} レビュー)</span>
+                    </div>
+                </div>
+            </Link>
+        </>
     );
 };
 

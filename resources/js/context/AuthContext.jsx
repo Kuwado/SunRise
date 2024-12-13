@@ -9,9 +9,10 @@ const AuthProvider = ({ children }) => {
     const [userId, setUserId] = useState(localStorage.getItem('userId') || '');
     const [user, setUser] = useState({});
     const [currentUser, setCurrentUser] = useState({});
+    const [headPhone, setHeadPhone] = useState('+84');
 
-    console.log(user);
-    console.log(currentUser);
+    // console.log(user);
+    // console.log(currentUser);
 
     const fetchUser = async () => {
         const resonse = await axios.get(`/api/user?id=${userId}`);
@@ -32,9 +33,19 @@ const AuthProvider = ({ children }) => {
         const formData = new FormData();
         Object.entries(currentUser).forEach(([key, value]) => {
             if (value !== null && value !== undefined) {
+                if (key === 'phone') {
+                    formData.append(key, `${headPhone}${value}`);
+                } else {
+                    formData.append(key, value);
+                }
+            }
+            if (key === 'desired_distance') {
+                formData.append(key, parseInt(value)); // Chỉ lưu giá trị số
+            } else {
                 formData.append(key, value);
             }
         });
+
         try {
             const response = await axios.post(`/api/user/update/${currentUser.id}`, formData);
             if (response.status === 200) {
@@ -42,8 +53,7 @@ const AuthProvider = ({ children }) => {
                 fetchUser();
             }
         } catch (error) {
-            alert(response.data.message);
-            console.log(error);
+            console.error(error);
         }
     };
 
@@ -68,6 +78,8 @@ const AuthProvider = ({ children }) => {
     return (
         <AuthContext.Provider
             value={{
+                headPhone,
+                setHeadPhone,
                 isAuthenticated,
                 role,
                 userId,
