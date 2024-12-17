@@ -509,8 +509,8 @@ class RestaurantController extends Controller
     public function getCounts(Request $request)
     {
         $userId = $request->query('user_id');
-        $start = $request->query('start') ?? null;
-        $end = $request->query('end') ?? null;
+        $start = $request->query('start') ?? 40;
+        $end = $request->query('end') ?? 90;
 
         $distances = [];
         if ($userId) {
@@ -551,21 +551,21 @@ class RestaurantController extends Controller
         $ratingArray = [1, 2, 3, 4, 5];
         $ratings = [];
         foreach ($ratingArray as $rating) {
-            $start = $rating - 0.5;
-            $end = $rating + 0.5;
+            $startRate = $rating - 0.5;
+            $endRate = $rating + 0.5;
             $ratings[$rating] = Restaurant::withAvg('reviews', 'rating')
-                ->havingRaw('reviews_avg_rating <= ? AND reviews_avg_rating > ?', [$end, $start])
+                ->havingRaw('reviews_avg_rating <= ? AND reviews_avg_rating > ?', [$endRate, $startRate])
                 ->count();
         }
 
         // Price
         $prices = [];
-        $prices["1"] = Restaurant::where('price_start', '<=', $end)->count();
+        $prices["1"] = Restaurant::where('price_start', '<=' , $start)->count();
         $prices["2"] = Restaurant::whereRaw(
             '(price_start < ? AND price_end > ?) OR (price_end < ? AND price_end > ?)',
             [$end, $end, $end, $start]
         )->count();
-        $prices["3"] = Restaurant::where('price_end', '>=', $start)->count();
+        $prices["3"] = Restaurant::where('price_end', '>=', $end)->count();
         $prices["4"] = Restaurant::count();
 
 
