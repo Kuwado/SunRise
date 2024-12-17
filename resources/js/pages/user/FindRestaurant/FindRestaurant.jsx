@@ -28,6 +28,12 @@ const FindRestaurant = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [search, setSearch] = useState('');
+    const [totalPriceProducts, setTotalPriceroducts] = useState([]);
+    const [totalStyleProducts, setTotalStyleProducts] = useState([]);
+    // const [filterCounts, setFilterCounts] = useState({
+    //     styles: {},
+    //     prices: {},
+    // });
 
     //state filter
 
@@ -53,6 +59,7 @@ const FindRestaurant = () => {
                         user_id: user.id,
                     },
                 });
+                console.log(response.data.restaurants);
 
                 if (response.status === 200) {
                     setProducts(response.data.restaurants.data);
@@ -67,6 +74,29 @@ const FindRestaurant = () => {
 
         fetchProducts();
     }, [types, ratings, styles, currentPage, filterDrPrice, filterDrRating, priceType, distances]);
+
+    useEffect(() => {
+        const fetchTotalProducts = async () => {
+            try {
+                const response = await axios.get('/api/restaurants/count', {
+                    params: {
+                        user_id: user.id,
+                    },
+                });
+                if (response.status === 200) {
+                    console.log(response);
+                    setTotalStyleProducts(response.data.styles);
+                    setTotalPriceroducts(response.data.prices);
+
+                    // setTotalRatingProducts(response.data.ratings);
+                }
+            } catch (error) {
+                alert('Error fetching total products' + error.response.data.message);
+                console.error('Error fetching total products:', error);
+            }
+        };
+        fetchTotalProducts();
+    }, []);
 
     const handlePageChange = (page) => {
         setCurrentPage(page);
@@ -186,7 +216,7 @@ const FindRestaurant = () => {
     const handleSortRating = () => {
         setFilterDrPrice('');
     };
-    console.log(products);
+    // console.log(products);
 
     return (
         <div className={cx('find-restaurant')}>
@@ -254,37 +284,37 @@ const FindRestaurant = () => {
                     <div className={cx('filter-option')}>
                         <h3>価格（円）</h3>
                         <RadioInput id="1" checked={priceType === 1} onChange={() => handlePriceTypeChange(1)}>
-                            安い (20)
+                            安い({totalPriceProducts[1]})
                         </RadioInput>
                         <RadioInput id="2" checked={priceType === 2} onChange={() => handlePriceTypeChange(2)}>
-                            手頃な価格 (20)
+                            手頃な価格({totalPriceProducts[2]})
                         </RadioInput>
                         <RadioInput id="3" checked={priceType === 3} onChange={() => handlePriceTypeChange(3)}>
-                            高い (50)
+                            高い({totalPriceProducts[3]})
                         </RadioInput>
                         <RadioInput id="4" checked={priceType === 4} onChange={() => handlePriceTypeChange(4)}>
-                            高価なものはすべて (5)
+                            高価なものはすべて({totalPriceProducts[4]})
                         </RadioInput>
                     </div>
                     <div className={cx('filter-option')}>
-                        <h3>料理/食品の種類</h3>
+                        <h3>カフェの空間スタイル</h3>
                         <CheckboxInput id="5" checked={styles.includes(1)} onChange={() => handleStyleChange(1)}>
-                            エスプレッソ (200)
+                            {`開放的な空間 (${totalStyleProducts[1]})`}
                         </CheckboxInput>
                         <CheckboxInput id="6" checked={styles.includes(2)} onChange={() => handleStyleChange(2)}>
-                            アメリカ人 (20)
+                            {`現代的な空間 (${totalStyleProducts[2]}) `}
                         </CheckboxInput>
                         <CheckboxInput id="7" checked={styles.includes(3)} onChange={() => handleStyleChange(3)}>
-                            カプチーノ (50)
+                            {`レトロな空間 (${totalStyleProducts[3]})`}
                         </CheckboxInput>
                         <CheckboxInput id="8" checked={styles.includes(4)} onChange={() => handleStyleChange(4)}>
-                            マキアートコーヒー (5)
+                            {` 落ち着いた空間 (${totalStyleProducts[4]})`}
                         </CheckboxInput>
                         <CheckboxInput id="9" checked={styles.includes(5)} onChange={() => handleStyleChange(5)}>
-                            ラテ (15)
+                            {` 高級な空間 (${totalStyleProducts[5]})`}
                         </CheckboxInput>
                         <CheckboxInput id="10" checked={styles.includes(6)} onChange={() => handleStyleChange(6)}>
-                            モカ (5)
+                            {`共有スペース (${totalStyleProducts[6]})`}
                         </CheckboxInput>
                     </div>
                     <div className={cx('filter-option')}>

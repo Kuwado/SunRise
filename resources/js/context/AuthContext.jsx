@@ -34,12 +34,14 @@ const AuthProvider = ({ children }) => {
         Object.entries(currentUser).forEach(([key, value]) => {
             if (value !== null && value !== undefined) {
                 if (key === 'phone') {
-                    formData.append(key, `${headPhone}${value}`);
+                    console.log(`${headPhone}${value}`);
+
+                    formData.append(`phone`, `${headPhone}${value}`); // Ghép headPhone với phone
+                    // console.log(currentUser);
                 } else {
                     formData.append(key, value);
                 }
-            }
-            if (key === 'desired_distance') {
+            } else if (key === 'desired_distance') {
                 formData.append(key, parseInt(value)); // Chỉ lưu giá trị số
             } else {
                 formData.append(key, value);
@@ -48,7 +50,11 @@ const AuthProvider = ({ children }) => {
 
         try {
             const response = await axios.post(`/api/user/update/${currentUser.id}`, formData);
+
             if (response.status === 200) {
+                // console.log(response.data.user.phone);
+                // console.log(currentUser);
+
                 alert(response.data.message);
                 fetchUser();
             }

@@ -16,8 +16,6 @@ export default function HeaderUser() {
     const [showMenu, setShowMenu] = useState(false);
     const menuRef = useRef(null);
 
-    console.log(user);
-
     // Đóng menu khi click bên ngoài
     useEffect(() => {
         const handleClickOutside = (e) => {

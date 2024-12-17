@@ -23,14 +23,14 @@ export default function UserInfor() {
     const countryOptions = ['Vietnam', 'Japan'];
     const headPhoneOptions = ['+01', '+91', '+84'];
     const styleOptions = [
-        { id: 1, label: 'エスプレッソ' },
-        { id: 2, label: 'アメリカ人' },
-        { id: 3, label: 'カプチーノ' },
-        { id: 4, label: 'マキアートコーヒー' },
-        { id: 5, label: 'ラテ' },
-        { id: 6, label: 'フラットホワイト' },
+        { id: 1, label: '開放的な空間' }, // Quán cà phê hiện đại
+        { id: 2, label: '現代的な空間' }, // Quán cà phê cổ điển
+        { id: 3, label: 'レトロな空間' }, // Nơi hòa mình vào thiên nhiên
+        { id: 4, label: '落ち着いた空間' }, // Không gian yên tĩnh
+        { id: 5, label: '高級な空間' }, // Quán cà phê với âm nhạc
+        { id: 6, label: '共有スペース' }, // Quán cà phê có phòng triển lãm nghệ thuật
     ];
-    // console.log(user);
+    // console.log(user);f
     useEffect(() => {
         if (currentUser.nationality === 'Vietnam') {
             setCityOptions(vietnamCities);
@@ -51,6 +51,7 @@ export default function UserInfor() {
                     ...prev,
                     phone: phone.slice(3),
                 }));
+                console.log(phone);
             } else {
                 setHeadPhone('+84');
             }
@@ -232,7 +233,7 @@ export default function UserInfor() {
                                         }
                                     }}
                                     width="100%"
-                                    label="好きな味"
+                                    label="好きな空間"
                                 >
                                     {styleOptions.map((option, index) => (
                                         <div key={index}>{option.label}</div>
