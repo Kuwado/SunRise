@@ -31,6 +31,8 @@ const RestaurantList = () => {
         const fetchTotalProducts = async () => {
             try {
                 const response = await axios.get('/api/restaurants/count');
+                console.log(response);
+
                 if (response.status === 200) {
                     // console.log(response);
                     setTotalStyleProducts(response.data.styles);
@@ -151,24 +153,24 @@ const RestaurantList = () => {
                             </span>
                         </div>
                         <div className={cx('filter-option')}>
-                            <h3>料理/食品の種類</h3>
+                            <h3>カフェの空間スタイル</h3>
                             <CheckboxInput id="5" checked={styles.includes(1)} onChange={() => handleStyleChange(1)}>
-                                {`エスプレッソ (${totalStyleProducts[1]})`} 
+                                {`開放的な空間 (${totalStyleProducts[1]})`}
                             </CheckboxInput>
                             <CheckboxInput id="6" checked={styles.includes(2)} onChange={() => handleStyleChange(2)}>
-                                {`アメリカ人 (${totalStyleProducts[2]}) `}
+                                {`現代的な空間 (${totalStyleProducts[2]}) `}
                             </CheckboxInput>
                             <CheckboxInput id="7" checked={styles.includes(3)} onChange={() => handleStyleChange(3)}>
-                                {`カプチーノ (${totalStyleProducts[3]})`}
+                                {`レトロな空間 (${totalStyleProducts[3]})`}
                             </CheckboxInput>
                             <CheckboxInput id="8" checked={styles.includes(4)} onChange={() => handleStyleChange(4)}>
-                               {` マキアートコーヒー (${totalStyleProducts[4]})`}
+                                {` 落ち着いた空間(${totalStyleProducts[4]})`}
                             </CheckboxInput>
                             <CheckboxInput id="9" checked={styles.includes(5)} onChange={() => handleStyleChange(5)}>
-                               {` ラテ (${totalStyleProducts[5]})`}
+                                {` 高級な空間 (${totalStyleProducts[5]})`}
                             </CheckboxInput>
                             <CheckboxInput id="10" checked={styles.includes(6)} onChange={() => handleStyleChange(6)}>
-                                {`モカ (${totalStyleProducts[6]})`}
+                                {`共有スペース (${totalStyleProducts[6]})`}
                             </CheckboxInput>
                         </div>
                         <div className={cx('filter-option')}>

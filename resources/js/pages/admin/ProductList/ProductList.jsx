@@ -142,7 +142,7 @@ const ProductList = () => {
                             <CheckboxInput id="4">高価なものはすべて (5)</CheckboxInput>
                         </div>
                         <div className={cx('filter-option')}>
-                            <h3>料理/食品の種類</h3>
+                            <h3>カフェの空間スタイル</h3>
                             <CheckboxInput id="5" checked={styles.includes(1)} onChange={() => handleStyleChange(1)}>
                                 エスプレッソ (200)
                             </CheckboxInput>
