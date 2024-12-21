@@ -11,6 +11,7 @@ import styles from './Favorite.module.scss';
 import HeaderFavorite from '../components/header/HeaderFavorite';
 import RadioInput from '~/components/radio';
 import FavoriteItem from '../components/restaurants/FavoriteItem';
+import { AddCollectionPopup } from '../components/CollectionPopup';
 const cx = classNames.bind(styles);
 export default function Favorite() {
     const [types, setTypes] = useState([]);
@@ -47,7 +48,7 @@ export default function Favorite() {
 
     return (
         <>
-            <HeaderFavorite />
+            {/* <HeaderFavorite /> */}
             <div className={cx('favoriteRestaurant')}>
                 <div className={cx('banner')}>
                     <img src={images.headerFindRestaurant} alt="Restaurant Banner" />

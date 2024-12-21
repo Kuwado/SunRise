@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useContext } from 'react';
+import React, { useState, useRef, useEffect, useContext, faHeart } from 'react';
 import classNames from 'classnames/bind';
 import styles from './HeaderUser.module.scss';
 import images from '~/assets/images';
@@ -45,6 +45,10 @@ export default function HeaderUser() {
             </div>
             {user && (
                 <div className={cx('user-hugs')} ref={menuRef}>
+                    <div className={cx('favorite-header')}>
+                        <FontAwesomeIcon icon={faHeart} />
+                        <span>お気に入り</span>
+                    </div>
                     <img
                         className={cx('avatar-header')}
                         src={user.avatar ?? images.avatarUser}
