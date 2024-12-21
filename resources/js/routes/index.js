@@ -14,6 +14,7 @@ const publicRoutes = [
     { path: config.routes.other.test, component: pages.other.test, layout: layouts.other.noHeader },
     { path: config.routes.user.userInfor, component: pages.user.userInfor, layout: layouts.user.default },
     { path: config.routes.user.findRestaurant, component: pages.user.findRestaurant, layout: layouts.user.default },
+    { path: config.routes.user.favorite, component: pages.user.favorite, layout: layouts.other.noHeader },
     { path: config.routes.admin.restaurantList, component: pages.admin.restaurantList, role: 'admin' },
     // { path: config.routes.admin.productDetail, component: pages.admin.productDetail, role: 'admin' },
 ];

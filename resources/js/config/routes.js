@@ -16,6 +16,7 @@ const routes = {
         cart: '/cart',
         userInfor: '/userInfor',
         findRestaurant: '/findRestaurant',
+        favorite: '/favorite',
     },
 
     other: {
