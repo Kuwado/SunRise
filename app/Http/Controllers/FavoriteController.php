@@ -31,13 +31,13 @@ class FavoriteController extends Controller
 
     public function deleteFavorite(Request $request)
 {
-    // Validate đầu vào
+    //ĐĐầu vào
     $validatedData = $request->validate([
         'user_id' => 'required|exists:users,id',
         'restaurant_id' => 'required|exists:restaurants,id',
     ]);
 
-    // Tìm mục yêu thích theo user_id và restaurant_id
+    // Tìm mục muốn xóa theo user_id và restaurant_id
     $favorite = Favorite::where('user_id', $validatedData['user_id'])
                         ->where('restaurant_id', $validatedData['restaurant_id'])
                         ->first();
@@ -54,7 +54,8 @@ class FavoriteController extends Controller
 
     // Trả về phản hồi thành công
     return response()->json([
-        'message' => 'Favorite deleted successfully!'
+        'message' => 'Favorite deleted successfully!',
+        'favorite' => $favorite,
     ], 200);
 }
 
