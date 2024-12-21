@@ -23,7 +23,11 @@ const CafeItem = ({
     close_time,
 }) => {
     const [isFavorite, setIsFavorite] = useState(false);
-
+    const handleCreateFavorite = () => {
+        const user_id = localStorage.getItem('userId');
+        const restaurant_id = id;
+        axios.post(`/api/favorite/create`, { user_id: user_id, restaurant_id: restaurant_id });
+    };
     const toggleFavorite = () => {
         setIsFavorite(!isFavorite);
     };
@@ -35,7 +39,13 @@ const CafeItem = ({
                     <Link to={`${config.routes.user.restaurantDetail.replace(':restaurantId', id)}`}>
                         <img src={images.restaurantItem1} alt={name} className={cx('image')} />
                     </Link>
-                    <div className={cx('favorite-icon', { active: isFavorite })} onClick={toggleFavorite}>
+                    <div
+                        className={cx('favorite-icon', { active: isFavorite })}
+                        onClick={() => {
+                            toggleFavorite();
+                            handleCreateFavorite();
+                        }}
+                    >
                         <FontAwesomeIcon icon={faHeart} />
                     </div>
                 </div>
