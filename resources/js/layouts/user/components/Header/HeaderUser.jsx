@@ -3,7 +3,7 @@ import classNames from 'classnames/bind';
 import styles from './HeaderUser.module.scss';
 import images from '~/assets/images';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons';
+import { faChevronDown, faChevronUp, faHeart } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import config from '~/config';
@@ -45,6 +45,12 @@ export default function HeaderUser() {
             </div>
             {user && (
                 <div className={cx('user-hugs')} ref={menuRef}>
+                    <div className={cx('favorite-header')}>
+                        <Link to={config.routes.user.favorite}>
+                            <FontAwesomeIcon icon={faHeart} />
+                            <span>お気に入り</span>
+                        </Link>
+                    </div>
                     <img
                         className={cx('avatar-header')}
                         src={user.avatar ?? images.avatarUser}
