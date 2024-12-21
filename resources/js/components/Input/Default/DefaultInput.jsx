@@ -16,13 +16,14 @@ const DefaultInput = ({
     className,
     inputClassName,
     readOnly,
+    noLabel,
 }) => {
     const handleChangeValue = (e) => {
         setValue(e.target.value);
     };
     return (
         <div className={cx('default-input', { 'no-label': !label, [className]: className })} style={{ width: width }}>
-            <label htmlFor={`default-input-${id}`}>
+            <label htmlFor={`default-input-${id}`} style={{display: noLabel ? 'none' : 'block'}}>
                 {label}
                 {required && <span className={cx('required-note')}>*</span>}
                 {!label && 'no-label'}
