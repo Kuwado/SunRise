@@ -1,0 +1,152 @@
+.favorite-item {
+    display: flex;
+        align-items: flex-start;
+        padding: 6px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        background-color: #fff;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        height: 210px;
+
+    .image-container {
+        width: 30%;
+        .cafe-image {
+            width: 193px;
+            height: 193px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+    }
+
+
+}
+.collection{
+    display: flex;
+    flex-direction: column;
+    width: 70%;
+    gap: 20px;
+    margin-right: 24px;
+}
+.cafe-infor{
+    display: flex;
+}
+.cafe-name {
+    color: #EA6A12;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.cafe-infor {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px;
+}
+
+.cafe-address {
+    display: flex;
+    gap: 5px;
+    justify-content: center;
+    align-items: center;
+}
+
+.cafe-price {
+    display: flex;
+    gap: 5px;
+    justify-content: center;
+    align-items: center;
+}
+
+.cafe-time_save {
+    display: flex;
+    gap: 5px;
+    justify-content: center;
+    align-items: center;
+}
+
+.cafe-rating {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    span{
+        color: #989B9E;
+    }
+}
+
+
+.cafe-left-action {
+    display: flex;
+    flex-direction: row;
+}
+
+.cafe-action {
+    display: flex;
+    justify-content: space-between;
+}
+
+.add-collection {
+    padding: 10px;
+    border-radius: 7px;
+    background-color: #E8E8E8;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    span{
+        font-weight: 600;
+    }
+    svg{
+        font-weight: 900; 
+        width: 26px;
+        margin-right: 4px;
+        color: #252525;
+    }
+}
+
+.share-collection {
+    padding: 13px;
+    border-radius: 7px;
+    margin-left: 10px;
+    cursor: pointer;
+    svg{
+        width: 30px;
+    }
+}
+
+.cafe-action-right {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.favorite-icon {
+    // position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 20px;
+    color: red;
+    background: white;
+    border-radius: 50%;
+    padding: 5px;
+    cursor: pointer;
+    transition: color 0.2s ease;
+    width: 30px;
+    height: 29px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 14px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+.cafe-detail {
+    padding: 10px;
+    border-radius: 23px;
+    background-color: #EA6A12;
+    color: #FFFFFF;
+    font-weight: 600;
+    display: flex;
+    gap: 13px;
+    align-items: center;
+    justify-content: center;
+    width: 150px;
+    cursor: pointer;
+}

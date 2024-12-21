@@ -1,0 +1,161 @@
+
+.favoriteRestaurant{
+    display: flex;
+    flex-direction: column;
+}
+.banner {
+    position: relative;
+    width: 100%;
+    height: 400px; 
+
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    h1 {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: white;
+        font-size: 32px;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    .search-bar-wrapper {
+        position: absolute;
+        top: 60%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        display: flex;
+        align-items: center;
+        width: 50%;
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        
+
+        .search-icon {
+            margin-left: 12px;
+            color: #aaa;
+            font-size: 18px;
+        }
+
+        
+    }
+}
+
+.filters-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 25px 50px 0 50px;
+
+    .filters-left {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+
+        h3 {
+            font-size: 18px;
+            margin: 0;
+            font: optional;
+            margin-left: 85px;
+        }
+        h4{
+            font-size: 18px;
+            color: #545B61;
+        }
+
+        a {
+            font-size: 14px;
+            color: #666;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-left: 90px;
+
+            svg {
+                font-size: 14px;
+            }
+
+            &:hover {
+                text-decoration: none;
+                color: #000;
+            }
+        }
+    }
+    .name-collection{
+        font-size: 30px;
+        font-weight: 600;
+        color: var(--cl-favorite);
+    }
+    .filters-right {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+
+        .view-icon {
+            font-size: 20px;
+            cursor: pointer;
+        }
+        &.active {
+            color: #000;
+        }
+        h3{
+            color: #787878;
+            font-size: 18px;
+        }
+        
+        span{
+            font-weight: 600;
+            color: #000;
+        }
+    }
+}
+.content {
+    display: flex;
+    margin: 50px;
+    // flex-direction: column;
+    .filter {
+        flex: 1;
+        margin-right: 20px;
+
+        h3 {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+    }
+
+    .favorite-list {
+        flex: 3;
+        display: grid;
+        gap: 20px;
+        &.list-view {
+            grid-template-columns: 1fr;
+        }
+    }
+}
+.filter-option {
+    margin-bottom: 40px;
+
+    h3 {
+        font-size: 15px;
+        letter-spacing: 1px;
+    }
+
+    label {
+        font-size: 12px;
+        user-select: none;
+        margin-left: 4px;
+    }
+}
