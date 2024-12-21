@@ -8,6 +8,9 @@ use App\Http\Controllers\UploadController;
 use App\Services\LocationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\FavoriteController;
+
+
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -37,3 +40,8 @@ Route::post('/upload/image', [UploadController::class, 'uploadImage']);
 
 // Location
 Route::get('/location', [LocationController::class, 'getCoordinates']);
+
+//Favorite
+Route::post('/favorite/create', [FavoriteController::class, 'createFavorite']);
+Route::delete('/favorite/delete/{id}', [FavoriteController::class, 'deleteFavorite']);
+
