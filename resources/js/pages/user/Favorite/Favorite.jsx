@@ -61,7 +61,7 @@ export default function Favorite() {
             .catch((error) => {
                 console.log(error);
             });
-    }, []);
+    });
 
     const handleCollectionIdChange = (id) => {
         setCollectionId(id);

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlus, faTimes, faPen } from '@fortawesome/free-solid-svg-icons';
 import ImageUploading from 'react-images-uploading';
@@ -27,6 +28,21 @@ const AddPopup = ({ onClose, onReFetch }) => {
     const [closeTime, setCloseTime] = useState('');
     const maxNumber = 4;
 
+    const inputRef = React.useRef();
+
+    const [source, setSource] = React.useState();
+
+    const handleFileChange = (event) => {
+        const file = event.target.files[0];
+        const url = URL.createObjectURL(file);
+        setMedia([file]);
+        setSource(url);
+    };
+
+    const handleChoose = (event) => {
+        inputRef.current.click();
+    };
+
     const onAvatarChange = (image) => {
         // console.log(image);
         setAvatar(image);
@@ -44,7 +60,7 @@ const AddPopup = ({ onClose, onReFetch }) => {
         // console.log({ name, description: desc, address, phone, email, price_start: priceStart, price_end: priceEnd, avatar : avatar?.file, media: imagesFile.length > 0 ? imagesFile : media, open_time: `${openTime}:00`, close_time: `${closeTime}:00` });
         try {
             const data = await axios.post('/api/restaurant/create-v',
-                { name, description: desc, address, phone, email, price_start: priceStart, price_end: priceEnd, avatar : avatar?.file, media: imagesFile.length > 0 ? imagesFile : media, open_time: `${openTime}:00`, close_time: `${closeTime}:00` },
+                { name, description: desc, address, phone, email, price_start: priceStart, price_end: priceEnd, avatar: avatar?.file, media: imagesFile.length > 0 ? imagesFile : media, open_time: `${openTime}:00`, close_time: `${closeTime}:00` },
                 {
                     headers: {
                         'Content-Type': 'multipart/form-data'
@@ -100,31 +116,61 @@ const AddPopup = ({ onClose, onReFetch }) => {
                         <div className={cx('right')}>
                             <div className={cx('content-item')}>
                                 <h3 className={cx('title')}>メディア</h3>
-                                <div>
-                                    <label className={cx('label')}>アバター</label>
-                                    <ImageUploading
-                                        value={avatar ? [avatar] : []}
-                                        onChange={(imageList) => onAvatarChange(imageList[0])}
-                                    >
-                                        {({ onImageUpload, onImageUpdate }) => (
-                                            <div className={cx('upload__avatar-wrapper')}>
-                                                {avatar ? (
-                                                    <img
-                                                        src={avatar.dataURL}
-                                                        width="100"
-                                                        height="100"
-                                                        onClick={onImageUpdate} />
-                                                ) :
-                                                    (<button onClick={onImageUpload}>
-                                                        <FontAwesomeIcon icon={faPlus}></FontAwesomeIcon>
-                                                    </button>)}
-                                            </div>
-                                        )}
-                                    </ImageUploading>
+                                <div className={cx('flex-row')}>
+                                    <div>
+                                        <label className={cx('label')}>アバター</label>
+                                        <ImageUploading
+                                            value={avatar ? [avatar] : []}
+                                            onChange={(imageList) => onAvatarChange(imageList[0])}
+                                        >
+                                            {({ onImageUpload, onImageUpdate }) => (
+                                                <div className={cx('upload__avatar-wrapper')}>
+                                                    {avatar ? (
+                                                        <img
+                                                            src={avatar.dataURL}
+                                                            width="100"
+                                                            height="100"
+                                                            onClick={onImageUpdate} />
+                                                    ) :
+                                                        (<button onClick={onImageUpload}>
+                                                            <FontAwesomeIcon icon={faPlus}></FontAwesomeIcon>
+                                                        </button>)}
+                                                </div>
+                                            )}
+                                        </ImageUploading>
+                                    </div>
+                                    <div className={cx('VideoInput')}>
+                                        <label className={cx('label')}>ビデオ</label>
+                                        <div className={cx('VideoInput_container')}>
+                                            <input
+                                                ref={inputRef}
+                                                className={cx('VideoInput_input')}
+                                                type="file"
+                                                onChange={handleFileChange}
+                                                accept=".mp4"
+                                            />
+                                            {!source && <button onClick={handleChoose}>
+                                                <FontAwesomeIcon icon={faPlus}></FontAwesomeIcon>
+                                            </button>}
+                                            {source && (
+                                                <>
+                                                    <video
+                                                        className={cx('VideoInput_video')}
+                                                        width={200}
+                                                        height={100}
+                                                        controls
+                                                        src={source}
+                                                    />
+                                                    <button onClick={() => setSource()} className={cx('VideoInput_btn')}>
+                                                        <FontAwesomeIcon icon={faTimes}></FontAwesomeIcon>
+                                                    </button>
+                                                </>
+                                            )}
+                                        </div>
+                                    </div>
                                 </div>
                                 <div>
                                     <label className={cx('label')}>フォトギャラリー</label>
-                                    <DefaultInput noLabel type='file' accept="mp4/*" onChange={(e) => setMedia(e.target.files)}></DefaultInput>
                                     <ImageUploading
                                         multiple
                                         value={images}
@@ -154,6 +200,7 @@ const AddPopup = ({ onClose, onReFetch }) => {
                                                         </div>
                                                     ))}
                                                 </div>
+
                                             </div>
                                         )}
                                     </ImageUploading>
