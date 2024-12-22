@@ -85,4 +85,109 @@ class CollectionController extends Controller
             ], 400);
         }
     }
+
+    public function createCollection(Request $request)
+    {
+        try {
+            $validatedData = $request->validate([
+                'user_id' => 'required|integer|exists:users,id',
+                'name' => 'required|string|max:255'
+            ]);
+
+            $collection = Collection::create($validatedData);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Collection created successfully',
+                'data' => [
+                    'id' => $collection->id,
+                    'name' => $collection->name,
+                    'user_id' => $collection->user_id,
+                    'created_at' => $collection->created_at
+                ]
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error creating collection',
+                'error' => $e->getMessage()
+            ], 400);
+        }
+    }
+
+    /**
+     * Update an existing collection
+     */
+    public function updateCollection(Request $request, $id)
+    {
+        try {
+            // Thay đổi validation để không cần 'id' trong body
+            $validatedData = $request->validate([
+                'name' => 'required|string|max:255',
+                // 'user_id' không bắt buộc
+                'user_id' => 'nullable|integer|exists:users,id',
+            ]);
+
+            // Tìm collection bằng ID từ URL
+            $collection = Collection::findOrFail($id);
+
+            // Kiểm tra xem collection có thuộc về user không nếu user_id có trong request
+            if (isset($validatedData['user_id']) && $collection->user_id != $validatedData['user_id']) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'You do not have permission to update this collection'
+                ], 403);
+            }
+
+            // Cập nhật collection
+            $collection->update([
+                'name' => $validatedData['name']
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Collection updated successfully',
+                'data' => [
+                    'id' => $collection->id,
+                    'name' => $collection->name,
+                    'user_id' => $collection->user_id,
+                    'updated_at' => $collection->updated_at
+                ]
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error updating collection',
+                'error' => $e->getMessage()
+            ], 400);
+        }
+    }
+
+
+
+
+    /**
+     * Delete a collection
+     */
+    public function deleteCollection($id)
+    {
+        try {
+            // Lấy collection từ DB theo ID
+            $collection = Collection::findOrFail($id);
+
+            // Xóa collection
+            $collection->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Collection deleted successfully'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error deleting collection',
+                'error' => $e->getMessage()
+            ], 400);
+        }
+    }
 }

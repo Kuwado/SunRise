@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Collection extends Model
 {
+    protected $fillable = ['user_id', 'name'];
+
     use HasFactory;
 
     public function user()
