@@ -8,6 +8,47 @@ use App\Http\Resources\RestaurantResource;
 
 class CollectionController extends Controller
 {
+    // add favorite to Collection
+    public function addFavoriteToCollection(Request $request)
+    {
+        try {
+            // Validate input
+            $validatedData = $request->validate([
+                'collection_id' => 'required|integer|exists:collections,id',
+                'favorite_id' => 'required|integer|exists:favorites,id',
+            ]);
+
+            // Find the collection
+            $collection = Collection::findOrFail($validatedData['collection_id']);
+
+            // Check if the favorite is already in the collection
+            if ($collection->favorites()->where('favorites.id', $validatedData['favorite_id'])->exists()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'The favorite is already in the collection'
+                ], 409);
+            }
+
+            // Attach favorite to the collection
+            $collection->favorites()->attach($validatedData['favorite_id']);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Favorite added to collection successfully',
+                'collection_favorite' => [
+                    'collection_id' => $collection->id,
+                    'favorite_id' => $validatedData['favorite_id']
+                ]
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error adding favorite to collection',
+                'error' => $e->getMessage()
+            ], 400);
+        }
+    }
+
     public function getCollection(Request $request)
     {
         try {
