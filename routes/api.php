@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CollectionController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\RestaurantController;
@@ -45,3 +46,5 @@ Route::get('/location', [LocationController::class, 'getCoordinates']);
 Route::post('/favorite/create', [FavoriteController::class, 'createFavorite']);
 Route::delete('/favorite/delete', [FavoriteController::class, 'deleteFavorite']);
 
+//Collection
+Route::get('collection', [CollectionController::class, 'getCollection']);
