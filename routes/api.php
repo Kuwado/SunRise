@@ -32,7 +32,7 @@ Route::get('/restaurants/count', [RestaurantController::class, 'getCounts']);
 
 // Reviews
 Route::get('/reviews', [ReviewController::class, 'getReviews']);
-
+Route::post('/review/create', [ReviewController::class, 'createReview']);
 
 
 //Upload
@@ -48,3 +48,4 @@ Route::delete('/favorite/delete', [FavoriteController::class, 'deleteFavorite'])
 
 //Collection
 Route::get('collection', [CollectionController::class, 'getCollection']);
+Route::get('collections', [CollectionController::class, 'getCollections']);

@@ -11,15 +11,12 @@ class CollectionController extends Controller
     public function getCollection(Request $request)
     {
         try {
-            // Validate the request parameter
             $request->validate([
                 'id' => 'required|integer|exists:collections,id'
             ]);
 
-            // Find the collection with the given ID from query parameter
             $collection = Collection::findOrFail($request->query('id'));
 
-            // Get the restaurants through favorites relationship with pagination
             $restaurants = $collection->favorites()
                 ->with('restaurant')
                 ->paginate(2)
@@ -62,6 +59,30 @@ class CollectionController extends Controller
                 'message' => 'Collection not found or error occurred',
                 'error' => $e->getMessage()
             ], 404);
+        }
+    }
+    public function getCollections(Request $request)
+    {
+        try {
+            $request->validate([
+                'user_id' => 'required|integer|exists:users,id'
+            ]);
+
+            $collections = Collection::select('id', 'name')
+                ->where('user_id', $request->query('user_id'))
+                ->withCount('favorites as restaurant_count')
+                ->get();
+
+            return response()->json([
+                'success' => true,
+                'data' => $collections
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error fetching collections',
+                'error' => $e->getMessage()
+            ], 400);
         }
     }
 }
