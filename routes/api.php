@@ -53,3 +53,4 @@ Route::get('/collections', [CollectionController::class, 'getCollections']);
 Route::post('/collection/create', [CollectionController::class, 'createCollection']);
 Route::post('/collection/update/{id}', [CollectionController::class, 'updateCollection']);
 Route::delete('/collection/delete/{id}', [CollectionController::class, 'deleteCollection']);
+Route::post('/collection/addfavorite', [CollectionController::class, 'addFavoriteToCollection']);
