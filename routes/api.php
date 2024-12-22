@@ -47,5 +47,8 @@ Route::post('/favorite/create', [FavoriteController::class, 'createFavorite']);
 Route::delete('/favorite/delete', [FavoriteController::class, 'deleteFavorite']);
 
 //Collection
-Route::get('collection', [CollectionController::class, 'getCollection']);
-Route::get('collections', [CollectionController::class, 'getCollections']);
+Route::get('/collection', [CollectionController::class, 'getCollection']);
+Route::get('/collections', [CollectionController::class, 'getCollections']);
+Route::post('/collection/create', [CollectionController::class, 'createCollection']);
+Route::post('/collection/update/{id}', [CollectionController::class, 'updateCollection']);
+Route::delete('/collection/delete/{id}', [CollectionController::class, 'deleteCollection']);
