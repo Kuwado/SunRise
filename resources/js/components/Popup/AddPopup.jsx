@@ -22,6 +22,7 @@ const AddPopup = ({ onClose, onReFetch }) => {
     const [avatar, setAvatar] = useState();
     const [images, setImages] = useState([]);
     const [imagesFile, setImagesFile] = useState([]);
+    const [media, setMedia] = useState([]);
     const [openTime, setOpenTime] = useState('');
     const [closeTime, setCloseTime] = useState('');
     const maxNumber = 4;
@@ -39,9 +40,11 @@ const AddPopup = ({ onClose, onReFetch }) => {
 
     const onSubmitHandler = async (e) => {
         e.preventDefault();
+        imagesFile.push(...media);
+        // console.log({ name, description: desc, address, phone, email, price_start: priceStart, price_end: priceEnd, avatar : avatar?.file, media: imagesFile.length > 0 ? imagesFile : media, open_time: `${openTime}:00`, close_time: `${closeTime}:00` });
         try {
-            const data = await axios.post('/api/restaurant/create',
-                { name, description: desc, address, phone, email, price_start: priceStart, price_end: priceEnd, avatar : avatar?.file, media: imagesFile.length > 0 ? imagesFile : null, open_time: openTime, close_time: closeTime },
+            const data = await axios.post('/api/restaurant/create-v',
+                { name, description: desc, address, phone, email, price_start: priceStart, price_end: priceEnd, avatar : avatar?.file, media: imagesFile.length > 0 ? imagesFile : media, open_time: `${openTime}:00`, close_time: `${closeTime}:00` },
                 {
                     headers: {
                         'Content-Type': 'multipart/form-data'
@@ -121,6 +124,7 @@ const AddPopup = ({ onClose, onReFetch }) => {
                                 </div>
                                 <div>
                                     <label className={cx('label')}>フォトギャラリー</label>
+                                    <DefaultInput noLabel type='file' accept="mp4/*" onChange={(e) => setMedia(e.target.files)}></DefaultInput>
                                     <ImageUploading
                                         multiple
                                         value={images}
