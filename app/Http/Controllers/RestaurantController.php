@@ -585,7 +585,7 @@ class RestaurantController extends Controller
             'phone' => 'required|string|max:20',
             'address' => 'required|string|max:255',
             'avatar' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-            'media.*' => 'nullable|mimes:jpg,jpeg,png,mp4,avi,mkv|max:20480',
+            'media.*' => 'nullable|mimes:jpg,jpeg,png,mp4,avi,mkv|max:20480000',
             'description' => 'nullable|string',
             'price_start' => 'nullable|numeric',
             'price_end' => 'nullable|numeric',
