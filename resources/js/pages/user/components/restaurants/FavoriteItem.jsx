@@ -14,10 +14,14 @@ import styles from './FavoriteItem.module.scss';
 import images from '~/assets/images';
 import Rating from '~/components/Rating';
 import { AddCollectionPopup } from '../CollectionPopup';
+import axios from 'axios';
 const cx = classNames.bind(styles);
 
 export default function FavoriteItem() {
     const [isShowPopUp, setIsShowPopup] = useState(false);
+
+    
+   
     return (
         <>
             {isShowPopUp && <AddCollectionPopup onClose={() => setIsShowPopup(false)} />}
