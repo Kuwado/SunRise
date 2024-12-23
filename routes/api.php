@@ -46,6 +46,7 @@ Route::get('/location', [LocationController::class, 'getCoordinates']);
 //Favorite
 Route::post('/favorite/create', [FavoriteController::class, 'createFavorite']);
 Route::delete('/favorite/delete', [FavoriteController::class, 'deleteFavorite']);
+Route::get('/favorites', [FavoriteController::class, 'getFavorites']);
 
 //Collection
 Route::get('/collection', [CollectionController::class, 'getCollection']);
