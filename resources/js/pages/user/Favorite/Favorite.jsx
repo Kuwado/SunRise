@@ -11,7 +11,7 @@ import styles from './Favorite.module.scss';
 import RadioInput from '~/components/radio';
 import FavoriteItem from '../components/restaurants/FavoriteItem';
 import { AddCollectionPopup } from '../components/CollectionPopup';
-import { Link } from 'react-router-dom';
+
 const cx = classNames.bind(styles);
 export default function Favorite() {
     const [types, setTypes] = useState([]);
@@ -273,8 +273,7 @@ export default function Favorite() {
                                     location={restaurant.address}
                                     price_start={restaurant.price_range.start}
                                     price_end={restaurant.price_range.end}
-                                    open_time={restaurant.open_time}
-                                    close_time={restaurant.close_time}
+                                    time_ago={restaurant.time_ago}
                                     rating={restaurant.rating}
                                     reviews={restaurant.reviews}
                                 />

@@ -104,15 +104,15 @@ class FavoriteController extends Controller
                         $months = round(abs($now->diffInMonths($favorite->created_at)));
 
                         if ($minutes < 1) {
-                            return 'dưới 1 phút trước';
+                            return ' 1 ぶん前に保存';
                         } elseif ($minutes < 60) {
-                            return $minutes . ' phút trước';
+                            return $minutes . ' ぶん前に保存';
                         } elseif ($hours < 24) {
-                            return $hours . ' giờ trước';
+                            return $hours . ' 時間前に保存';
                         } elseif ($days < 30) {
-                            return $days . ' ngày trước';
+                            return $days . ' 日前に保存';
                         } elseif ($months < 12) {
-                            return $months . ' tháng trước';
+                            return $months . ' 月前に保存';
                         } else {
                             return $favorite->created_at;
                         }

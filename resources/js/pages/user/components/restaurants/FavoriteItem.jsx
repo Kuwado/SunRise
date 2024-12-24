@@ -29,11 +29,9 @@ export default function FavoriteItem({
     rating,
     reviews,
     isListView,
-    open_time,
-    close_time,
+    time_ago,
 }) {
     const [isShowPopUp, setIsShowPopup] = useState(false);
-
     return (
         <>
             {isShowPopUp && <AddCollectionPopup onClose={() => setIsShowPopup(false)} />}
@@ -55,7 +53,7 @@ export default function FavoriteItem({
                         </div>
                         <div className={cx('cafe-time_save')}>
                             <FontAwesomeIcon icon={faClockRotateLeft} />
-                            <span>2日前に保存</span>
+                            <span>{time_ago}</span>
                         </div>
                     </div>
                     <div className={cx('cafe-rating')}>
