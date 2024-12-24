@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faTimes } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
@@ -12,13 +12,25 @@ import classNames from 'classnames/bind';
 const cx = classNames.bind(styles);
 
 const AddCollectionPopup = ({ onClose }) => {
-    const collections = [
-        { id: 10, name: 'コレクションA' },
-        { id: 11, name: 'コレクションB' },
-        { id: 12, name: 'コレクションC' },
-    ];
+    const [collections, setCollections] = useState([]);
     const [collectionsType, setCollectionsType] = useState([]);
-    const [newCollectionType, setNewCollectionType] = useState('');
+    const [newCollection, setNewCollection] = useState('');
+
+    useEffect(() => {
+        axios
+            .get('/api/collections', {
+                params: {
+                    user_id: localStorage.getItem('userId'),
+                },
+            })
+            .then((response) => {
+                console.log(response);
+                setCollections(response.data.data);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    })
 
     const handleCollectionsTypeChange = (id) => {
         setCollectionsType((prevCollectionsType) => {
@@ -31,14 +43,17 @@ const AddCollectionPopup = ({ onClose }) => {
             return newCollectionsType;
         });
     };
+    const user_id = localStorage.getItem('userId');
 
     const handleAddNewCollection = () => {
         axios
-            .post('/api/collections', {
-                name: newCollectionType,
+            .post('/api/collection/create', {
+                user_id, name: newCollection
             })
             .then((response) => {
                 console.log(response);
+                alert('新しいコレクションが追加されました');
+                setNewCollection('');
             })
             .catch((error) => {
                 console.log(error);
@@ -68,11 +83,11 @@ const AddCollectionPopup = ({ onClose }) => {
                         </button>
                     </div>
                     <div className={cx('content', 'flex-col')}>
-                        {collections.map((collection, index) => {
+                        {collections.length > 0 && collections.map((collection, index) => {
                             return (
                                 <CheckboxInput
                                     key={index}
-                                    id={collection.id}
+                                    id={index + 10}
                                     onChange={() => handleCollectionsTypeChange(collection.id)}
                                 >
                                     {collection.name}
@@ -83,11 +98,10 @@ const AddCollectionPopup = ({ onClose }) => {
                             placeholder={'新しいコレクション名'}
                             width={'250px'}
                             noLabel
-                            value={newCollectionType}
-                            setValue={setNewCollectionType}
+                            value={newCollection}
+                            setValue={setNewCollection}
                         />
                         <Button
-                            onClick
                             curved
                             secondary
                             width={'220px'}
@@ -95,9 +109,9 @@ const AddCollectionPopup = ({ onClose }) => {
                                 <FontAwesomeIcon
                                     icon={faPlus}
                                     size="xl"
-                                    onClick={handleAddNewCollection}
-                                ></FontAwesomeIcon>
-                            }
+                                    ></FontAwesomeIcon>
+                                }
+                            onClick={handleAddNewCollection}
                         >
                             新しいコレクション
                         </Button>

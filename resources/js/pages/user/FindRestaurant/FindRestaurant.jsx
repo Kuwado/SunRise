@@ -30,10 +30,6 @@ const FindRestaurant = () => {
     const [search, setSearch] = useState('');
     const [totalPriceProducts, setTotalPriceroducts] = useState([]);
     const [totalStyleProducts, setTotalStyleProducts] = useState([]);
-    // const [filterCounts, setFilterCounts] = useState({
-    //     styles: {},
-    //     prices: {},
-    // });
 
     //state filter
 

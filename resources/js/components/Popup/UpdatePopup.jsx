@@ -57,6 +57,7 @@ const UpdatePopup = ({ id, onClose, onReFetch }) => {
 
         fetchRestaurant();
     }, []);
+    console.log(images);
 
     const onAvatarChange = (image) => {
         // console.log(image.file);
