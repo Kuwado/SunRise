@@ -207,6 +207,33 @@ class CollectionController extends Controller
         }
     }
 
+    public function getCollections(Request $request)
+    {
+        try {
+            $request->validate([
+                'user_id' => 'required|integer|exists:users,id'
+            ]);
+
+            $collections = Collection::select('id', 'name')
+                ->where('user_id', $request->query('user_id'))
+                ->withCount('favorites as restaurant_count')
+                ->get();
+
+            $totalRestaurantCount = $collections->sum('restaurant_count');
+
+            return response()->json([
+                'success' => true,
+                'data' => $collections,
+                'total_restaurant_count' => $totalRestaurantCount
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error fetching collections',
+                'error' => $e->getMessage()
+            ], 400);
+        }
+    }
 
 
 
