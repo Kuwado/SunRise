@@ -65,15 +65,54 @@ class FavoriteController extends Controller
                 'user_id' => 'required|integer|exists:users,id'
             ]);
 
-            $perPage = 4;
+            // Lọc giá
+            $start = $request->query('start') ?? null;
+            $end = $request->query('end') ?? null;
+
+            // Sắp xếp theo giá
+            $sort_price = $request->query('sort_price') ?? null;
+
+            $perPage = 10;
             $now = now();
 
             $favorites = Favorite::with(['restaurant.reviews'])
-                ->where('user_id', $request->user_id)
-                ->paginate($perPage);
+                ->where('user_id', $request->user_id);
+
+            // Logic lọc giá
+            if ($start && $end) {
+                $favorites = $favorites->whereHas('restaurant', function ($query) use ($start, $end) {
+                    $query->where(function ($query) use ($start, $end) {
+                        $query->where('price_start', '<=', $end)
+                            ->where('price_end', '>=', $start);
+                    });
+                });
+            } elseif ($start) {
+                $favorites = $favorites->whereHas('restaurant', function ($query) use ($start) {
+                    $query->where('price_end', '>=', $start);
+                });
+            } elseif ($end) {
+                $favorites = $favorites->whereHas('restaurant', function ($query) use ($end) {
+                    $query->where('price_start', '<=', $end);
+                });
+            }
+
+            // Logic sắp xếp giá
+            if ($sort_price === "asc") {
+                $favorites = $favorites->join('restaurants', 'favorites.restaurant_id', '=', 'restaurants.id')
+                    ->orderByRaw('(restaurants.price_start + restaurants.price_end) / 2 ASC')
+                    ->select('favorites.*');
+            } elseif ($sort_price === "desc") {
+                $favorites = $favorites->join('restaurants', 'favorites.restaurant_id', '=', 'restaurants.id')
+                    ->orderByRaw('(restaurants.price_start + restaurants.price_end) / 2 DESC')
+                    ->select('favorites.*');
+            }
+
+            // Phân trang
+            $favorites = $favorites->paginate($perPage);
 
             $formattedData = [];
             foreach ($favorites->items() as $favorite) {
+                $priceAvg = ($favorite->restaurant->price_start + $favorite->restaurant->price_end) / 2;
                 $formattedData[] = [
                     'id' => $favorite->restaurant->id,
                     'name' => $favorite->restaurant->name,
@@ -83,6 +122,7 @@ class FavoriteController extends Controller
                         'start' => $favorite->restaurant->price_start,
                         'end' => $favorite->restaurant->price_end,
                     ],
+                    'price_avg' => $priceAvg,
                     'operation_hours' => [
                         'open' => $favorite->restaurant->open_time,
                         'close' => $favorite->restaurant->close_time
@@ -96,7 +136,7 @@ class FavoriteController extends Controller
                     'rating' => round($favorite->restaurant->reviews->avg('rating'), 2),
                     'num_of_days_favorited' => abs(round($now->diffInDays($favorite->created_at))),
                     'days_favorited' => $favorite->created_at,
-                    'now' => now(),
+                    'now' => $now,
                     'time_ago' => (function () use ($favorite, $now) {
                         $minutes = round(abs($now->diffInMinutes($favorite->created_at)));
                         $hours = round(abs($now->diffInHours($favorite->created_at)));
