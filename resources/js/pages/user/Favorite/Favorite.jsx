@@ -8,7 +8,6 @@ import Rating from '~/components/Rating';
 import Button from '~/components/Button';
 import classNames from 'classnames/bind';
 import styles from './Favorite.module.scss';
-import HeaderFavorite from '../components/header/HeaderFavorite';
 import RadioInput from '~/components/radio';
 import FavoriteItem from '../components/restaurants/FavoriteItem';
 import { AddCollectionPopup } from '../components/CollectionPopup';
@@ -27,11 +26,12 @@ export default function Favorite() {
 
     useEffect(() => {
         const fetchProducts = async () => {
-            const response = await axios.get('/api/collection', {
-                params: {
-                    id: collectionId
-                },
-            })
+            const response = await axios
+                .get('/api/collection', {
+                    params: {
+                        id: collectionId,
+                    },
+                })
                 .then((response) => {
                     console.log(response);
                     setProducts(response.data.data.collection.restaurants.data);
@@ -39,13 +39,11 @@ export default function Favorite() {
                 .catch((error) => {
                     console.log(error);
                 });
-            axios
+            axios;
+        };
 
-        }
-
-        if (collectionId !== -1 ) fetchProducts();
+        if (collectionId !== -1) fetchProducts();
     }, [collectionId]);
-
 
     useEffect(() => {
         axios
@@ -55,20 +53,21 @@ export default function Favorite() {
                 },
             })
             .then((response) => {
-                // console.log(response);
+                console.log(response);
                 setCollections(response.data.data);
             })
             .catch((error) => {
                 console.log(error);
             });
-    });
+    }, []);
+    console.log(products);
 
     const handleCollectionIdChange = (id) => {
         setCollectionId(id);
         setCollection(id === -1 ? 'すべてのいい' : collections.find((collection) => collection.id === id).name);
     };
 
-    const handleClearFilter = () => { };
+    const handleClearFilter = () => {};
 
     const handleCollectionUpdate = () => {
         setEditCollection(!editCollection);
@@ -94,8 +93,8 @@ export default function Favorite() {
         if (!confirm) {
             return;
         }
-        axios.delete(`/api/collection/delete/${collectionId}`, {
-        })
+        axios
+            .delete(`/api/collection/delete/${collectionId}`, {})
             .then((response) => {
                 console.log(response);
                 setCollection('すべてのいい');
@@ -106,7 +105,9 @@ export default function Favorite() {
             });
     };
 
-    const inputStyle = editCollection ? { border: '1px solid #000', backgroundColor: '#fff', borderRadius: '8px' } : { border: 'none', backgroundColor: 'transparent' };
+    const inputStyle = editCollection
+        ? { border: '1px solid #000', backgroundColor: '#fff', borderRadius: '8px' }
+        : { border: 'none', backgroundColor: 'transparent' };
 
     const handlePriceTypeChange = (typeId) => {
         if (typeId === priceType) {
@@ -133,7 +134,6 @@ export default function Favorite() {
 
     return (
         <>
-            {/* <HeaderFavorite /> */}
             <div className={cx('favoriteRestaurant')}>
                 <div className={cx('banner')}>
                     <img src={images.headerFindRestaurant} alt="Restaurant Banner" />
@@ -148,24 +148,34 @@ export default function Favorite() {
                         </a>
                     </div>
                     <div className={cx('name-collection')}>
-                        <input style={inputStyle} type="text" value={collection} onChange={(e) => setCollection(e.target.value)} contentEditable={editCollection} unselectable='true' />
-                        <div hidden={!editCollection}><Button onClick={() => updateCollection()} curved primary width={'150px'} > アップデート</Button></div>
+                        <input
+                            style={inputStyle}
+                            type="text"
+                            value={collection}
+                            onChange={(e) => setCollection(e.target.value)}
+                            contentEditable={editCollection}
+                            unselectable="true"
+                        />
+                        <div hidden={!editCollection}>
+                            <Button onClick={() => updateCollection()} curved primary width={'150px'}>
+                                {' '}
+                                アップデート
+                            </Button>
+                        </div>
                     </div>
                     <div className={cx('filters-right')}>
-                        {
-                            collectionId !== -1 && (
-                                <>
-                                    <div style={{ cursor: 'pointer' }} onClick={() => handleCollectionDelete()}>
-                                        <FontAwesomeIcon icon={faTrashCan} className={cx('view-icon')} />
-                                        <span>消去</span>
-                                    </div>
-                                    <div style={{ cursor: 'pointer' }} onClick={() => handleCollectionUpdate()}>
-                                        <FontAwesomeIcon icon={faPen} className={cx('view-icon')} />
-                                        <span>編集</span>
-                                    </div>
-                                </>
-                            )
-                        }
+                        {collectionId !== -1 && (
+                            <>
+                                <div style={{ cursor: 'pointer' }} onClick={() => handleCollectionDelete()}>
+                                    <FontAwesomeIcon icon={faTrashCan} className={cx('view-icon')} />
+                                    <span>消去</span>
+                                </div>
+                                <div style={{ cursor: 'pointer' }} onClick={() => handleCollectionUpdate()}>
+                                    <FontAwesomeIcon icon={faPen} className={cx('view-icon')} />
+                                    <span>編集</span>
+                                </div>
+                            </>
+                        )}
                     </div>
                 </div>
                 <div className={cx('content')}>
@@ -179,25 +189,26 @@ export default function Favorite() {
                             >
                                 すべてのいい
                             </RadioInput>
-                            {collections.length > 0 && collections.map((collection, index) => {
-                                return (
-                                    <RadioInput
-                                        key={index}
-                                        id={collection.id}
-                                        onChange={() => handleCollectionIdChange(collection.id)}
-                                        checked={collection.id === collectionId}
-                                    >
-                                        {collection.name}
-                                    </RadioInput>
-                                );
-                            })}
+                            {collections.length > 0 &&
+                                collections.map((collection, index) => {
+                                    return (
+                                        <RadioInput
+                                            key={index}
+                                            id={collection.id}
+                                            onChange={() => handleCollectionIdChange(collection.id)}
+                                            checked={collection.id === collectionId}
+                                        >
+                                            {collection.name}
+                                        </RadioInput>
+                                    );
+                                })}
                         </div>
                         <Dropdown
                             title="並べ替え 評価: 低から高"
                             width="width=227px"
-                        // setValue={setFilterDrPrice}
-                        // selected={filterDrPrice}
-                        // handleClick={handleSortPrice}
+                            // setValue={setFilterDrPrice}
+                            // selected={filterDrPrice}
+                            // handleClick={handleSortPrice}
                         >
                             <div>並べ替え 評価: 低から高</div>
                             <div>並べ替え 評価: 高から低</div>
@@ -220,13 +231,7 @@ export default function Favorite() {
                     </div>
 
                     <div className={cx('favorite-list')}>
-                        {products.length === 0 ? (
-                            <div></div>
-                        ) : (
-                            products.map((restaurant, index) => (
-                                <FavoriteItem />
-                            ))
-                        )}
+                        {products.length === 0 ? <div></div> : products.map((restaurant, index) => <FavoriteItem />)}
                         <FavoriteItem />
                         <FavoriteItem />
                         <FavoriteItem />
