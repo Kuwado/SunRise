@@ -95,7 +95,28 @@ class FavoriteController extends Controller
                     ],
                     'rating' => round($favorite->restaurant->reviews->avg('rating'), 2),
                     'num_of_days_favorited' => abs(round($now->diffInDays($favorite->created_at))),
-                    'days_favorited' => $favorite->created_at
+                    'days_favorited' => $favorite->created_at,
+                    'now' => now(),
+                    'time_ago' => (function () use ($favorite, $now) {
+                        $minutes = round(abs($now->diffInMinutes($favorite->created_at)));
+                        $hours = round(abs($now->diffInHours($favorite->created_at)));
+                        $days = round(abs($now->diffInDays($favorite->created_at)));
+                        $months = round(abs($now->diffInMonths($favorite->created_at)));
+
+                        if ($minutes < 1) {
+                            return 'dưới 1 phút trước';
+                        } elseif ($minutes < 60) {
+                            return $minutes . ' phút trước';
+                        } elseif ($hours < 24) {
+                            return $hours . ' giờ trước';
+                        } elseif ($days < 30) {
+                            return $days . ' ngày trước';
+                        } elseif ($months < 12) {
+                            return $months . ' tháng trước';
+                        } else {
+                            return $favorite->created_at;
+                        }
+                    })()
                 ];
             }
 
