@@ -65,7 +65,7 @@ class FavoriteController extends Controller
                 'user_id' => 'required|integer|exists:users,id'
             ]);
 
-            $perPage = 2;
+            $perPage = 4;
             $now = now();
 
             $favorites = Favorite::with(['restaurant.reviews'])

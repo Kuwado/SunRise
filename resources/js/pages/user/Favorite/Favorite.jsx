@@ -11,6 +11,7 @@ import styles from './Favorite.module.scss';
 import RadioInput from '~/components/radio';
 import FavoriteItem from '../components/restaurants/FavoriteItem';
 import { AddCollectionPopup } from '../components/CollectionPopup';
+import { Link } from 'react-router-dom';
 const cx = classNames.bind(styles);
 export default function Favorite() {
     const [types, setTypes] = useState([]);
@@ -68,6 +69,7 @@ export default function Favorite() {
             .get('/api/favorites', {
                 params: {
                     user_id: localStorage.getItem('userId'),
+                    perPage: 4,
                     page: currentPage,
                 },
             })

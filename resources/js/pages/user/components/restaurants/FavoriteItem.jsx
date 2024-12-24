@@ -15,6 +15,8 @@ import images from '~/assets/images';
 import Rating from '~/components/Rating';
 import { AddCollectionPopup } from '../CollectionPopup';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
+import config from '~/config';
 const cx = classNames.bind(styles);
 
 export default function FavoriteItem({
@@ -74,10 +76,12 @@ export default function FavoriteItem({
                             <div className={cx('favorite-icon')}>
                                 <FontAwesomeIcon icon={faHeart} />
                             </div>
-                            <button className={cx('cafe-detail')}>
-                                <span>もっと見る</span>
-                                <FontAwesomeIcon icon={faEye} />
-                            </button>
+                            <Link to={`${config.routes.user.restaurantDetail.replace(':restaurantId', id)}`}>
+                                <button className={cx('cafe-detail')}>
+                                    <span>もっと見る</span>
+                                    <FontAwesomeIcon icon={faEye} />
+                                </button>
+                            </Link>
                         </div>
                     </div>
                 </div>
