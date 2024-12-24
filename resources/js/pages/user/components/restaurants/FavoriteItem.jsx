@@ -17,11 +17,21 @@ import { AddCollectionPopup } from '../CollectionPopup';
 import axios from 'axios';
 const cx = classNames.bind(styles);
 
-export default function FavoriteItem() {
+export default function FavoriteItem({
+    id,
+    image,
+    name,
+    location,
+    price_start,
+    price_end,
+    rating,
+    reviews,
+    isListView,
+    open_time,
+    close_time,
+}) {
     const [isShowPopUp, setIsShowPopup] = useState(false);
 
-    
-   
     return (
         <>
             {isShowPopUp && <AddCollectionPopup onClose={() => setIsShowPopup(false)} />}
@@ -31,15 +41,15 @@ export default function FavoriteItem() {
                     <img src={images.restaurantItem1} alt="Cafe" className={cx('cafe-image')} />
                 </div>
                 <div className={cx('collection')}>
-                    <div className={cx('cafe-name')}>カフェA</div>
+                    <div className={cx('cafe-name')}>{name}</div>
                     <div className={cx('cafe-infor')}>
                         <div className={cx('cafe-address')}>
                             <FontAwesomeIcon icon={faHouse} />
-                            <span>道路A | B地区</span>
+                            <span>{location}</span>
                         </div>
                         <div className={cx('cafe-price')}>
                             <FontAwesomeIcon icon={faYenSign} />
-                            <span>600 以下</span>
+                            <span>{price_start} 以下</span>
                         </div>
                         <div className={cx('cafe-time_save')}>
                             <FontAwesomeIcon icon={faClockRotateLeft} />
@@ -47,7 +57,7 @@ export default function FavoriteItem() {
                         </div>
                     </div>
                     <div className={cx('cafe-rating')}>
-                        <Rating small rate={4} />
+                        <Rating small rate={rating} />
                         <span>(1897 reviews)</span>
                     </div>
                     <div className={cx('cafe-action')}>

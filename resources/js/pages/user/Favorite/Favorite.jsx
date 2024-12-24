@@ -14,7 +14,8 @@ import { AddCollectionPopup } from '../components/CollectionPopup';
 const cx = classNames.bind(styles);
 export default function Favorite() {
     const [types, setTypes] = useState([]);
-
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
     const [priceRange, setPriceRange] = useState({ start: null, end: null });
     const [priceType, setPriceType] = useState();
     const [products, setProducts] = useState([]);
@@ -53,14 +54,41 @@ export default function Favorite() {
                 },
             })
             .then((response) => {
-                console.log(response);
+                // console.log(response);
                 setCollections(response.data.data);
             })
             .catch((error) => {
                 console.log(error);
             });
     }, []);
+    console.log(currentPage);
+
+    useEffect(() => {
+        axios
+            .get('/api/favorites', {
+                params: {
+                    user_id: localStorage.getItem('userId'),
+                    page: currentPage,
+                },
+            })
+            .then((response) => {
+                // console.log(response.data.data.data);
+                console.log(response.data.data);
+                setProducts(response.data.data.data);
+                setTotalPages(response.data.data.last_page);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }, [currentPage]);
     console.log(products);
+    const handlePageChange = (page) => {
+        setCurrentPage(page);
+        window.scrollTo({
+            top: 405,
+            behavior: 'smooth',
+        });
+    };
 
     const handleCollectionIdChange = (id) => {
         setCollectionId(id);
@@ -231,11 +259,51 @@ export default function Favorite() {
                     </div>
 
                     <div className={cx('favorite-list')}>
-                        {products.length === 0 ? <div></div> : products.map((restaurant, index) => <FavoriteItem />)}
-                        <FavoriteItem />
-                        <FavoriteItem />
-                        <FavoriteItem />
+                        {products.length === 0 ? (
+                            <div></div>
+                        ) : (
+                            products.map((restaurant, index) => (
+                                <FavoriteItem
+                                    key={index}
+                                    id={restaurant.id}
+                                    image={restaurant.image}
+                                    name={restaurant.name}
+                                    location={restaurant.address}
+                                    price_start={restaurant.price_range.start}
+                                    price_end={restaurant.price_range.end}
+                                    open_time={restaurant.open_time}
+                                    close_time={restaurant.close_time}
+                                    rating={restaurant.rating}
+                                    reviews={restaurant.reviews}
+                                />
+                            ))
+                        )}
                     </div>
+                </div>
+                <div className={cx('pagination')}>
+                    {products.length > 0 && (
+                        <>
+                            <Button onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>
+                                <FontAwesomeIcon icon={faAngleLeft} />
+                            </Button>
+                            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                                <Button
+                                    key={page}
+                                    onClick={() => handlePageChange(page)}
+                                    primary={currentPage === page}
+                                    small
+                                >
+                                    {page}
+                                </Button>
+                            ))}
+                            <Button
+                                onClick={() => handlePageChange(currentPage + 1)}
+                                disabled={currentPage === totalPages}
+                            >
+                                <FontAwesomeIcon icon={faAngleRight} />
+                            </Button>
+                        </>
+                    )}
                 </div>
             </div>
         </>

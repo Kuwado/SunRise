@@ -65,9 +65,7 @@ class FavoriteController extends Controller
                 'user_id' => 'required|integer|exists:users,id'
             ]);
 
-            $perPage = 2;
-            $page = $request->get('page', 1);
-
+            $perPage = 4;
             $favorites = Favorite::with('restaurant')
                 ->where('user_id', $request->user_id)
                 ->paginate($perPage);
@@ -81,7 +79,7 @@ class FavoriteController extends Controller
                     'description' => $favorite->restaurant->description,
                     'price_range' => [
                         'start' => $favorite->restaurant->price_start,
-                        'end' => $favorite->restaurant->price_end
+                        'end' => $favorite->restaurant->price_end,
                     ],
                     'operation_hours' => [
                         'open' => $favorite->restaurant->open_time,
