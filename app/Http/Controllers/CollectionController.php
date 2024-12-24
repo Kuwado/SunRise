@@ -58,10 +58,12 @@ class CollectionController extends Controller
 
             $collection = Collection::findOrFail($request->query('id'));
 
+            $now = now();
+
             $restaurants = $collection->favorites()
                 ->with('restaurant')
                 ->paginate(2)
-                ->through(function ($favorite) {
+                ->through(function ($favorite) use ($now) {
                     return [
                         'id' => $favorite->restaurant->id,
                         'name' => $favorite->restaurant->name,
@@ -82,8 +84,29 @@ class CollectionController extends Controller
                             'longitude' => $favorite->restaurant->longitude
                         ],
                         'rating' => round($favorite->restaurant->reviews->avg('rating'), 2),
-                        'num_of_days_favorited' => abs(round(now()->diffInDays($favorite->created_at))),
-                        'days_favorited' => $favorite->created_at
+                        'num_of_days_favorited' => abs(round($now->diffInDays($favorite->created_at))),
+                        'days_favorited' => $favorite->created_at,
+                        'now' => $now,
+                        'time_ago' => (function () use ($favorite, $now) {
+                            $minutes = round(abs($now->diffInMinutes($favorite->created_at)));
+                            $hours = round(abs($now->diffInHours($favorite->created_at)));
+                            $days = round(abs($now->diffInDays($favorite->created_at)));
+                            $months = round(abs($now->diffInMonths($favorite->created_at)));
+
+                            if ($minutes < 1) {
+                                return 'dưới 1 phút trước';
+                            } elseif ($minutes < 60) {
+                                return $minutes . ' phút trước';
+                            } elseif ($hours < 24) {
+                                return $hours . ' giờ trước';
+                            } elseif ($days < 30) {
+                                return $days . ' ngày trước';
+                            } elseif ($months < 12) {
+                                return $months . ' tháng trước';
+                            } else {
+                                return $favorite->created_at;
+                            }
+                        })()
                     ];
                 });
 
@@ -103,33 +126,6 @@ class CollectionController extends Controller
                 'message' => 'Collection not found or error occurred',
                 'error' => $e->getMessage()
             ], 404);
-        }
-    }
-    public function getCollections(Request $request)
-    {
-        try {
-            $request->validate([
-                'user_id' => 'required|integer|exists:users,id'
-            ]);
-
-            $collections = Collection::select('id', 'name')
-                ->where('user_id', $request->query('user_id'))
-                ->withCount('favorites as restaurant_count')
-                ->get();
-
-            $totalRestaurantCount = $collections->sum('restaurant_count');
-
-            return response()->json([
-                'success' => true,
-                'data' => $collections,
-                'total_restaurant_count' => $totalRestaurantCount
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Error fetching collections',
-                'error' => $e->getMessage()
-            ], 400);
         }
     }
 
