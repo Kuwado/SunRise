@@ -66,9 +66,9 @@ class FavoriteController extends Controller
             ]);
 
             $perPage = 2;
-            $page = $request->get('page', 1);
+            $now = now();
 
-            $favorites = Favorite::with('restaurant')
+            $favorites = Favorite::with(['restaurant.reviews'])
                 ->where('user_id', $request->user_id)
                 ->paginate($perPage);
 
@@ -87,12 +87,15 @@ class FavoriteController extends Controller
                         'open' => $favorite->restaurant->open_time,
                         'close' => $favorite->restaurant->close_time
                     ],
-                    'media' => $favorite->restaurant->media,
+                    'media' => json_decode($favorite->restaurant->media, true),
                     'avatar' => $favorite->restaurant->avatar,
                     'location' => [
                         'latitude' => $favorite->restaurant->latitude,
                         'longitude' => $favorite->restaurant->longitude
-                    ]
+                    ],
+                    'rating' => round($favorite->restaurant->reviews->avg('rating'), 2),
+                    'num_of_days_favorited' => abs(round($now->diffInDays($favorite->created_at))),
+                    'days_favorited' => $favorite->created_at
                 ];
             }
 
