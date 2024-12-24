@@ -32,6 +32,7 @@ export default function Favorite() {
                 .get('/api/collection', {
                     params: {
                         id: collectionId,
+                        
                     },
                 })
                 .then((response) => {
@@ -45,7 +46,7 @@ export default function Favorite() {
         };
 
         if (collectionId !== -1) fetchProducts();
-    }, [collectionId]);
+    }, []);
 
     useEffect(() => {
         axios
@@ -55,7 +56,7 @@ export default function Favorite() {
                 },
             })
             .then((response) => {
-                // console.log(response);
+                console.log(response);
                 setCollections(response.data.data);
             })
             .catch((error) => {

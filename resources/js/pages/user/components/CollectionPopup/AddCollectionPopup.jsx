@@ -30,9 +30,9 @@ const AddCollectionPopup = ({ onClose }) => {
             .catch((error) => {
                 console.log(error);
             });
-    })
+    }, []);
 
-    const handleCollectionsTypeChange = (id) => {
+    const handleCollectionsTypeChange = () => {
         setCollectionsType((prevCollectionsType) => {
             const newCollectionsType = [...prevCollectionsType];
             if (newCollectionsType.includes(id)) {
@@ -48,7 +48,8 @@ const AddCollectionPopup = ({ onClose }) => {
     const handleAddNewCollection = () => {
         axios
             .post('/api/collection/create', {
-                user_id, name: newCollection
+                user_id,
+                name: newCollection,
             })
             .then((response) => {
                 console.log(response);
@@ -62,6 +63,17 @@ const AddCollectionPopup = ({ onClose }) => {
 
     const onSubmitHandler = (e) => {
         e.preventDefault();
+        axios
+            .post('/api/collection/addfavorite', {
+                collection_id: 6,
+                favorite_id: 11,
+            })
+            .then((response) => {
+                console.log(response);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
         console.log('submit');
     };
 
@@ -83,17 +95,18 @@ const AddCollectionPopup = ({ onClose }) => {
                         </button>
                     </div>
                     <div className={cx('content', 'flex-col')}>
-                        {collections.length > 0 && collections.map((collection, index) => {
-                            return (
-                                <CheckboxInput
-                                    key={index}
-                                    id={index + 10}
-                                    onChange={() => handleCollectionsTypeChange(collection.id)}
-                                >
-                                    {collection.name}
-                                </CheckboxInput>
-                            );
-                        })}
+                        {collections.length > 0 &&
+                            collections.map((collection, index) => {
+                                return (
+                                    <CheckboxInput
+                                        key={index}
+                                        id={index + 10}
+                                        onChange={() => handleCollectionsTypeChange(collection.id)}
+                                    >
+                                        {collection.name}
+                                    </CheckboxInput>
+                                );
+                            })}
                         <DefaultInput
                             placeholder={'新しいコレクション名'}
                             width={'250px'}
@@ -105,12 +118,7 @@ const AddCollectionPopup = ({ onClose }) => {
                             curved
                             secondary
                             width={'220px'}
-                            leftIcon={
-                                <FontAwesomeIcon
-                                    icon={faPlus}
-                                    size="xl"
-                                    ></FontAwesomeIcon>
-                                }
+                            leftIcon={<FontAwesomeIcon icon={faPlus} size="xl"></FontAwesomeIcon>}
                             onClick={handleAddNewCollection}
                         >
                             新しいコレクション
