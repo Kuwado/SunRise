@@ -75,12 +75,15 @@ class CollectionController extends Controller
                             'open' => $favorite->restaurant->open_time,
                             'close' => $favorite->restaurant->close_time
                         ],
-                        'media' => $favorite->restaurant->media,
+                        'media' => json_decode($favorite->restaurant->media, true),
                         'avatar' => $favorite->restaurant->avatar,
                         'location' => [
                             'latitude' => $favorite->restaurant->latitude,
                             'longitude' => $favorite->restaurant->longitude
-                        ]
+                        ],
+                        'rating' => round($favorite->restaurant->reviews->avg('rating'), 2),
+                        'num_of_days_favorited' => abs(round(now()->diffInDays($favorite->created_at))),
+                        'days_favorited' => $favorite->created_at
                     ];
                 });
 
@@ -114,9 +117,12 @@ class CollectionController extends Controller
                 ->withCount('favorites as restaurant_count')
                 ->get();
 
+            $totalRestaurantCount = $collections->sum('restaurant_count');
+
             return response()->json([
                 'success' => true,
-                'data' => $collections
+                'data' => $collections,
+                'total_restaurant_count' => $totalRestaurantCount
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -126,6 +132,7 @@ class CollectionController extends Controller
             ], 400);
         }
     }
+
 
     public function createCollection(Request $request)
     {
