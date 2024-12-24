@@ -114,9 +114,12 @@ class CollectionController extends Controller
                 ->withCount('favorites as restaurant_count')
                 ->get();
 
+            $totalRestaurantCount = $collections->sum('restaurant_count');
+
             return response()->json([
                 'success' => true,
-                'data' => $collections
+                'data' => $collections,
+                'total_restaurant_count' => $totalRestaurantCount
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -126,6 +129,7 @@ class CollectionController extends Controller
             ], 400);
         }
     }
+
 
     public function createCollection(Request $request)
     {
