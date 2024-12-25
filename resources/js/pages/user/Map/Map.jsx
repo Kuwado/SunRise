@@ -6,9 +6,6 @@ import styles from './Map.module.scss';
 import MapItem from './MapItem';
 import { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '~/context/AuthContext';
-import MapItem from './MapItem';
-import { useContext, useEffect, useState } from 'react';
-import { AuthContext } from '~/context/AuthContext';
 
 const cx = classNames.bind(styles);
 

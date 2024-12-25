@@ -25,7 +25,7 @@ const CafeItem = ({
     isFavorited,
 }) => {
     const [isFavorite, setIsFavorite] = useState(isFavorited);
-    // console.log(cafe.isFavorited);
+    console.log(cafe.isFavorited);
 
     const handleToggleFavorite = () => {
         const user_id = localStorage.getItem('userId');

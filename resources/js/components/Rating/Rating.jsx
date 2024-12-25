@@ -9,7 +9,6 @@ const cx = classNames.bind(styles);
 const Rating = ({ id, rate, small = false, medium = false, large = false }) => {
     const [rateList, setRateList] = useState([0, 0, 0, 0, 0]);
     console.log(typeof rate);
-    // console.log(typeof rate);
 
     const updateRate = () => {
         if (isNaN(rate) || rate < 0 || rate > 5) return;
