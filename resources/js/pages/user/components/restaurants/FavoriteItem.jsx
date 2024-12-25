@@ -14,36 +14,52 @@ import styles from './FavoriteItem.module.scss';
 import images from '~/assets/images';
 import Rating from '~/components/Rating';
 import { AddCollectionPopup } from '../CollectionPopup';
+import axios from 'axios';
+import { Link } from 'react-router-dom';
+import config from '~/config';
 const cx = classNames.bind(styles);
 
-export default function FavoriteItem() {
+export default function FavoriteItem({
+    id,
+    image,
+    name,
+    location,
+    price_start,
+    price_end,
+    rating,
+    reviews,
+    isListView,
+    time_ago,
+}) {
     const [isShowPopUp, setIsShowPopup] = useState(false);
+    console.log(time_ago);
+
     return (
         <>
-            {isShowPopUp && <AddCollectionPopup onClose={() => setIsShowPopup(false)} />}
+            {isShowPopUp && <AddCollectionPopup favorite_id={id} onClose={() => setIsShowPopup(false)} />}
 
             <div className={cx('favorite-item')}>
                 <div className={cx('image-container')}>
                     <img src={images.restaurantItem1} alt="Cafe" className={cx('cafe-image')} />
                 </div>
                 <div className={cx('collection')}>
-                    <div className={cx('cafe-name')}>カフェA</div>
+                    <div className={cx('cafe-name')}>{name}</div>
                     <div className={cx('cafe-infor')}>
                         <div className={cx('cafe-address')}>
                             <FontAwesomeIcon icon={faHouse} />
-                            <span>道路A | B地区</span>
+                            <span>{location}</span>
                         </div>
                         <div className={cx('cafe-price')}>
                             <FontAwesomeIcon icon={faYenSign} />
-                            <span>600 以下</span>
+                            <span>{price_start} 以下</span>
                         </div>
                         <div className={cx('cafe-time_save')}>
                             <FontAwesomeIcon icon={faClockRotateLeft} />
-                            <span>2日前に保存</span>
+                            <span>{time_ago}</span>
                         </div>
                     </div>
                     <div className={cx('cafe-rating')}>
-                        <Rating small rate={4} />
+                        <Rating small rate={rating} />
                         <span>(1897 reviews)</span>
                     </div>
                     <div className={cx('cafe-action')}>
@@ -60,10 +76,12 @@ export default function FavoriteItem() {
                             <div className={cx('favorite-icon')}>
                                 <FontAwesomeIcon icon={faHeart} />
                             </div>
-                            <button className={cx('cafe-detail')}>
-                                <span>もっと見る</span>
-                                <FontAwesomeIcon icon={faEye} />
-                            </button>
+                            <Link to={`${config.routes.user.restaurantDetail.replace(':restaurantId', id)}`}>
+                                <button className={cx('cafe-detail')}>
+                                    <span>もっと見る</span>
+                                    <FontAwesomeIcon icon={faEye} />
+                                </button>
+                            </Link>
                         </div>
                     </div>
                 </div>

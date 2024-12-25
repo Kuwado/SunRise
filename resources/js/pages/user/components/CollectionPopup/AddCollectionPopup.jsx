@@ -11,7 +11,7 @@ import styles from './Popup.module.scss';
 import classNames from 'classnames/bind';
 const cx = classNames.bind(styles);
 
-const AddCollectionPopup = ({ onClose }) => {
+const AddCollectionPopup = ({ favorite_id, onClose }) => {
     const [collections, setCollections] = useState([]);
     const [collectionsType, setCollectionsType] = useState([]);
     const [newCollection, setNewCollection] = useState('');
@@ -30,9 +30,11 @@ const AddCollectionPopup = ({ onClose }) => {
             .catch((error) => {
                 console.log(error);
             });
-    })
+    }, [newCollection]);
 
     const handleCollectionsTypeChange = (id) => {
+        console.log(id);
+
         setCollectionsType((prevCollectionsType) => {
             const newCollectionsType = [...prevCollectionsType];
             if (newCollectionsType.includes(id)) {
@@ -43,12 +45,14 @@ const AddCollectionPopup = ({ onClose }) => {
             return newCollectionsType;
         });
     };
-    const user_id = localStorage.getItem('userId');
+    console.log(collectionsType);
 
+    const user_id = localStorage.getItem('userId');
     const handleAddNewCollection = () => {
         axios
             .post('/api/collection/create', {
-                user_id, name: newCollection
+                user_id,
+                name: newCollection,
             })
             .then((response) => {
                 console.log(response);
@@ -62,7 +66,22 @@ const AddCollectionPopup = ({ onClose }) => {
 
     const onSubmitHandler = (e) => {
         e.preventDefault();
-        console.log('submit');
+        collectionsType.forEach((collectionId) => {
+            console.log(collectionId);
+            axios
+                .post('/api/collection/addfavorite', {
+                    //update
+                    favorite_id: favorite_id,
+                    collection_id: collectionId,
+                })
+                .then((response) => {
+                    console.log(response);
+                    alert('add thanh cong');
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        });
     };
 
     return (
@@ -83,17 +102,18 @@ const AddCollectionPopup = ({ onClose }) => {
                         </button>
                     </div>
                     <div className={cx('content', 'flex-col')}>
-                        {collections.length > 0 && collections.map((collection, index) => {
-                            return (
-                                <CheckboxInput
-                                    key={index}
-                                    id={index + 10}
-                                    onChange={() => handleCollectionsTypeChange(collection.id)}
-                                >
-                                    {collection.name}
-                                </CheckboxInput>
-                            );
-                        })}
+                        {collections.length > 0 &&
+                            collections.map((collection, index) => {
+                                return (
+                                    <CheckboxInput
+                                        key={index}
+                                        id={index + 20}
+                                        onChange={() => handleCollectionsTypeChange(collection.id)}
+                                    >
+                                        {collection.name}
+                                    </CheckboxInput>
+                                );
+                            })}
                         <DefaultInput
                             placeholder={'新しいコレクション名'}
                             width={'250px'}
@@ -105,12 +125,7 @@ const AddCollectionPopup = ({ onClose }) => {
                             curved
                             secondary
                             width={'220px'}
-                            leftIcon={
-                                <FontAwesomeIcon
-                                    icon={faPlus}
-                                    size="xl"
-                                    ></FontAwesomeIcon>
-                                }
+                            leftIcon={<FontAwesomeIcon icon={faPlus} size="xl"></FontAwesomeIcon>}
                             onClick={handleAddNewCollection}
                         >
                             新しいコレクション

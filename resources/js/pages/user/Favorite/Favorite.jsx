@@ -8,30 +8,57 @@ import Rating from '~/components/Rating';
 import Button from '~/components/Button';
 import classNames from 'classnames/bind';
 import styles from './Favorite.module.scss';
-import HeaderFavorite from '../components/header/HeaderFavorite';
 import RadioInput from '~/components/radio';
 import FavoriteItem from '../components/restaurants/FavoriteItem';
 import { AddCollectionPopup } from '../components/CollectionPopup';
+
 const cx = classNames.bind(styles);
 export default function Favorite() {
     const [types, setTypes] = useState([]);
-
+    const [user, setUser] = useState({});
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
     const [priceRange, setPriceRange] = useState({ start: null, end: null });
     const [priceType, setPriceType] = useState();
     const [products, setProducts] = useState([]);
+    const [filterDrPrice, setFilterDrPrice] = useState('並べ替え 評価:低から高', '並べ替え 評価:高から低');
     const [totalPriceProducts, setTotalPriceroducts] = useState([]);
     const [collection, setCollection] = useState('すべてのいい');
     const [editCollection, setEditCollection] = useState(false);
     const [collections, setCollections] = useState([]);
     const [collectionId, setCollectionId] = useState(-1);
+    const fetchFavorites = async () => {
+        axios
+            .get('/api/favorites', {
+                params: {
+                    user_id: localStorage.getItem('userId'),
+                    sort_price: filterDrPrice === '' ? '' : filterDrPrice === '並べ替え 評価:低から高' ? 'asc' : 'desc',
+                    perPage: 4,
+                    page: currentPage,
+                    start: priceRange.start || '',
+                    end: priceRange.end || '',
+                },
+            })
+            .then((response) => {
+                // console.log(response.data.data.data);
+                // console.log(response.data.data);
+                setProducts(response.data.data.data);
+                setTotalPages(response.data.data.last_page);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    };
+    console.log('collection_id :', collectionId);
 
     useEffect(() => {
         const fetchProducts = async () => {
-            const response = await axios.get('/api/collection', {
-                params: {
-                    id: collectionId
-                },
-            })
+            const response = await axios
+                .get('/api/collection', {
+                    params: {
+                        id: collectionId,
+                    },
+                })
                 .then((response) => {
                     console.log(response);
                     setProducts(response.data.data.collection.restaurants.data);
@@ -39,15 +66,34 @@ export default function Favorite() {
                 .catch((error) => {
                     console.log(error);
                 });
-            axios
+        };
 
+        if (collectionId !== -1) fetchProducts();
+        else {
+            fetchFavorites();
         }
-
-        if (collectionId !== -1 ) fetchProducts();
     }, [collectionId]);
 
-
     useEffect(() => {
+        //call API user
+        const fetchUser = async () => {
+            try {
+                const response = await axios.get('/api/user', {
+                    params: { id: 1 },
+                });
+                if (response.status === 200) {
+                    // console.log(response);
+                    setUser(response.data.user);
+                }
+            } catch (error) {
+                alert('Error fetching user' + error?.response?.data?.message);
+            }
+        };
+
+        fetchUser();
+    }, []);
+    useEffect(() => {
+        //call api collections
         axios
             .get('/api/collections', {
                 params: {
@@ -55,20 +101,34 @@ export default function Favorite() {
                 },
             })
             .then((response) => {
-                // console.log(response);
+                console.log(response);
                 setCollections(response.data.data);
             })
             .catch((error) => {
                 console.log(error);
             });
-    });
+    }, [collection]);
+
+    useEffect(() => {
+        fetchFavorites();
+    }, [currentPage, filterDrPrice, priceRange]);
+
+    const handlePageChange = (page) => {
+        setCurrentPage(page);
+        window.scrollTo({
+            top: 405,
+            behavior: 'smooth',
+        });
+    };
 
     const handleCollectionIdChange = (id) => {
         setCollectionId(id);
         setCollection(id === -1 ? 'すべてのいい' : collections.find((collection) => collection.id === id).name);
     };
 
-    const handleClearFilter = () => { };
+    const handleClearFilter = () => {
+        setCurrentPage(1);
+    };
 
     const handleCollectionUpdate = () => {
         setEditCollection(!editCollection);
@@ -81,7 +141,7 @@ export default function Favorite() {
                 user_id: localStorage.getItem('userId'),
             })
             .then((response) => {
-                console.log(response);
+                // console.log(response);
                 setEditCollection(false);
             })
             .catch((error) => {
@@ -94,10 +154,10 @@ export default function Favorite() {
         if (!confirm) {
             return;
         }
-        axios.delete(`/api/collection/delete/${collectionId}`, {
-        })
+        axios
+            .delete(`/api/collection/delete/${collectionId}`, {})
             .then((response) => {
-                console.log(response);
+                // console.log(response);
                 setCollection('すべてのいい');
                 setCollectionId(-1);
             })
@@ -105,8 +165,11 @@ export default function Favorite() {
                 console.log(error);
             });
     };
+    console.log(products);
 
-    const inputStyle = editCollection ? { border: '1px solid #000', backgroundColor: '#fff', borderRadius: '8px' } : { border: 'none', backgroundColor: 'transparent' };
+    const inputStyle = editCollection
+        ? { border: '1px solid #000', backgroundColor: '#fff', borderRadius: '8px' }
+        : { border: 'none', backgroundColor: 'transparent' };
 
     const handlePriceTypeChange = (typeId) => {
         if (typeId === priceType) {
@@ -133,7 +196,6 @@ export default function Favorite() {
 
     return (
         <>
-            {/* <HeaderFavorite /> */}
             <div className={cx('favoriteRestaurant')}>
                 <div className={cx('banner')}>
                     <img src={images.headerFindRestaurant} alt="Restaurant Banner" />
@@ -148,24 +210,34 @@ export default function Favorite() {
                         </a>
                     </div>
                     <div className={cx('name-collection')}>
-                        <input style={inputStyle} type="text" value={collection} onChange={(e) => setCollection(e.target.value)} contentEditable={editCollection} unselectable='true' />
-                        <div hidden={!editCollection}><Button onClick={() => updateCollection()} curved primary width={'150px'} > アップデート</Button></div>
+                        <input
+                            style={inputStyle}
+                            type="text"
+                            value={collection}
+                            onChange={(e) => setCollection(e.target.value)}
+                            contentEditable={editCollection}
+                            unselectable="true"
+                        />
+                        <div hidden={!editCollection}>
+                            <Button onClick={() => updateCollection()} curved primary width={'150px'}>
+                                {' '}
+                                アップデート
+                            </Button>
+                        </div>
                     </div>
                     <div className={cx('filters-right')}>
-                        {
-                            collectionId !== -1 && (
-                                <>
-                                    <div style={{ cursor: 'pointer' }} onClick={() => handleCollectionDelete()}>
-                                        <FontAwesomeIcon icon={faTrashCan} className={cx('view-icon')} />
-                                        <span>消去</span>
-                                    </div>
-                                    <div style={{ cursor: 'pointer' }} onClick={() => handleCollectionUpdate()}>
-                                        <FontAwesomeIcon icon={faPen} className={cx('view-icon')} />
-                                        <span>編集</span>
-                                    </div>
-                                </>
-                            )
-                        }
+                        {collectionId !== -1 && (
+                            <>
+                                <div style={{ cursor: 'pointer' }} onClick={() => handleCollectionDelete()}>
+                                    <FontAwesomeIcon icon={faTrashCan} className={cx('view-icon')} />
+                                    <span>消去</span>
+                                </div>
+                                <div style={{ cursor: 'pointer' }} onClick={() => handleCollectionUpdate()}>
+                                    <FontAwesomeIcon icon={faPen} className={cx('view-icon')} />
+                                    <span>編集</span>
+                                </div>
+                            </>
+                        )}
                     </div>
                 </div>
                 <div className={cx('content')}>
@@ -179,28 +251,29 @@ export default function Favorite() {
                             >
                                 すべてのいい
                             </RadioInput>
-                            {collections.length > 0 && collections.map((collection, index) => {
-                                return (
-                                    <RadioInput
-                                        key={index}
-                                        id={collection.id}
-                                        onChange={() => handleCollectionIdChange(collection.id)}
-                                        checked={collection.id === collectionId}
-                                    >
-                                        {collection.name}
-                                    </RadioInput>
-                                );
-                            })}
+                            {collections.length > 0 &&
+                                collections.map((collection, index) => {
+                                    return (
+                                        <RadioInput
+                                            key={index}
+                                            id={collection.id}
+                                            onChange={() => handleCollectionIdChange(collection.id)}
+                                            checked={collection.id === collectionId}
+                                        >
+                                            {collection.name}
+                                        </RadioInput>
+                                    );
+                                })}
                         </div>
                         <Dropdown
-                            title="並べ替え 評価: 低から高"
+                            title="並べ替え 評価:低から高"
                             width="width=227px"
-                        // setValue={setFilterDrPrice}
-                        // selected={filterDrPrice}
-                        // handleClick={handleSortPrice}
+                            setValue={setFilterDrPrice}
+                            selected={filterDrPrice}
+                            // handleClick={handleSortPrice}
                         >
-                            <div>並べ替え 評価: 低から高</div>
-                            <div>並べ替え 評価: 高から低</div>
+                            <div>並べ替え 評価:低から高</div>
+                            <div>並べ替え 評価:高から低</div>
                         </Dropdown>
                         <div className={cx('filter-option')} style={{ marginTop: '20px' }}>
                             <h3>価格（円）</h3>
@@ -224,13 +297,46 @@ export default function Favorite() {
                             <div></div>
                         ) : (
                             products.map((restaurant, index) => (
-                                <FavoriteItem />
+                                <FavoriteItem
+                                    key={index}
+                                    id={restaurant.id}
+                                    image={restaurant.image}
+                                    name={restaurant.name}
+                                    location={restaurant.address}
+                                    price_start={restaurant.price_range.start}
+                                    price_end={restaurant.price_range.end}
+                                    time_ago={restaurant.time_ago}
+                                    rating={restaurant.rating}
+                                    reviews={restaurant.reviews}
+                                />
                             ))
                         )}
-                        <FavoriteItem />
-                        <FavoriteItem />
-                        <FavoriteItem />
                     </div>
+                </div>
+                <div className={cx('pagination')}>
+                    {products.length > 0 && (
+                        <>
+                            <Button onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>
+                                <FontAwesomeIcon icon={faAngleLeft} />
+                            </Button>
+                            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                                <Button
+                                    key={page}
+                                    onClick={() => handlePageChange(page)}
+                                    primary={currentPage === page}
+                                    small
+                                >
+                                    {page}
+                                </Button>
+                            ))}
+                            <Button
+                                onClick={() => handlePageChange(currentPage + 1)}
+                                disabled={currentPage === totalPages}
+                            >
+                                <FontAwesomeIcon icon={faAngleRight} />
+                            </Button>
+                        </>
+                    )}
                 </div>
             </div>
         </>

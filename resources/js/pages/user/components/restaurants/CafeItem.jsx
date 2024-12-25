@@ -23,10 +23,16 @@ const CafeItem = ({
     close_time,
 }) => {
     const [isFavorite, setIsFavorite] = useState(false);
-    const handleCreateFavorite = () => {
+    const handleToggleFavorite = () => {
         const user_id = localStorage.getItem('userId');
         const restaurant_id = id;
-        axios.post(`/api/favorite/create`, { user_id: user_id, restaurant_id: restaurant_id });
+        if (isFavorite === false) {
+            axios.post(`/api/favorite/create`, { user_id: user_id, restaurant_id: restaurant_id });
+        } else {
+            axios.delete(`/api/favorite/delete`, {
+                params: { user_id: user_id, restaurant_id: restaurant_id },
+            });
+        }
     };
     const toggleFavorite = () => {
         setIsFavorite(!isFavorite);
@@ -43,7 +49,7 @@ const CafeItem = ({
                         className={cx('favorite-icon', { active: isFavorite })}
                         onClick={() => {
                             toggleFavorite();
-                            handleCreateFavorite();
+                            handleToggleFavorite();
                         }}
                     >
                         <FontAwesomeIcon icon={faHeart} />
