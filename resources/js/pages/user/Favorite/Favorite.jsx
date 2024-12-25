@@ -27,6 +27,8 @@ export default function Favorite() {
     const [editCollection, setEditCollection] = useState(false);
     const [collections, setCollections] = useState([]);
     const [collectionId, setCollectionId] = useState(-1);
+    
+
     const fetchFavorites = async () => {
         axios
             .get('/api/favorites', {
@@ -40,8 +42,6 @@ export default function Favorite() {
                 },
             })
             .then((response) => {
-                // console.log(response.data.data.data);
-                // console.log(response.data.data);
                 setProducts(response.data.data.data);
                 setTotalPages(response.data.data.last_page);
             })
@@ -49,7 +49,7 @@ export default function Favorite() {
                 console.log(error);
             });
     };
-    console.log('collection_id :', collectionId);
+    // console.log('collection_id :', collectionId);
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -61,7 +61,7 @@ export default function Favorite() {
                 })
                 .then((response) => {
                     console.log(response);
-                    setProducts(response.data.data.collection.restaurants.data);
+                    setProducts(response.data.data.collection.restaurants.data || []);
                 })
                 .catch((error) => {
                     console.log(error);
@@ -75,14 +75,12 @@ export default function Favorite() {
     }, [collectionId]);
 
     useEffect(() => {
-        //call API user
         const fetchUser = async () => {
             try {
                 const response = await axios.get('/api/user', {
                     params: { id: 1 },
                 });
                 if (response.status === 200) {
-                    // console.log(response);
                     setUser(response.data.user);
                 }
             } catch (error) {
@@ -92,8 +90,8 @@ export default function Favorite() {
 
         fetchUser();
     }, []);
+
     useEffect(() => {
-        //call api collections
         axios
             .get('/api/collections', {
                 params: {
@@ -296,6 +294,7 @@ export default function Favorite() {
                         {products.length === 0 ? (
                             <div></div>
                         ) : (
+                            
                             products.map((restaurant, index) => (
                                 <FavoriteItem
                                     key={index}
