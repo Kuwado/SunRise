@@ -44,7 +44,7 @@ class RestaurantController extends Controller
                 'open_time' => 'required|date_format:H:i:s',
                 'close_time' => 'required|date_format:H:i:s',
                 'avatar' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-                'media.*' => 'nullable|mimes:jpg,jpeg,png,mp4,avi,mkv|max:10240',
+                'media.*' => 'nullable|mimes:jpg,jpeg,png,mp4,avi,mkv|max:20480000',
             ];
 
             // Tùy chỉnh thông báo lỗi (nếu cần)
@@ -210,7 +210,7 @@ class RestaurantController extends Controller
 
         return response()->json([
             'message' => 'Lấy thành công cửa hàng',
-            'restaurant' => new RestaurantResource($restaurant),
+            'restaurant' => new RestaurantResource($restaurant, $userId),
         ], 200);
     }
 
@@ -384,7 +384,9 @@ class RestaurantController extends Controller
         return response()->json([
             'message' => 'Lấy thành công danh sách cửa hàng',
             'restaurants' => [
-                'data' => RestaurantResource::collection($restaurants),
+                'data' => RestaurantResource::collection($restaurants->map(function ($restaurant) use ($userId) {
+                    return new RestaurantResource($restaurant, $userId);
+                })),
                 // 'data' => $restaurants,
                 'meta' => [
                     'current_page' => $restaurants->currentPage(),
@@ -560,7 +562,7 @@ class RestaurantController extends Controller
 
         // Price
         $prices = [];
-        $prices["1"] = Restaurant::where('price_start', '<=' , $start)->count();
+        $prices["1"] = Restaurant::where('price_start', '<=', $start)->count();
         $prices["2"] = Restaurant::whereRaw(
             '(price_start < ? AND price_end > ?) OR (price_end < ? AND price_end > ?)',
             [$end, $end, $end, $start]
@@ -574,6 +576,90 @@ class RestaurantController extends Controller
             'ratings' => $ratings,
             'prices' => $prices,
             'distances' => $distances,
+        ], 200);
+    }
+
+    public function createRestaurantV(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:restaurants,email',
+            'phone' => 'required|string|max:20',
+            'address' => 'required|string|max:255',
+            'avatar' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'media.*' => 'nullable|mimes:jpg,jpeg,png,mp4,avi,mkv|max:20480000',
+            'description' => 'nullable|string',
+            'price_start' => 'nullable|numeric',
+            'price_end' => 'nullable|numeric',
+            'open_time' => 'nullable|date_format:H:i:s',
+            'close_time' => 'nullable|date_format:H:i:s',
+        ]);
+
+        // Kiểm tra điều kiện giá
+        if ($request->input('price_start') >= $request->input('price_end')) {
+            return response()->json(['message' => 'Giá bắt đầu phải nhỏ hơn giá kết thúc.'], 422);
+        }
+
+        // Kiểm tra điều kiện thời gian mở và đóng
+        if ($request->input('open_time') >= $request->input('close_time')) {
+            return response()->json(['message' => 'Thời gian mở phải nhỏ hơn thời gian đóng.'], 422);
+        }
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Dữ liệu không hợp lệ',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        // Lấy tọa độ từ địa chỉ
+        $address = $request->input('address');
+        $locations = $this->locationService->getCoordinates($address);
+        if (!$locations) {
+            return response()->json([
+                'message' => 'Địa chỉ không hợp lệ',
+            ], 422);
+        }
+
+        // Xử lý avatar (nếu có)
+        $avatarPath = null;
+        if ($request->hasFile('avatar')) {
+            $avatar = $request->file('avatar');
+            $avatarName = time() . '_avatar_' . uniqid() . '.' . $avatar->extension();
+            $avatar->storeAs('images', $avatarName, 'public');
+            $avatarPath = "/storage/images/$avatarName";
+        }
+
+        // Xử lý media (ảnh và video)
+        $mediaPaths = [];
+        if ($request->hasFile('media')) {
+            foreach ($request->file('media') as $mediaFile) {
+                $mediaName = time() . '_media_' . uniqid() . '.' . $mediaFile->extension();
+                $mediaFile->storeAs('media', $mediaName, 'public'); // Lưu video và ảnh vào thư mục 'media'
+                $mediaPaths[] = "/storage/media/$mediaName";
+            }
+        }
+
+        // Tạo nhà hàng mới
+        $restaurant = Restaurant::create([
+            'name' => $request->input('name'),
+            'email' => $request->input('email'),
+            'phone' => $request->input('phone'),
+            'address' => $request->input('address'),
+            'longitude' => $locations['lng'],
+            'latitude' => $locations['lat'],
+            'avatar' => $avatarPath,
+            'media' => json_encode($mediaPaths),
+            'description' => $request->input('description'),
+            'price_start' => $request->input('price_start'),
+            'price_end' => $request->input('price_end'),
+            'open_time' => $request->input('open_time'),
+            'close_time' => $request->input('close_time'),
+        ]);
+
+        return response()->json([
+            'message' => 'Nhà hàng đã được tạo thành công!',
+            'restaurant' => $restaurant,
         ], 200);
     }
 }

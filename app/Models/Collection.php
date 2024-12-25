@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Collection extends Model
 {
+    protected $fillable = ['user_id', 'name'];
+
     use HasFactory;
 
     public function user()
@@ -16,6 +18,7 @@ class Collection extends Model
 
     public function favorites()
     {
-        return $this->belongsToMany(Favorite::class, 'collections_favorites');
+        return $this->belongsToMany(Favorite::class, 'collections_favorites')
+            ->withPivot('id'); // Thêm 'id' để truy vấn pivot_id
     }
 }

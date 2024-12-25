@@ -15,8 +15,10 @@ class Favorite extends Model
 
     public function collections()
     {
-        return $this->belongsToMany(Collection::class, 'collections_favorites');
+        return $this->belongsToMany(Collection::class, 'collections_favorites')
+            ->withPivot('id');
     }
+
 
     public function user()
     {

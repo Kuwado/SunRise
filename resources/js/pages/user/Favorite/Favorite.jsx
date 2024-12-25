@@ -20,8 +20,93 @@ export default function Favorite() {
     const [priceType, setPriceType] = useState();
     const [products, setProducts] = useState([]);
     const [totalPriceProducts, setTotalPriceroducts] = useState([]);
+    const [collection, setCollection] = useState('すべてのいい');
+    const [editCollection, setEditCollection] = useState(false);
+    const [collections, setCollections] = useState([]);
+    const [collectionId, setCollectionId] = useState(-1);
 
-    const handleClearFilter = () => {};
+    useEffect(() => {
+        const fetchProducts = async () => {
+            const response = await axios.get('/api/collection', {
+                params: {
+                    id: collectionId
+                },
+            })
+                .then((response) => {
+                    console.log(response);
+                    setProducts(response.data.data.collection.restaurants.data);
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+            axios
+
+        }
+
+        if (collectionId !== -1 ) fetchProducts();
+    }, [collectionId]);
+
+
+    useEffect(() => {
+        axios
+            .get('/api/collections', {
+                params: {
+                    user_id: localStorage.getItem('userId'),
+                },
+            })
+            .then((response) => {
+                // console.log(response);
+                setCollections(response.data.data);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    });
+
+    const handleCollectionIdChange = (id) => {
+        setCollectionId(id);
+        setCollection(id === -1 ? 'すべてのいい' : collections.find((collection) => collection.id === id).name);
+    };
+
+    const handleClearFilter = () => { };
+
+    const handleCollectionUpdate = () => {
+        setEditCollection(!editCollection);
+    };
+
+    const updateCollection = () => {
+        axios
+            .post(`/api/collection/update/${collectionId}`, {
+                name: collection,
+                user_id: localStorage.getItem('userId'),
+            })
+            .then((response) => {
+                console.log(response);
+                setEditCollection(false);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    };
+
+    const handleCollectionDelete = () => {
+        confirm('本当に削除しますか？');
+        if (!confirm) {
+            return;
+        }
+        axios.delete(`/api/collection/delete/${collectionId}`, {
+        })
+            .then((response) => {
+                console.log(response);
+                setCollection('すべてのいい');
+                setCollectionId(-1);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    };
+
+    const inputStyle = editCollection ? { border: '1px solid #000', backgroundColor: '#fff', borderRadius: '8px' } : { border: 'none', backgroundColor: 'transparent' };
 
     const handlePriceTypeChange = (typeId) => {
         if (typeId === priceType) {
@@ -62,37 +147,57 @@ export default function Favorite() {
                             フィルターをクリア
                         </a>
                     </div>
-                    <div className={cx('name-collection')}> コレクション A</div>
+                    <div className={cx('name-collection')}>
+                        <input style={inputStyle} type="text" value={collection} onChange={(e) => setCollection(e.target.value)} contentEditable={editCollection} unselectable='true' />
+                        <div hidden={!editCollection}><Button onClick={() => updateCollection()} curved primary width={'150px'} > アップデート</Button></div>
+                    </div>
                     <div className={cx('filters-right')}>
-                        <FontAwesomeIcon icon={faTrashCan} className={cx('view-icon')} />
-                        <span>消去</span>
-                        <FontAwesomeIcon icon={faPen} className={cx('view-icon')} />
-                        <span>編集</span>
+                        {
+                            collectionId !== -1 && (
+                                <>
+                                    <div style={{ cursor: 'pointer' }} onClick={() => handleCollectionDelete()}>
+                                        <FontAwesomeIcon icon={faTrashCan} className={cx('view-icon')} />
+                                        <span>消去</span>
+                                    </div>
+                                    <div style={{ cursor: 'pointer' }} onClick={() => handleCollectionUpdate()}>
+                                        <FontAwesomeIcon icon={faPen} className={cx('view-icon')} />
+                                        <span>編集</span>
+                                    </div>
+                                </>
+                            )
+                        }
                     </div>
                 </div>
                 <div className={cx('content')}>
                     <div className={cx('filter')}>
                         <div className={cx('filter-option')}>
                             <h3>私のコレクション</h3>
-                            <RadioInput id="1" checked={priceType === 1} onChange={() => handlePriceTypeChange(1)}>
-                                すべての「いいね({totalPriceProducts[1]})
+                            <RadioInput
+                                id={-1}
+                                onChange={() => handleCollectionIdChange(-1)}
+                                checked={-1 === collectionId}
+                            >
+                                すべてのいい
                             </RadioInput>
-                            <RadioInput id="2" checked={priceType === 2} onChange={() => handlePriceTypeChange(2)}>
-                                コレクション A({totalPriceProducts[2]})
-                            </RadioInput>
-                            <RadioInput id="3" checked={priceType === 3} onChange={() => handlePriceTypeChange(3)}>
-                                コレクション B({totalPriceProducts[3]})
-                            </RadioInput>
-                            <RadioInput id="4" checked={priceType === 4} onChange={() => handlePriceTypeChange(4)}>
-                                コレクション C({totalPriceProducts[4]})
-                            </RadioInput>
+                            {collections.length > 0 && collections.map((collection, index) => {
+                                return (
+                                    <RadioInput
+                                        key={index}
+                                        id={collection.id}
+                                        onChange={() => handleCollectionIdChange(collection.id)}
+                                        checked={collection.id === collectionId}
+                                    >
+                                        {collection.name}
+                                    </RadioInput>
+                                );
+                            })}
                         </div>
                         <Dropdown
                             title="並べ替え 評価: 低から高"
                             width="width=227px"
-                            // setValue={setFilterDrPrice}
-                            // selected={filterDrPrice}
-                            // handleClick={handleSortPrice}
+                        // setValue={setFilterDrPrice}
+                        // selected={filterDrPrice}
+                        // handleClick={handleSortPrice}
                         >
                             <div>並べ替え 評価: 低から高</div>
                             <div>並べ替え 評価: 高から低</div>
@@ -115,7 +220,13 @@ export default function Favorite() {
                     </div>
 
                     <div className={cx('favorite-list')}>
-                        <FavoriteItem />
+                        {products.length === 0 ? (
+                            <div></div>
+                        ) : (
+                            products.map((restaurant, index) => (
+                                <FavoriteItem />
+                            ))
+                        )}
                         <FavoriteItem />
                         <FavoriteItem />
                         <FavoriteItem />
