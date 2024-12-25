@@ -75,7 +75,6 @@ const createRandomColorIcon = () => {
 const MapItem = ({ latitude, longitude, restaurant, location = false }) => {
     const { userId } = useContext(AuthContext);
     const navigate = useNavigate();
-    console.log(restaurant);
 
     const handleSeeDetail = () => {
         navigate(`/restaurant/${restaurant.id}`);
@@ -88,7 +87,7 @@ const MapItem = ({ latitude, longitude, restaurant, location = false }) => {
 
     return (
         <>
-            {latitude && longitude && (
+            {latitude && longitude && restaurant && (
                 <Marker position={[latitude, longitude]} icon={location ? markerIcon : createRandomColorIcon()}>
                     {restaurant && (
                         <Popup>
@@ -125,7 +124,7 @@ const MapItem = ({ latitude, longitude, restaurant, location = false }) => {
 
                                 {restaurant.rating > 0 && (
                                     <div className={cx('action')}>
-                                        <Rating rate={restaurant.rating} />
+                                        <Rating id={restaurant.id} rate={restaurant.rating} />
                                         <div
                                             className={cx('favorite-btn')}
                                             style={{ color: restaurant.isFavorited ? 'red' : 'gray' }}
