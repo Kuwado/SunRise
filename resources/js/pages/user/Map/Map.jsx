@@ -6,6 +6,9 @@ import styles from './Map.module.scss';
 import MapItem from './MapItem';
 import { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '~/context/AuthContext';
+import MapItem from './MapItem';
+import { useContext, useEffect, useState } from 'react';
+import { AuthContext } from '~/context/AuthContext';
 
 const cx = classNames.bind(styles);
 
@@ -18,7 +21,6 @@ const Map = () => {
     const longitude = 105.78348;
     // const latitude = 20.9929374;
     // const longitude = 105.7933964;
-    console.log(restaurants);
 
     useEffect(() => {
         const fetchRes = async () => {
