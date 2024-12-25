@@ -120,7 +120,7 @@ class FavoriteController extends Controller
                     'description' => $favorite->restaurant->description,
                     'price_range' => [
                         'start' => $favorite->restaurant->price_start,
-                        'end' => $favorite->restaurant->price_end,
+                        'end' => $favorite->restaurant->price_end
                     ],
                     'price_avg' => $priceAvg,
                     'operation_hours' => [
@@ -144,15 +144,15 @@ class FavoriteController extends Controller
                         $months = round(abs($now->diffInMonths($favorite->created_at)));
 
                         if ($minutes < 1) {
-                            return ' 1 ぶん前に保存';
+                            return 'dưới 1 phút trước';
                         } elseif ($minutes < 60) {
-                            return $minutes . ' ぶん前に保存';
+                            return $minutes . ' phút trước';
                         } elseif ($hours < 24) {
-                            return $hours . ' 時間前に保存';
+                            return $hours . ' giờ trước';
                         } elseif ($days < 30) {
-                            return $days . ' 日前に保存';
+                            return $days . ' ngày trước';
                         } elseif ($months < 12) {
-                            return $months . ' 月前に保存';
+                            return $months . ' tháng trước';
                         } else {
                             return $favorite->created_at;
                         }

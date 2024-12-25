@@ -11,7 +11,7 @@ import styles from './Popup.module.scss';
 import classNames from 'classnames/bind';
 const cx = classNames.bind(styles);
 
-const AddCollectionPopup = ({ onClose }) => {
+const AddCollectionPopup = ({ favorite_id, onClose }) => {
     const [collections, setCollections] = useState([]);
     const [collectionsType, setCollectionsType] = useState([]);
     const [newCollection, setNewCollection] = useState('');
@@ -30,9 +30,11 @@ const AddCollectionPopup = ({ onClose }) => {
             .catch((error) => {
                 console.log(error);
             });
-    }, []);
+    }, [newCollection]);
 
-    const handleCollectionsTypeChange = () => {
+    const handleCollectionsTypeChange = (id) => {
+        console.log(id);
+
         setCollectionsType((prevCollectionsType) => {
             const newCollectionsType = [...prevCollectionsType];
             if (newCollectionsType.includes(id)) {
@@ -43,8 +45,9 @@ const AddCollectionPopup = ({ onClose }) => {
             return newCollectionsType;
         });
     };
-    const user_id = localStorage.getItem('userId');
+    console.log(collectionsType);
 
+    const user_id = localStorage.getItem('userId');
     const handleAddNewCollection = () => {
         axios
             .post('/api/collection/create', {
@@ -63,18 +66,21 @@ const AddCollectionPopup = ({ onClose }) => {
 
     const onSubmitHandler = (e) => {
         e.preventDefault();
-        axios
-            .post('/api/collection/addfavorite', {
-                collection_id: 6,
-                favorite_id: 11,
-            })
-            .then((response) => {
-                console.log(response);
-            })
-            .catch((error) => {
-                console.log(error);
-            });
-        console.log('submit');
+        collectionsType.forEach((collectionId) => {
+            axios
+                .post('/api/collection/addfavorite', {
+                    //update
+                    favorite_id: favorite_id,
+                    collection_id: collectionId,
+                })
+                .then((response) => {
+                    console.log(response);
+                    alert('add thanh cong');
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        });
     };
 
     return (
@@ -100,7 +106,7 @@ const AddCollectionPopup = ({ onClose }) => {
                                 return (
                                     <CheckboxInput
                                         key={index}
-                                        id={index + 10}
+                                        id={index + 20}
                                         onChange={() => handleCollectionsTypeChange(collection.id)}
                                     >
                                         {collection.name}

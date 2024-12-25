@@ -15,11 +15,13 @@ import { AddCollectionPopup } from '../components/CollectionPopup';
 const cx = classNames.bind(styles);
 export default function Favorite() {
     const [types, setTypes] = useState([]);
+    const [user, setUser] = useState({});
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [priceRange, setPriceRange] = useState({ start: null, end: null });
     const [priceType, setPriceType] = useState();
     const [products, setProducts] = useState([]);
+    const [filterDrPrice, setFilterDrPrice] = useState('並べ替え 評価:低から高', '並べ替え 評価:高から低');
     const [totalPriceProducts, setTotalPriceroducts] = useState([]);
     const [collection, setCollection] = useState('すべてのいい');
     const [editCollection, setEditCollection] = useState(false);
@@ -32,7 +34,6 @@ export default function Favorite() {
                 .get('/api/collection', {
                     params: {
                         id: collectionId,
-                        
                     },
                 })
                 .then((response) => {
@@ -42,13 +43,57 @@ export default function Favorite() {
                 .catch((error) => {
                     console.log(error);
                 });
-            axios;
         };
 
         if (collectionId !== -1) fetchProducts();
-    }, []);
+        else {
+            const fetchFavorites = async () => {
+                axios
+                    .get('/api/favorites', {
+                        params: {
+                            user_id: localStorage.getItem('userId'),
+                            sort_price:
+                                filterDrPrice === '' ? '' : filterDrPrice === '並べ替え 評価:低から高' ? 'asc' : 'desc',
+                            perPage: 4,
+                            page: currentPage,
+                            start: priceRange.start || '',
+                            end: priceRange.end || '',
+                        },
+                    })
+                    .then((response) => {
+                        // console.log(response.data.data.data);
+                        console.log(response.data.data);
+                        setProducts(response.data.data.data);
+                        setTotalPages(response.data.data.last_page);
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    });
+            };
+            fetchFavorites();
+        }
+    }, [collectionId]);
 
     useEffect(() => {
+        //call API user
+        const fetchUser = async () => {
+            try {
+                const response = await axios.get('/api/user', {
+                    params: { id: 1 },
+                });
+                if (response.status === 200) {
+                    // console.log(response);
+                    setUser(response.data.user);
+                }
+            } catch (error) {
+                alert('Error fetching user' + error?.response?.data?.message);
+            }
+        };
+
+        fetchUser();
+    }, []);
+    useEffect(() => {
+        //call api collections
         axios
             .get('/api/collections', {
                 params: {
@@ -62,29 +107,35 @@ export default function Favorite() {
             .catch((error) => {
                 console.log(error);
             });
-    }, []);
-    console.log(currentPage);
+    }, [collection]);
 
     useEffect(() => {
-        axios
-            .get('/api/favorites', {
-                params: {
-                    user_id: localStorage.getItem('userId'),
-                    perPage: 4,
-                    page: currentPage,
-                },
-            })
-            .then((response) => {
-                // console.log(response.data.data.data);
-                console.log(response.data.data);
-                setProducts(response.data.data.data);
-                setTotalPages(response.data.data.last_page);
-            })
-            .catch((error) => {
-                console.log(error);
-            });
-    }, [currentPage]);
-    console.log(products);
+        const fetchFavorites = async () => {
+            axios
+                .get('/api/favorites', {
+                    params: {
+                        user_id: localStorage.getItem('userId'),
+                        sort_price:
+                            filterDrPrice === '' ? '' : filterDrPrice === '並べ替え 評価:低から高' ? 'asc' : 'desc',
+                        perPage: 4,
+                        page: currentPage,
+                        start: priceRange.start || '',
+                        end: priceRange.end || '',
+                    },
+                })
+                .then((response) => {
+                    // console.log(response.data.data.data);
+                    console.log(response.data.data);
+                    setProducts(response.data.data.data);
+                    setTotalPages(response.data.data.last_page);
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        };
+        fetchFavorites();
+    }, [currentPage, filterDrPrice, priceRange]);
+
     const handlePageChange = (page) => {
         setCurrentPage(page);
         window.scrollTo({
@@ -98,7 +149,9 @@ export default function Favorite() {
         setCollection(id === -1 ? 'すべてのいい' : collections.find((collection) => collection.id === id).name);
     };
 
-    const handleClearFilter = () => {};
+    const handleClearFilter = () => {
+        setCurrentPage(1);
+    };
 
     const handleCollectionUpdate = () => {
         setEditCollection(!editCollection);
@@ -111,7 +164,7 @@ export default function Favorite() {
                 user_id: localStorage.getItem('userId'),
             })
             .then((response) => {
-                console.log(response);
+                // console.log(response);
                 setEditCollection(false);
             })
             .catch((error) => {
@@ -127,7 +180,7 @@ export default function Favorite() {
         axios
             .delete(`/api/collection/delete/${collectionId}`, {})
             .then((response) => {
-                console.log(response);
+                // console.log(response);
                 setCollection('すべてのいい');
                 setCollectionId(-1);
             })
@@ -135,6 +188,7 @@ export default function Favorite() {
                 console.log(error);
             });
     };
+    // console.log(collections);
 
     const inputStyle = editCollection
         ? { border: '1px solid #000', backgroundColor: '#fff', borderRadius: '8px' }
@@ -235,14 +289,14 @@ export default function Favorite() {
                                 })}
                         </div>
                         <Dropdown
-                            title="並べ替え 評価: 低から高"
+                            title="並べ替え 評価:低から高"
                             width="width=227px"
-                            // setValue={setFilterDrPrice}
-                            // selected={filterDrPrice}
+                            setValue={setFilterDrPrice}
+                            selected={filterDrPrice}
                             // handleClick={handleSortPrice}
                         >
-                            <div>並べ替え 評価: 低から高</div>
-                            <div>並べ替え 評価: 高から低</div>
+                            <div>並べ替え 評価:低から高</div>
+                            <div>並べ替え 評価:高から低</div>
                         </Dropdown>
                         <div className={cx('filter-option')} style={{ marginTop: '20px' }}>
                             <h3>価格（円）</h3>

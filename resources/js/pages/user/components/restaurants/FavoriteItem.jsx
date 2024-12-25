@@ -34,7 +34,7 @@ export default function FavoriteItem({
     const [isShowPopUp, setIsShowPopup] = useState(false);
     return (
         <>
-            {isShowPopUp && <AddCollectionPopup onClose={() => setIsShowPopup(false)} />}
+            {isShowPopUp && <AddCollectionPopup favorite_id={id} onClose={() => setIsShowPopup(false)} />}
 
             <div className={cx('favorite-item')}>
                 <div className={cx('image-container')}>
