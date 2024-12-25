@@ -17,6 +17,7 @@ const routes = {
         userInfor: '/userInfor',
         findRestaurant: '/findRestaurant',
         favorite: '/favorite',
+        map: '/map',
     },
 
     other: {
