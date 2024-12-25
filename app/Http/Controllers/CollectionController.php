@@ -306,4 +306,31 @@ class CollectionController extends Controller
             ], 400);
         }
     }
+    public function getCollectionsFromFavorite(Request $request)
+    {
+        try {
+            // Validate the favorite_id
+            $request->validate([
+                'favorite_id' => 'required|integer|exists:favorites,id'
+            ]);
+
+            $favoriteId = $request->query('favorite_id');
+
+            // Fetch collections containing the given favorite
+            $collections = Collection::whereHas('favorites', function ($query) use ($favoriteId) {
+                $query->where('favorites.id', $favoriteId);
+            })->select('id', 'name')->get();
+
+            return response()->json([
+                'success' => true,
+                'data' => $collections
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error fetching collections for the favorite',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 }
