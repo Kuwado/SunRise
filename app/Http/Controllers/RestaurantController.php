@@ -210,7 +210,7 @@ class RestaurantController extends Controller
 
         return response()->json([
             'message' => 'Lấy thành công cửa hàng',
-            'restaurant' => new RestaurantResource($restaurant),
+            'restaurant' => new RestaurantResource($restaurant, $userId),
         ], 200);
     }
 
@@ -384,7 +384,9 @@ class RestaurantController extends Controller
         return response()->json([
             'message' => 'Lấy thành công danh sách cửa hàng',
             'restaurants' => [
-                'data' => RestaurantResource::collection($restaurants),
+                'data' => RestaurantResource::collection($restaurants->map(function ($restaurant) use ($userId) {
+                    return new RestaurantResource($restaurant, $userId);
+                })),
                 // 'data' => $restaurants,
                 'meta' => [
                     'current_page' => $restaurants->currentPage(),
