@@ -306,4 +306,34 @@ class CollectionController extends Controller
             ], 400);
         }
     }
+    public function getCollectionsFromFavorite(Request $request)
+    {
+        try {
+            $request->validate([
+                'favorite_id' => 'required|integer|exists:favorites,id',
+            ]);
+
+            $favoriteId = $request->input('favorite_id');
+
+            $collections = Collection::select(
+                'collections.id as collection_id',
+                'collections.name as collection_name',
+                'collections_favorites.id as col_fav_id' // Lấy ID của bảng pivot
+            )
+                ->join('collections_favorites', 'collections.id', '=', 'collections_favorites.collection_id')
+                ->where('collections_favorites.favorite_id', $favoriteId)
+                ->get();
+
+            return response()->json([
+                'success' => true,
+                'data' => $collections,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error fetching collections for the favorite',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
 }
