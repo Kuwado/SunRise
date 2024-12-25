@@ -67,7 +67,9 @@ export default function FavoriteItem({
                                 <FontAwesomeIcon icon={faPlus} />
                                 <span>コレクションに追加</span>
                             </button>
-                            <button className={cx('share-collection')} onClick={() => navigator.clipboard.writeText(`http://127.0.0.1:8000${config.routes.user.restaurantDetail.replace(':restaurantId', id)}`)}>
+                            <button className={cx('share-collection')} onClick={() => 
+                                navigator.clipboard.writeText(`http://127.0.0.1:8000${config.routes.user.restaurantDetail.replace(':restaurantId', id)}`)
+                            }>
                                 <FontAwesomeIcon icon={faShare} />
                             </button>
                         </div>

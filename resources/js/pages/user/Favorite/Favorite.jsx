@@ -60,7 +60,7 @@ export default function Favorite() {
                     },
                 })
                 .then((response) => {
-                    console.log(response);
+                    // console.log(response);
                     setProducts(response.data.data.collection.restaurants.data || []);
                 })
                 .catch((error) => {
@@ -99,7 +99,7 @@ export default function Favorite() {
                 },
             })
             .then((response) => {
-                console.log(response);
+                // console.log(response);
                 setCollections(response.data.data);
             })
             .catch((error) => {

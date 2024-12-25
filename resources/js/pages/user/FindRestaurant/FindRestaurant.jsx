@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useActionState, useContext } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRedo, faThLarge, faBars, faAngleRight, faAngleLeft } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
@@ -14,6 +14,7 @@ import Search from '~/components/Search';
 import classNames from 'classnames/bind';
 import styles from './FindRestaurant.module.scss';
 import RadioInput from '~/components/radio';
+import { AuthContext } from '~/context/AuthContext';
 const cx = classNames.bind(styles);
 
 const FindRestaurant = () => {
@@ -30,6 +31,9 @@ const FindRestaurant = () => {
     const [search, setSearch] = useState('');
     const [totalPriceProducts, setTotalPriceroducts] = useState([]);
     const [totalStyleProducts, setTotalStyleProducts] = useState([]);
+    const [favoriteProducts, setFavoriteProducts] = useState([]);
+    const [favoriteProductsIds, setFavoriteProductsIds] = useState([]);
+
 
     //state filter
 
@@ -37,6 +41,7 @@ const FindRestaurant = () => {
     const [filterDrRating, setFilterDrRating] = useState('1 - 5', '5 - 1');
     const [priceRange, setPriceRange] = useState({ start: null, end: null });
     const [priceType, setPriceType] = useState();
+    const {userId} = useContext(AuthContext);
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -52,10 +57,10 @@ const FindRestaurant = () => {
                         start: priceRange.start || '',
                         end: priceRange.end || '',
                         distance_type: distances.toString(),
-                        user_id: user.id,
+                        user_id: userId,
                     },
                 });
-                console.log(response.data.restaurants);
+                // console.log(response.data.restaurants);
 
                 if (response.status === 200) {
                     setProducts(response.data.restaurants.data);
@@ -179,24 +184,6 @@ const FindRestaurant = () => {
         }
     };
 
-    useEffect(() => {
-        const fetchUser = async () => {
-            try {
-                const response = await axios.get('/api/user', {
-                    params: { id: 1 },
-                });
-                if (response.status === 200) {
-                    // console.log(response);
-                    setUser(response.data.user);
-                }
-            } catch (error) {
-                alert('Error fetching user' + error?.response?.data?.message);
-            }
-        };
-
-        fetchUser();
-    }, []);
-
     const handleClearFilter = () => {
         setStyles([]);
         setRatings([]);
@@ -212,7 +199,7 @@ const FindRestaurant = () => {
     const handleSortRating = () => {
         setFilterDrPrice('');
     };
-    // console.log(products);
+    console.log(products);
 
     return (
         <div className={cx('find-restaurant')}>
@@ -384,6 +371,7 @@ const FindRestaurant = () => {
                 <div className={cx('cafe-list', { 'grid-view': isGridView, 'list-view': !isGridView })}>
                     {products.map((cafe, index) => (
                         <CafeItem
+                            cafe={cafe}
                             key={index}
                             id={cafe.id}
                             image={cafe.image}
@@ -396,6 +384,7 @@ const FindRestaurant = () => {
                             rating={cafe.rating}
                             reviews={cafe.reviews}
                             isListView={!isGridView}
+                            isFavorited={cafe.isFavorited}
                         />
                     ))}
                 </div>
