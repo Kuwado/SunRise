@@ -107,6 +107,7 @@ class CollectionController extends Controller
             $formattedData = $favorites->through(function ($favorite) use ($now) {
                 return [
                     'id' => $favorite->restaurant->id,
+                    'fav_id' => $favorite->id,
                     'name' => $favorite->restaurant->name,
                     'address' => $favorite->restaurant->address,
                     'description' => $favorite->restaurant->description,

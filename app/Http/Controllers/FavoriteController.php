@@ -115,6 +115,7 @@ class FavoriteController extends Controller
                 $priceAvg = ($favorite->restaurant->price_start + $favorite->restaurant->price_end) / 2;
                 $formattedData[] = [
                     'id' => $favorite->restaurant->id,
+                    'fav_id' => $favorite->id,
                     'name' => $favorite->restaurant->name,
                     'address' => $favorite->restaurant->address,
                     'description' => $favorite->restaurant->description,

@@ -87,7 +87,7 @@ const MapItem = ({ latitude, longitude, restaurant, location = false }) => {
 
     return (
         <>
-            {latitude && longitude && restaurant && (
+            {latitude && longitude && (
                 <Marker position={[latitude, longitude]} icon={location ? markerIcon : createRandomColorIcon()}>
                     {restaurant && (
                         <Popup>
