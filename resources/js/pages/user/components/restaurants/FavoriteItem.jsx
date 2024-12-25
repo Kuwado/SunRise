@@ -32,6 +32,8 @@ export default function FavoriteItem({
     time_ago,
 }) {
     const [isShowPopUp, setIsShowPopup] = useState(false);
+    console.log(time_ago);
+
     return (
         <>
             {isShowPopUp && <AddCollectionPopup favorite_id={id} onClose={() => setIsShowPopup(false)} />}
