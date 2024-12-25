@@ -18,7 +18,6 @@ const Map = () => {
     const longitude = 105.78348;
     // const latitude = 20.9929374;
     // const longitude = 105.7933964;
-    console.log(restaurants);
 
     useEffect(() => {
         const fetchRes = async () => {
