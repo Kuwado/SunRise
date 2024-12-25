@@ -10,6 +10,7 @@ import config from '~/config';
 const cx = classNames.bind(styles);
 
 const CafeItem = ({
+    cafe,
     id,
     image,
     name,
@@ -21,23 +22,26 @@ const CafeItem = ({
     isListView,
     open_time,
     close_time,
+    isFavorited,
 }) => {
-    const [isFavorite, setIsFavorite] = useState(false);
+    const [isFavorite, setIsFavorite] = useState(isFavorited);
+    console.log(cafe.isFavorited);
+
     const handleToggleFavorite = () => {
         const user_id = localStorage.getItem('userId');
         const restaurant_id = id;
         if (isFavorite === false) {
             axios.post(`/api/favorite/create`, { user_id: user_id, restaurant_id: restaurant_id });
+            // console.log(cafe.isFavorited);
+            cafe.isFavorited = true;
         } else {
             axios.delete(`/api/favorite/delete`, {
                 params: { user_id: user_id, restaurant_id: restaurant_id },
             });
         }
-    };
-    const toggleFavorite = () => {
         setIsFavorite(!isFavorite);
+        // cafe.isFavorited = !isFavorite;
     };
-
     return (
         <>
             <Link className={cx('cafe-item', { list: isListView })}>
@@ -48,7 +52,6 @@ const CafeItem = ({
                     <div
                         className={cx('favorite-icon', { active: isFavorite })}
                         onClick={() => {
-                            toggleFavorite();
                             handleToggleFavorite();
                         }}
                     >
