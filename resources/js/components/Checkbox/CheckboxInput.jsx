@@ -4,11 +4,11 @@ import styles from './Checkbox.module.scss';
 
 const cx = classNames.bind(styles);
 
-const CheckboxInput = ({ name, title = 'title', id = 'checkbox', checked, onChange, children }) => {
+const CheckboxInput = ({ name, title = 'title', id = 'checkbox', checked, onChange, children, readOnly }) => {
     return (
         <div className={cx('checkbox-input', { checked: checked })}>
             <label htmlFor={id}>
-                <input type="checkbox" name={name} id={id} checked={checked} onChange={onChange} />
+                <input type="checkbox" name={name} id={id} checked={checked} readOnly={readOnly} onChange={readOnly ? () => {} : onChange} />
                 <span className={cx('square')}></span>
                 <span className={cx('title')}>{children ? children : title}</span>
             </label>
