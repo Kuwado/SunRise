@@ -68,7 +68,6 @@ const AddCollectionPopup = ({ favorite_id, onClose }) => {
         e.preventDefault();
         collectionsType.forEach((collectionId) => {
             console.log(collectionId);
-
             axios
                 .post('/api/collection/addfavorite', {
                     //update
