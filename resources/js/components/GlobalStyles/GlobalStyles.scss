@@ -79,6 +79,10 @@ html *::-webkit-scrollbar-track {
     z-index: 10 !important;
 }
 
+.leaflet-map-pane svg {
+    z-index: 0 !important;
+}
+
 // Responsive
 // Mobile
 @media (max-width: 480px) {
