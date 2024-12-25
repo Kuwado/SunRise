@@ -7,9 +7,11 @@ import Rating from '~/components/Rating';
 import Star from '~/components/Rating/Star';
 import { AddCollectionPopup } from '../user/components/CollectionPopup';
 const Test = () => {
+    const [checked, setChecked] = useState(false);
     return (
 
-        <AddCollectionPopup />
+
+        <input checked={checked} readOnly type="checkbox" onChange={true ? {} : ()=>{setChecked(!checked)}} />
     )
 };
 

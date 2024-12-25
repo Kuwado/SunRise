@@ -50,9 +50,9 @@
 
 .filters-container {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin: 25px 50px 0 50px;
+    flex: 1;
+    flex-direction: column;
+    margin: 0 30px 0 0;
 
     .filters-left {
         display: flex;
@@ -88,44 +88,16 @@
             }
         }
     }
-    .name-collection{
-        display: flex;
-        input {
-            font-size: 30px;
-            font-weight: 600;
-            color: var(--cl-favorite);
-        }
-    }
-    .filters-right {
-        display: flex;
-        align-items: center;
-        gap: 20px;
-
-        .view-icon {
-            font-size: 20px;
-            cursor: pointer;
-            margin-right: 10px;
-        }
-        &.active {
-            color: #000;
-        }
-        h3{
-            color: #787878;
-            font-size: 18px;
-        }
-        
-        span{
-            font-weight: 600;
-            color: #000;
-        }
-    }
+   
+    
 }
 .content {
     display: flex;
     margin: 50px;
+    margin-right: 70px;
     // flex-direction: column;
     .filter {
-        flex: 1;
+        margin-top: 40px;
         margin-right: 20px;
 
         h3 {
@@ -146,6 +118,46 @@
         gap: 20px;
         &.list-view {
             grid-template-columns: 1fr;
+        }
+    }
+
+    .main {
+        flex: 3;
+
+        .name-collection{
+            display: flex;
+            margin-bottom: 20px;
+            margin-left: 40px;
+            justify-content: space-between;
+            input {
+                font-size: 30px;
+                font-weight: 600;
+                color: var(--cl-favorite);
+            }
+        }
+
+        .filters-right {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+    
+            .view-icon {
+                font-size: 20px;
+                cursor: pointer;
+                margin-right: 10px;
+            }
+            &.active {
+                color: #000;
+            }
+            h3{
+                color: #787878;
+                font-size: 18px;
+            }
+            
+            span{
+                font-weight: 600;
+                color: #000;
+            }
         }
     }
 }
