@@ -41,7 +41,9 @@ export default function HeaderUser() {
                 <Link to={config.routes.user.findRestaurant} className={cx('tab-restaurant')}>
                     レストラン
                 </Link>
-                <div className={cx('tab-restaurant')}>地図</div>
+                <Link to={config.routes.user.map} className={cx('tab-restaurant')}>
+                    地図
+                </Link>
             </div>
             {user && (
                 <div className={cx('user-hugs')} ref={menuRef}>

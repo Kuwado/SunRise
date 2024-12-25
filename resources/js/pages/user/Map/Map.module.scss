@@ -1,0 +1,43 @@
+// Map item
+.map {
+    z-index: 2;
+}
+
+.pop-up {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.name {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--cl-primary);
+    cursor: pointer;
+}
+
+.icon {
+    font-size: 20px;
+    color: var(--cl-primary);
+    min-width: 30px;
+    display: flex;
+    justify-content: center;
+}
+
+.address,
+.time,
+.price {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.action {
+    display: flex;
+    justify-content: space-between;
+}
+
+.favorite-btn {
+    font-size: 20px;
+    cursor: pointer;
+}
