@@ -309,27 +309,30 @@ class CollectionController extends Controller
     public function getCollectionsFromFavorite(Request $request)
     {
         try {
-            // Validate the favorite_id
             $request->validate([
-                'favorite_id' => 'required|integer|exists:favorites,id'
+                'favorite_id' => 'required|integer|exists:favorites,id',
             ]);
 
-            $favoriteId = $request->query('favorite_id');
+            $favoriteId = $request->input('favorite_id');
 
-            // Fetch collections containing the given favorite
-            $collections = Collection::whereHas('favorites', function ($query) use ($favoriteId) {
-                $query->where('favorites.id', $favoriteId);
-            })->select('id', 'name')->get();
+            $collections = Collection::select(
+                'collections.id as collection_id',
+                'collections.name as collection_name',
+                'collections_favorites.id as col_fav_id' // Lấy ID của bảng pivot
+            )
+                ->join('collections_favorites', 'collections.id', '=', 'collections_favorites.collection_id')
+                ->where('collections_favorites.favorite_id', $favoriteId)
+                ->get();
 
             return response()->json([
                 'success' => true,
-                'data' => $collections
+                'data' => $collections,
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Error fetching collections for the favorite',
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
