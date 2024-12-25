@@ -12,8 +12,22 @@ class RestaurantResource extends JsonResource
      *
      * @return array<string, mixed>
      */
+
+
+    protected ?int $userId;
+
+    public function __construct($resource, ?int $userId = null)
+    {
+        // Gọi parent constructor
+        parent::__construct($resource);
+        $this->userId = $userId;
+    }
+
+
     public function toArray(Request $request): array
     {
+        $isFavorited = $this->favorites()->where('user_id', $this->userId)->exists();
+
         return [
             'id' => $this->id,
             'name' => $this->name,
@@ -36,6 +50,7 @@ class RestaurantResource extends JsonResource
             'rating' => round($this->reviews->avg('rating'), 2),
             'distance' => round($this->distance, 2) ?? null,
             'number' => $this->reviews->count(),
+            'isFavorited' => $isFavorited,
         ];
     }
 }
