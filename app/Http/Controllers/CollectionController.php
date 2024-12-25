@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Collection;
+use App\Models\Favorite;
+
 use App\Http\Resources\RestaurantResource;
 
 class CollectionController extends Controller
@@ -60,55 +62,94 @@ class CollectionController extends Controller
 
             $now = now();
 
-            $restaurants = $collection->favorites()
-                ->with('restaurant')
-                ->paginate(2)
-                ->through(function ($favorite) use ($now) {
-                    return [
-                        'id' => $favorite->restaurant->id,
-                        'name' => $favorite->restaurant->name,
-                        'address' => $favorite->restaurant->address,
-                        'description' => $favorite->restaurant->description,
-                        'price_range' => [
-                            'start' => $favorite->restaurant->price_start,
-                            'end' => $favorite->restaurant->price_end
-                        ],
-                        'operation_hours' => [
-                            'open' => $favorite->restaurant->open_time,
-                            'close' => $favorite->restaurant->close_time
-                        ],
-                        'media' => json_decode($favorite->restaurant->media, true),
-                        'avatar' => $favorite->restaurant->avatar,
-                        'location' => [
-                            'latitude' => $favorite->restaurant->latitude,
-                            'longitude' => $favorite->restaurant->longitude
-                        ],
-                        'rating' => round($favorite->restaurant->reviews->avg('rating'), 2),
-                        'num_of_days_favorited' => abs(round($now->diffInDays($favorite->created_at))),
-                        'days_favorited' => $favorite->created_at,
-                        'now' => $now,
-                        'time_ago' => (function () use ($favorite, $now) {
-                            $minutes = round(abs($now->diffInMinutes($favorite->created_at)));
-                            $hours = round(abs($now->diffInHours($favorite->created_at)));
-                            $days = round(abs($now->diffInDays($favorite->created_at)));
-                            $months = round(abs($now->diffInMonths($favorite->created_at)));
+            // Lọc giá
+            $start = $request->query('start') ?? null;
+            $end = $request->query('end') ?? null;
 
-                            if ($minutes < 1) {
-                                return 'dưới 1 phút trước';
-                            } elseif ($minutes < 60) {
-                                return $minutes . ' phút trước';
-                            } elseif ($hours < 24) {
-                                return $hours . ' giờ trước';
-                            } elseif ($days < 30) {
-                                return $days . ' ngày trước';
-                            } elseif ($months < 12) {
-                                return $months . ' tháng trước';
-                            } else {
-                                return $favorite->created_at;
-                            }
-                        })()
-                    ];
+            // Sắp xếp theo giá
+            $sort_price = $request->query('sort_price') ?? null;
+
+            // Lấy các yêu thích của bộ sưu tập với nhà hàng và đánh giá
+            $favorites = $collection->favorites()->with('restaurant.reviews');
+
+            // Logic lọc giá
+            if ($start && $end) {
+                $favorites = $favorites->whereHas('restaurant', function ($query) use ($start, $end) {
+                    $query->where(function ($query) use ($start, $end) {
+                        $query->where('price_start', '<=', $end)
+                            ->where('price_end', '>=', $start);
+                    });
                 });
+            } elseif ($start) {
+                $favorites = $favorites->whereHas('restaurant', function ($query) use ($start) {
+                    $query->where('price_end', '>=', $start);
+                });
+            } elseif ($end) {
+                $favorites = $favorites->whereHas('restaurant', function ($query) use ($end) {
+                    $query->where('price_start', '<=', $end);
+                });
+            }
+
+            // Logic sắp xếp giá
+            if ($sort_price === "asc") {
+                $favorites = $favorites->join('restaurants', 'favorites.restaurant_id', '=', 'restaurants.id')
+                    ->orderByRaw('(restaurants.price_start + restaurants.price_end) / 2 ASC')
+                    ->select('favorites.*');
+            } elseif ($sort_price === "desc") {
+                $favorites = $favorites->join('restaurants', 'favorites.restaurant_id', '=', 'restaurants.id')
+                    ->orderByRaw('(restaurants.price_start + restaurants.price_end) / 2 DESC')
+                    ->select('favorites.*');
+            }
+
+            // Phân trang
+            $favorites = $favorites->paginate(2);
+
+            $formattedData = $favorites->through(function ($favorite) use ($now) {
+                return [
+                    'id' => $favorite->restaurant->id,
+                    'name' => $favorite->restaurant->name,
+                    'address' => $favorite->restaurant->address,
+                    'description' => $favorite->restaurant->description,
+                    'price_range' => [
+                        'start' => $favorite->restaurant->price_start,
+                        'end' => $favorite->restaurant->price_end
+                    ],
+                    'operation_hours' => [
+                        'open' => $favorite->restaurant->open_time,
+                        'close' => $favorite->restaurant->close_time
+                    ],
+                    'media' => json_decode($favorite->restaurant->media, true),
+                    'avatar' => $favorite->restaurant->avatar,
+                    'location' => [
+                        'latitude' => $favorite->restaurant->latitude,
+                        'longitude' => $favorite->restaurant->longitude
+                    ],
+                    'rating' => round($favorite->restaurant->reviews->avg('rating'), 2),
+                    'num_of_days_favorited' => abs(round($now->diffInDays($favorite->created_at))),
+                    'days_favorited' => $favorite->created_at,
+                    'now' => $now,
+                    'time_ago' => (function () use ($favorite, $now) {
+                        $minutes = round(abs($now->diffInMinutes($favorite->created_at)));
+                        $hours = round(abs($now->diffInHours($favorite->created_at)));
+                        $days = round(abs($now->diffInDays($favorite->created_at)));
+                        $months = round(abs($now->diffInMonths($favorite->created_at)));
+
+                        if ($minutes < 1) {
+                            return 'dưới 1 phút trước';
+                        } elseif ($minutes < 60) {
+                            return $minutes . ' phút trước';
+                        } elseif ($hours < 24) {
+                            return $hours . ' giờ trước';
+                        } elseif ($days < 30) {
+                            return $days . ' ngày trước';
+                        } elseif ($months < 12) {
+                            return $months . ' tháng trước';
+                        } else {
+                            return $favorite->created_at;
+                        }
+                    })()
+                ];
+            });
 
             return response()->json([
                 'success' => true,
@@ -116,7 +157,7 @@ class CollectionController extends Controller
                     'collection' => [
                         'id' => $collection->id,
                         'name' => $collection->name,
-                        'restaurants' => $restaurants
+                        'restaurants' => $formattedData
                     ]
                 ]
             ]);
@@ -128,6 +169,7 @@ class CollectionController extends Controller
             ], 404);
         }
     }
+
 
 
     public function createCollection(Request $request)
@@ -219,7 +261,10 @@ class CollectionController extends Controller
                 ->withCount('favorites as restaurant_count')
                 ->get();
 
-            $totalRestaurantCount = $collections->sum('restaurant_count');
+            // Tính tổng số nhà hàng yêu thích không trùng lặp
+            $totalRestaurantCount = Favorite::where('user_id', $request->query('user_id'))
+                ->distinct('restaurant_id')
+                ->count('restaurant_id');
 
             return response()->json([
                 'success' => true,
