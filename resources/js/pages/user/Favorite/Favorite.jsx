@@ -27,6 +27,29 @@ export default function Favorite() {
     const [editCollection, setEditCollection] = useState(false);
     const [collections, setCollections] = useState([]);
     const [collectionId, setCollectionId] = useState(-1);
+    const fetchFavorites = async () => {
+        axios
+            .get('/api/favorites', {
+                params: {
+                    user_id: localStorage.getItem('userId'),
+                    sort_price: filterDrPrice === '' ? '' : filterDrPrice === '並べ替え 評価:低から高' ? 'asc' : 'desc',
+                    perPage: 4,
+                    page: currentPage,
+                    start: priceRange.start || '',
+                    end: priceRange.end || '',
+                },
+            })
+            .then((response) => {
+                // console.log(response.data.data.data);
+                // console.log(response.data.data);
+                setProducts(response.data.data.data);
+                setTotalPages(response.data.data.last_page);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    };
+    console.log('collection_id :', collectionId);
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -47,29 +70,6 @@ export default function Favorite() {
 
         if (collectionId !== -1) fetchProducts();
         else {
-            const fetchFavorites = async () => {
-                axios
-                    .get('/api/favorites', {
-                        params: {
-                            user_id: localStorage.getItem('userId'),
-                            sort_price:
-                                filterDrPrice === '' ? '' : filterDrPrice === '並べ替え 評価:低から高' ? 'asc' : 'desc',
-                            perPage: 4,
-                            page: currentPage,
-                            start: priceRange.start || '',
-                            end: priceRange.end || '',
-                        },
-                    })
-                    .then((response) => {
-                        // console.log(response.data.data.data);
-                        console.log(response.data.data);
-                        setProducts(response.data.data.data);
-                        setTotalPages(response.data.data.last_page);
-                    })
-                    .catch((error) => {
-                        console.log(error);
-                    });
-            };
             fetchFavorites();
         }
     }, [collectionId]);
@@ -110,29 +110,6 @@ export default function Favorite() {
     }, [collection]);
 
     useEffect(() => {
-        const fetchFavorites = async () => {
-            axios
-                .get('/api/favorites', {
-                    params: {
-                        user_id: localStorage.getItem('userId'),
-                        sort_price:
-                            filterDrPrice === '' ? '' : filterDrPrice === '並べ替え 評価:低から高' ? 'asc' : 'desc',
-                        perPage: 4,
-                        page: currentPage,
-                        start: priceRange.start || '',
-                        end: priceRange.end || '',
-                    },
-                })
-                .then((response) => {
-                    // console.log(response.data.data.data);
-                    console.log(response.data.data);
-                    setProducts(response.data.data.data);
-                    setTotalPages(response.data.data.last_page);
-                })
-                .catch((error) => {
-                    console.log(error);
-                });
-        };
         fetchFavorites();
     }, [currentPage, filterDrPrice, priceRange]);
 
@@ -188,7 +165,7 @@ export default function Favorite() {
                 console.log(error);
             });
     };
-    // console.log(collections);
+    console.log(products);
 
     const inputStyle = editCollection
         ? { border: '1px solid #000', backgroundColor: '#fff', borderRadius: '8px' }
