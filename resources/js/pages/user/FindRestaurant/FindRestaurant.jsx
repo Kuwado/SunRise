@@ -384,6 +384,7 @@ const FindRestaurant = () => {
                 <div className={cx('cafe-list', { 'grid-view': isGridView, 'list-view': !isGridView })}>
                     {products.map((cafe, index) => (
                         <CafeItem
+                            cafe={cafe}
                             key={index}
                             id={cafe.id}
                             image={cafe.image}
@@ -396,6 +397,7 @@ const FindRestaurant = () => {
                             rating={cafe.rating}
                             reviews={cafe.reviews}
                             isListView={!isGridView}
+                            isFavorited={cafe.isFavorited}
                         />
                     ))}
                 </div>
