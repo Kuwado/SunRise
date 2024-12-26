@@ -34,14 +34,13 @@ const FindRestaurant = () => {
     const [favoriteProducts, setFavoriteProducts] = useState([]);
     const [favoriteProductsIds, setFavoriteProductsIds] = useState([]);
 
-
     //state filter
 
     const [filterDrPrice, setFilterDrPrice] = useState('評価: 低から高', '高から低');
     const [filterDrRating, setFilterDrRating] = useState('1 - 5', '5 - 1');
     const [priceRange, setPriceRange] = useState({ start: null, end: null });
     const [priceType, setPriceType] = useState();
-    const {userId} = useContext(AuthContext);
+    const { userId } = useContext(AuthContext);
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -379,6 +378,7 @@ const FindRestaurant = () => {
                             location={cafe.address}
                             price_start={cafe.price_start}
                             price_end={cafe.price_end}
+                            distance={cafe.distance}
                             open_time={cafe.open_time}
                             close_time={cafe.close_time}
                             rating={cafe.rating}

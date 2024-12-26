@@ -18,8 +18,7 @@ export default function UserInfor() {
     // const [headPhone, setHeadPhone] = useState('');
     const [cityOptions, setCityOptions] = useState([]);
     const [workplaceOptions, setWorkplaceOptions] = useState([]);
-    const priceRangeOptions = ['0-40', '40-90', '90-150'];
-    const distanceOptions = ['2 km', '3 km', '4 km'];
+    const priceRangeOptions = ['0-40.000 đ', '40.0000-90.000 đ', '90.0000-150.000 đ', '>150.000 đ'];
     const countryOptions = ['Vietnam', 'Japan'];
     const headPhoneOptions = ['+01', '+91', '+84'];
     const styleOptions = [
@@ -51,12 +50,12 @@ export default function UserInfor() {
                     ...prev,
                     phone: phone.slice(3),
                 }));
-                console.log(phone);
             } else {
                 setHeadPhone('+84');
             }
         }
     }, [currentUser.phone]);
+    console.log(currentUser);
     return (
         <>
             {currentUser && (
@@ -137,7 +136,7 @@ export default function UserInfor() {
                                         </div>
                                     ))}
                                 </Dropdown>
-                                <Dropdown
+                                {/* <Dropdown
                                     title="希望の距離"
                                     selected={`${currentUser.desired_distance} km`}
                                     setValue={(value) => {
@@ -150,18 +149,38 @@ export default function UserInfor() {
                                     {distanceOptions.map((option, index) => (
                                         <div key={index}>{option}</div>
                                     ))}
-                                </Dropdown>
+                                </Dropdown> */}
+                                <DefaultInput
+                                    value={currentUser.desired_distance}
+                                    setValue={(value) => setCurrentUser({ ...currentUser, desired_distance: value })}
+                                    placeholder="希望の距離"
+                                    label="希望の距離 (km )"
+                                    inputClassName={cx('input')}
+                                />
                                 <Dropdown
-                                    title="値を入力"
-                                    selected={`${currentUser.price_start}-${currentUser.price_end}`}
-                                    // setValue={setPriceRange}
+                                    title="好きな価格帯"
+                                    selected={
+                                        currentUser.price_start && currentUser.price_end
+                                            ? `${currentUser.price_start}-${currentUser.price_end} đ`
+                                            : '> 150.000 đ' // Mặc định nếu không có khoảng giá
+                                    }
                                     setValue={(value) => {
-                                        const [start, end] = value.split('-'); // Phân tách chuỗi thành giá trị start và end
-                                        setCurrentUser({
-                                            ...currentUser,
-                                            price_start: parseInt(start),
-                                            price_end: parseInt(end),
-                                        }); // Cập nhật state
+                                        const [start, end] = value.split('-'); // Tách giá trị theo dấu "-"
+                                        if (end) {
+                                            // Nếu có khoảng giá
+                                            setCurrentUser({
+                                                ...currentUser,
+                                                price_start: parseInt(start.replace('.', '').replace(' đ', '').trim()),
+                                                price_end: parseInt(end.replace('.', '').replace(' đ', '').trim()),
+                                            });
+                                        } else {
+                                            // Nếu là '> 150.000 đ'
+                                            setCurrentUser({
+                                                ...currentUser,
+                                                price_start: 150000,
+                                                price_end: null, // Giá trị không có giới hạn trên
+                                            });
+                                        }
                                     }}
                                     width="100%"
                                     label="好きな価格帯"

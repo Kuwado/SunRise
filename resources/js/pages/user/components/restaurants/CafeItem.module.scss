@@ -6,7 +6,7 @@
     overflow: hidden;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     transition: transform 0.2s ease;
-    height: 460px;
+    height:530px;
 
     &.list {
         flex-direction: row;
@@ -75,6 +75,10 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+        }
+        h5{
+            font-weight: 400;
+            font-size: 17px;
         }
 
         p {
