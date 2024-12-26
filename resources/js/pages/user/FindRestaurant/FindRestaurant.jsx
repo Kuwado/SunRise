@@ -34,14 +34,13 @@ const FindRestaurant = () => {
     const [favoriteProducts, setFavoriteProducts] = useState([]);
     const [favoriteProductsIds, setFavoriteProductsIds] = useState([]);
 
-
     //state filter
 
     const [filterDrPrice, setFilterDrPrice] = useState('評価: 低から高', '高から低');
     const [filterDrRating, setFilterDrRating] = useState('1 - 5', '5 - 1');
     const [priceRange, setPriceRange] = useState({ start: null, end: null });
     const [priceType, setPriceType] = useState();
-    const {userId} = useContext(AuthContext);
+    const { userId } = useContext(AuthContext);
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -78,10 +77,11 @@ const FindRestaurant = () => {
 
     useEffect(() => {
         const fetchTotalProducts = async () => {
+            const userId = localStorage.getItem('userId');
             try {
                 const response = await axios.get('/api/restaurants/count', {
                     params: {
-                        user_id: user.id,
+                        user_id: userId,
                     },
                 });
                 if (response.status === 200) {
@@ -97,6 +97,28 @@ const FindRestaurant = () => {
             }
         };
         fetchTotalProducts();
+    }, []);
+    useEffect(() => {
+        const fetchUser = async () => {
+            const userId = localStorage.getItem('userId');
+            console.log(userId);
+            try {
+                const response = await axios.get('/api/user', {
+                    params: {
+                        id: userId,
+                    },
+                });
+                if (response.status === 200) {
+                    console.log(response);
+                    setUser(response.data.user);
+
+                    // setTotalRatingProducts(response.data.ratings);
+                }
+            } catch (error) {
+                console.error('Error fetching total User:', error);
+            }
+        };
+        fetchUser();
     }, []);
 
     const handlePageChange = (page) => {
@@ -123,12 +145,14 @@ const FindRestaurant = () => {
                     setPriceRange({ start: user.price_end, end: null });
                     break;
                 case 4:
-                    setPriceRange({ start: user.price_end, end: null });
+                    setPriceRange({ start: null, end: null });
             }
             setPriceType(typeId);
         }
         setCurrentPage(1);
     };
+    console.log(user.price_start);
+    console.log(user.price_end);
 
     const handleStyleChange = (styleId) => {
         setStyles((prevStyles) => {
@@ -199,7 +223,7 @@ const FindRestaurant = () => {
     const handleSortRating = () => {
         setFilterDrPrice('');
     };
-    console.log(products);
+    console.log(user);
 
     return (
         <div className={cx('find-restaurant')}>
@@ -379,6 +403,7 @@ const FindRestaurant = () => {
                             location={cafe.address}
                             price_start={cafe.price_start}
                             price_end={cafe.price_end}
+                            distance={cafe.distance}
                             open_time={cafe.open_time}
                             close_time={cafe.close_time}
                             rating={cafe.rating}
