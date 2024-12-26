@@ -18,7 +18,7 @@ export default function UserInfor() {
     // const [headPhone, setHeadPhone] = useState('');
     const [cityOptions, setCityOptions] = useState([]);
     const [workplaceOptions, setWorkplaceOptions] = useState([]);
-    const priceRangeOptions = ['0-40.000 đ', '40.0000-90.000 đ', '90.0000-150.000 đ', '>150.000 đ'];
+    const priceRangeOptions = ['0-40.000 đ', '40.000-90.000 đ', '90.000-150.000 đ', '> 150.000 đ'];
     const countryOptions = ['Vietnam', 'Japan'];
     const headPhoneOptions = ['+01', '+91', '+84'];
     const styleOptions = [
@@ -160,26 +160,40 @@ export default function UserInfor() {
                                 <Dropdown
                                     title="好きな価格帯"
                                     selected={
-                                        currentUser.price_start && currentUser.price_end
-                                            ? `${currentUser.price_start}-${currentUser.price_end} đ`
-                                            : '> 150.000 đ' // Mặc định nếu không có khoảng giá
+                                        currentUser.price_end === 999
+                                            ? `> ${(currentUser.price_start * 1000).toLocaleString('vi-VN')} đ`
+                                            : currentUser.price_start !== undefined &&
+                                              currentUser.price_end !== undefined
+                                            ? `${(currentUser.price_start * 1000).toLocaleString('vi-VN')}-${(
+                                                  currentUser.price_end * 1000
+                                              )?.toLocaleString('vi-VN')} đ`
+                                            : '好きな価格帯' // Mặc định nếu không chọn
                                     }
                                     setValue={(value) => {
-                                        const [start, end] = value.split('-'); // Tách giá trị theo dấu "-"
-                                        if (end) {
-                                            // Nếu có khoảng giá
+                                        if (value.startsWith('>')) {
+                                            // Trường hợp "> 150.000 đ"
+                                            const start = parseInt(
+                                                value.replace('>', '').replace(/\./g, '').replace(' đ', '').trim(),
+                                            );
                                             setCurrentUser({
                                                 ...currentUser,
-                                                price_start: parseInt(start.replace('.', '').replace(' đ', '').trim()),
-                                                price_end: parseInt(end.replace('.', '').replace(' đ', '').trim()),
+                                                price_start: start / 1000, // Lưu giá trị rút gọn
+                                                price_end: 999, // Đại diện cho "không giới hạn trên"
                                             });
                                         } else {
-                                            // Nếu là '> 150.000 đ'
-                                            setCurrentUser({
-                                                ...currentUser,
-                                                price_start: 150000,
-                                                price_end: null, // Giá trị không có giới hạn trên
-                                            });
+                                            // Trường hợp "start-end"
+                                            const [start, end] = value.split('-');
+                                            if (start && end) {
+                                                setCurrentUser({
+                                                    ...currentUser,
+                                                    price_start:
+                                                        parseInt(start.replace(/\./g, '').replace(' đ', '').trim()) /
+                                                        1000, // Lưu giá trị rút gọn
+                                                    price_end:
+                                                        parseInt(end.replace(/\./g, '').replace(' đ', '').trim()) /
+                                                        1000, // Lưu giá trị rút gọn
+                                                });
+                                            }
                                         }
                                     }}
                                     width="100%"

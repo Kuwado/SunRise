@@ -26,7 +26,7 @@ const CafeItem = ({
     isFavorited,
 }) => {
     const [isFavorite, setIsFavorite] = useState(isFavorited);
-    console.log('review :', reviews);
+    // console.log('review :', reviews);
 
     const handleToggleFavorite = () => {
         const user_id = localStorage.getItem('userId');
@@ -46,6 +46,7 @@ const CafeItem = ({
     return (
         <>
             <Link className={cx('cafe-item', { list: isListView })}>
+                {/* <Rating small rate={rating} /> */}
                 <div className={cx('image-container')}>
                     <Link to={`${config.routes.user.restaurantDetail.replace(':restaurantId', id)}`}>
                         <img src={images.restaurantItem1} alt={name} className={cx('image')} />
@@ -63,7 +64,7 @@ const CafeItem = ({
                     <h3>{name}</h3>
                     <p>{location}</p>
                     <h4>
-                        {price_start} ~ {price_end} 円以下
+                        {price_start}.000 đ ~ {price_end}.000 đ 以下
                     </h4>
                     <h5>{distance}km</h5>
                     {isListView && (
