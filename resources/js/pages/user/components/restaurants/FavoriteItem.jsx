@@ -20,6 +20,7 @@ import config from '~/config';
 const cx = classNames.bind(styles);
 
 export default function FavoriteItem({
+    restaurant_id,
     id,
     image,
     name,
@@ -30,13 +31,24 @@ export default function FavoriteItem({
     reviews,
     isListView,
     time_ago,
-    onRefetchCollections,
 }) {
     const [isShowPopUp, setIsShowPopup] = useState(false);
+    const [isFavorite, setIsFavorite] = useState(true);
+    const handleToggleFavorite = () => {
+        const user_id = localStorage.getItem('userId');
+        if (isFavorite === false) {
+            axios.post(`/api/favorite/create`, { user_id: user_id, restaurant_id: restaurant_id });
+        } else {
+            axios.delete(`/api/favorite/delete`, {
+                params: { user_id: user_id, restaurant_id: restaurant_id },
+            });
+        }
+        setIsFavorite(!isFavorite);
+    };
 
     return (
         <>
-            {isShowPopUp && <AddCollectionPopup favorite_id={id} onClose={() => setIsShowPopup(false)} onRefetchCollections={onRefetchCollections}/>}
+            {isShowPopUp && <AddCollectionPopup favorite_id={id} onClose={() => setIsShowPopup(false)} />}
 
             <div className={cx('favorite-item')}>
                 <div className={cx('image-container')}>
@@ -51,7 +63,7 @@ export default function FavoriteItem({
                         </div>
                         <div className={cx('cafe-price')}>
                             <FontAwesomeIcon icon={faYenSign} />
-                            <span>{price_start} 以下</span>
+                            <span>{price_start}.000 đ 以下</span>
                         </div>
                         <div className={cx('cafe-time_save')}>
                             <FontAwesomeIcon icon={faClockRotateLeft} />
@@ -60,7 +72,7 @@ export default function FavoriteItem({
                     </div>
                     <div className={cx('cafe-rating')}>
                         <Rating small rate={rating} />
-                        <span>(1897 reviews)</span>
+                        <span>({reviews})</span>
                     </div>
                     <div className={cx('cafe-action')}>
                         <div className={cx('cafe-left-action')}>
@@ -68,15 +80,28 @@ export default function FavoriteItem({
                                 <FontAwesomeIcon icon={faPlus} />
                                 <span>コレクションに追加</span>
                             </button>
-                            <button className={cx('share-collection')} onClick={() => {
-                                navigator.clipboard.writeText(`http://127.0.0.1:8000${config.routes.user.restaurantDetail.replace(':restaurantId', id)}`);
-                                alert('URLがコピーされました');
-                            }}>
+                            <button
+                                className={cx('share-collection')}
+                                onClick={() => {
+                                    navigator.clipboard.writeText(
+                                        `http://127.0.0.1:8000${config.routes.user.restaurantDetail.replace(
+                                            ':restaurantId',
+                                            id,
+                                        )}`,
+                                    );
+                                    alert('URLがコピーされました');
+                                }}
+                            >
                                 <FontAwesomeIcon icon={faShare} />
                             </button>
                         </div>
                         <div className={cx('cafe-action-right')}>
-                            <div className={cx('favorite-icon')}>
+                            <div
+                                className={cx('favorite-icon', { active: isFavorite })}
+                                onClick={() => {
+                                    handleToggleFavorite();
+                                }}
+                            >
                                 <FontAwesomeIcon icon={faHeart} />
                             </div>
                             <Link to={`${config.routes.user.restaurantDetail.replace(':restaurantId', id)}`}>

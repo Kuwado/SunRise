@@ -17,6 +17,7 @@ const CafeItem = ({
     location,
     price_start,
     price_end,
+    distance,
     rating,
     reviews,
     isListView,
@@ -25,7 +26,7 @@ const CafeItem = ({
     isFavorited,
 }) => {
     const [isFavorite, setIsFavorite] = useState(isFavorited);
-    console.log(cafe.isFavorited);
+    // console.log('review :', reviews);
 
     const handleToggleFavorite = () => {
         const user_id = localStorage.getItem('userId');
@@ -33,7 +34,7 @@ const CafeItem = ({
         if (isFavorite === false) {
             axios.post(`/api/favorite/create`, { user_id: user_id, restaurant_id: restaurant_id });
             // console.log(cafe.isFavorited);
-            cafe.isFavorited = true;
+            // cafe.isFavorited = true;
         } else {
             axios.delete(`/api/favorite/delete`, {
                 params: { user_id: user_id, restaurant_id: restaurant_id },
@@ -45,6 +46,7 @@ const CafeItem = ({
     return (
         <>
             <Link className={cx('cafe-item', { list: isListView })}>
+                {/* <Rating small rate={rating} /> */}
                 <div className={cx('image-container')}>
                     <Link to={`${config.routes.user.restaurantDetail.replace(':restaurantId', id)}`}>
                         <img src={images.restaurantItem1} alt={name} className={cx('image')} />
@@ -62,8 +64,9 @@ const CafeItem = ({
                     <h3>{name}</h3>
                     <p>{location}</p>
                     <h4>
-                        {price_start} ~ {price_end} 円以下
+                        {price_start}.000 đ ~ {price_end}.000 đ 以下
                     </h4>
+                    <h5>{distance}km</h5>
                     {isListView && (
                         <div className={cx('wrap-time')}>
                             <p>Open: {open_time ? open_time.slice(0, 5) : ''}</p>
@@ -73,7 +76,7 @@ const CafeItem = ({
 
                     <div className={cx('rating')}>
                         <Rating small rate={rating} />
-                        <span>({reviews} レビュー)</span>
+                        <span>({reviews})</span>
                     </div>
                 </div>
             </Link>
