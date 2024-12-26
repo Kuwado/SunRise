@@ -30,12 +30,13 @@ export default function FavoriteItem({
     reviews,
     isListView,
     time_ago,
+    onRefetchCollections,
 }) {
     const [isShowPopUp, setIsShowPopup] = useState(false);
 
     return (
         <>
-            {isShowPopUp && <AddCollectionPopup favorite_id={id} onClose={() => setIsShowPopup(false)} />}
+            {isShowPopUp && <AddCollectionPopup favorite_id={id} onClose={() => setIsShowPopup(false)} onRefetchCollections={onRefetchCollections}/>}
 
             <div className={cx('favorite-item')}>
                 <div className={cx('image-container')}>
@@ -67,9 +68,10 @@ export default function FavoriteItem({
                                 <FontAwesomeIcon icon={faPlus} />
                                 <span>コレクションに追加</span>
                             </button>
-                            <button className={cx('share-collection')} onClick={() => 
-                                navigator.clipboard.writeText(`http://127.0.0.1:8000${config.routes.user.restaurantDetail.replace(':restaurantId', id)}`)
-                            }>
+                            <button className={cx('share-collection')} onClick={() => {
+                                navigator.clipboard.writeText(`http://127.0.0.1:8000${config.routes.user.restaurantDetail.replace(':restaurantId', id)}`);
+                                alert('URLがコピーされました');
+                            }}>
                                 <FontAwesomeIcon icon={faShare} />
                             </button>
                         </div>

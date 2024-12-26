@@ -11,10 +11,38 @@ import styles from './Popup.module.scss';
 import classNames from 'classnames/bind';
 const cx = classNames.bind(styles);
 
-const AddCollectionPopup = ({ favorite_id, onClose }) => {
+const AddCollectionPopup = ({ favorite_id, onClose, onRefetchCollections }) => {
     const [collections, setCollections] = useState([]);
     const [collectionsType, setCollectionsType] = useState([]);
     const [newCollection, setNewCollection] = useState('');
+    const [favCollections, setFavCollections] = useState([]);
+
+    useEffect(() => {
+        const fetchFavProductCollections = async () => {
+            await axios.get('/api/colfromfav', {
+                params: {
+                    favorite_id: favorite_id,
+                }
+            })
+                .then((response) => {
+                    setFavCollections(response.data.data);
+                })
+                .catch((error) => {
+                    alert('エラーが発生しました');
+                });
+        }
+        fetchFavProductCollections();
+    }, []);
+
+    useEffect(() => {
+        const newCollectionsType = [];
+        favCollections.forEach((collection) => {
+            newCollectionsType.push(collection.collection_id);
+        });
+        setCollectionsType(newCollectionsType);
+    }, [favCollections]);
+
+
 
     useEffect(() => {
         axios
@@ -33,8 +61,6 @@ const AddCollectionPopup = ({ favorite_id, onClose }) => {
     }, [newCollection]);
 
     const handleCollectionsTypeChange = (id) => {
-        console.log(id);
-
         setCollectionsType((prevCollectionsType) => {
             const newCollectionsType = [...prevCollectionsType];
             if (newCollectionsType.includes(id)) {
@@ -45,7 +71,6 @@ const AddCollectionPopup = ({ favorite_id, onClose }) => {
             return newCollectionsType;
         });
     };
-    console.log(collectionsType);
 
     const user_id = localStorage.getItem('userId');
     const handleAddNewCollection = () => {
@@ -76,7 +101,9 @@ const AddCollectionPopup = ({ favorite_id, onClose }) => {
                 })
                 .then((response) => {
                     console.log(response);
-                    alert('add thanh cong');
+                    alert('コレクションに追加しました');
+                    onClose();
+                    onRefetchCollections();
                 })
                 .catch((error) => {
                     console.log(error);
@@ -109,6 +136,8 @@ const AddCollectionPopup = ({ favorite_id, onClose }) => {
                                         key={index}
                                         id={index + 20}
                                         onChange={() => handleCollectionsTypeChange(collection.id)}
+                                        checked={collectionsType.includes(collection.id)}
+                                        readOnly={collectionsType.includes(collection.id)}
                                     >
                                         {collection.name}
                                     </CheckboxInput>

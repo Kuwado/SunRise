@@ -20,6 +20,8 @@ const DeletePopup = ({ id, onClose, onReFetch }) => {
     const [priceStart, setPriceStart] = useState('');
     const [priceEnd, setPriceEnd] = useState('');
     const [avatar, setAvatar] = useState(null);
+    const [files, setFiles] = useState([]);
+    const [medias, setMedias] = useState('');
     const [images, setImages] = useState([]);
     const [openTime, setOpenTime] = useState('');
     const [closeTime, setCloseTime] = useState('');
@@ -40,9 +42,10 @@ const DeletePopup = ({ id, onClose, onReFetch }) => {
                     setPriceEnd(response.data.restaurant.price_end);
                     setMail(response.data.restaurant.email);
                     setAvatar(response.data.restaurant.avatar);
-                    setImages(response.data.restaurant.media ? response.data.restaurant.media : []);
+                    setFiles(response.data.restaurant.media ? response.data.restaurant.media : []);
                     setOpenTime(response.data.restaurant.open_time);
                     setCloseTime(response.data.restaurant.close_time);
+
                 }
             } catch (error) {
                 console.error("Error fetching restaurant:", error);
@@ -51,6 +54,19 @@ const DeletePopup = ({ id, onClose, onReFetch }) => {
 
         fetchRestaurant();
     }, []);
+
+    useEffect(() => {
+        const newImages = [];
+        let newMedias = '';
+        files.forEach((file) => {
+            if (!file.includes(".mp4")) newImages.push(file);
+            else newMedias = file;
+        });
+        setImages(newImages);
+        setMedias(newMedias);
+    }, [files]);
+
+    console.log(medias);
 
     const onSubmitHandler = async () => {
         try {
@@ -68,6 +84,7 @@ const DeletePopup = ({ id, onClose, onReFetch }) => {
             alert('Error deleting restaurant' + error?.response?.data?.message);
         }
     };
+
 
 
     return (
@@ -108,20 +125,38 @@ const DeletePopup = ({ id, onClose, onReFetch }) => {
                         <div className={cx('right')}>
                             <div className={cx('content-item')}>
                                 <h3 className={cx('title')}>メディア</h3>
-                                <label className={cx('label')}>アバター</label>
-                                <div className={cx('upload__avatar-wrapper')}>
-                                    <img
-                                        src={avatar}
-                                        width="100"
-                                        height="100"
-                                    />
+                                <div className={cx('flex-row')}>
+                                    <div>
+                                        <label className={cx('label')}>アバター</label>
+                                        <div className={cx('upload__avatar-wrapper')}>
+                                            <img
+                                                src={avatar}
+                                                width="100"
+                                                height="100"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className={cx('VideoInput')}>
+                                        <label className={cx('label')}>ビデオ</label>
+                                        <div className={cx('VideoInput_container')}>
+                                            {medias.length > 0 && (
+                                                <video
+                                                    className={cx('VideoInput_video')}
+                                                    width={200}
+                                                    height={100}
+                                                    controls
+                                                    src={medias}
+                                                />
+                                            )}
+                                        </div>
+                                    </div>
                                 </div>
                                 <label className={cx('label')}>フォトギャラリー</label>
                                 <div className={cx('upload__image-wrapper')}>
                                     <div className={cx('image-list')}>
-                                        { images.length > 0 && images.map((image, index) => (
+                                        {images.length > 0 && images.map((image, index) => (
                                             <div key={index} className={cx('image-item')}>
-                                                <img src={image} alt="" width="100" height='75'/>
+                                                <img src={image} alt="" width="100" height='75' />
                                             </div>
                                         ))}
                                     </div>
