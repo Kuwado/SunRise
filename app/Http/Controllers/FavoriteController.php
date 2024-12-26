@@ -55,7 +55,6 @@ class FavoriteController extends Controller
         // Trả về phản hồi thành công
         return response()->json([
             'message' => 'Favorite deleted successfully!',
-            'favorite' => $favorite,
         ], 200);
     }
     public function getFavorites(Request $request)
