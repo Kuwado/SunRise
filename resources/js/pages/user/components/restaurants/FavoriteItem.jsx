@@ -60,7 +60,7 @@ export default function FavoriteItem({
                     <div className={cx('cafe-infor')}>
                         <div className={cx('cafe-address')}>
                             <FontAwesomeIcon icon={faHouse} />
-                            <span>{location}</span>
+                            <span className={cx('location')}>{location}</span>
                         </div>
                         <div className={cx('cafe-price')}>
                             <span>{price_start}.000 đ 以下</span>
