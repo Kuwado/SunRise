@@ -685,4 +685,38 @@ class RestaurantController extends Controller
             'restaurant' => $restaurant,
         ], 200);
     }
+
+    public function restaurantStyleCreate(Request $request)
+    {
+        try {
+            $request->validate([
+                'restaurant_id' => 'required|exists:restaurants,id',
+                'style_id' => 'required|exists:styles,id'
+            ]);
+
+            $restaurant = Restaurant::find($request->restaurant_id);
+
+            // Kiểm tra xem style đã tồn tại chưa
+            if ($restaurant->styles()->where('style_id', $request->style_id)->exists()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Style đã tồn tại cho nhà hàng này'
+                ], 400);
+            }
+
+            // Thêm style mới
+            $restaurant->styles()->attach($request->style_id);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Thêm style thành công'
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Lỗi khi thêm style',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 }
