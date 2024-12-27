@@ -26,17 +26,17 @@ class UserController extends Controller
         $messageValidation = '';
 
         if (!$request->input('name')) {
-            $messageValidation = 'Tên là bắt buộc.';
+            $messageValidation = '名前は必須です。';
         } else if (!$request->input('email')) {
-            $messageValidation = 'Email là bắt buộc.';
+            $messageValidation = 'メールアドレスは必須です';
         } else if (!Str::endsWith($request->input('email'), '@sun-asterisk.com')) {
-            $messageValidation = 'Email phải kết thúc bằng @sun-asterisk.com.';
+            $messageValidation = 'メールアドレスは @sun-asterisk.com で終わる必要があります。';
         } else if (!$request->input('password')) {
-            $messageValidation = 'Mật khẩu là bắt buộc.';
+            $messageValidation = 'パスワードは必須です。';
         } else {
             $user = User::where('email', $request->input('email'))->first();
             if ($user) {
-                $messageValidation = 'Email này đã được sử dụng.';
+                $messageValidation = 'このメールアドレスはすでに使用されています。';
             }
         }
 
@@ -53,11 +53,11 @@ class UserController extends Controller
             $user->password = bcrypt($request->password);
             $user->save();
         } catch (QueryException $e) {
-            throw new \Exception('Lỗi tạo prfile: ' . $e->getMessage());
+            throw new \Exception('プロフィール作成エラー:' . $e->getMessage());
         }
 
         return response()->json([
-            'message' => 'Tài khoản đã được tạo thành công',
+            'message' => 'アカウントが正常に作成されました。',
             // 'user' => $user,
         ], 201);
     }
@@ -67,11 +67,11 @@ class UserController extends Controller
         $messageValidation = '';
 
         if (!$request->input('email')) {
-            $messageValidation = 'Email là bắt buộc.';
+            $messageValidation = 'メールアドレスは必須です。';
         } else if (!Str::endsWith($request->input('email'), '@sun-asterisk.com')) {
-            $messageValidation = 'Email phải kết thúc bằng @sun-asterisk.com.';
+            $messageValidation = 'メールアドレスは@sun-asterisk.comで終わる必要があります。';
         } else if (!$request->input('password')) {
-            $messageValidation = 'Mật khẩu là bắt buộc.';
+            $messageValidation = 'パスワードは必須です。';
         }
 
         if ($messageValidation) {
@@ -88,12 +88,12 @@ class UserController extends Controller
                 if (!$user) {
                     return response()->json([
                         'type' => 'email',
-                        'message' => 'Email không chính xác!',
+                        'message' => 'メールアドレスが正しくありません！',
                     ], 422);
                 } else {
                     return response()->json([
                         'type' => 'password',
-                        'message' => 'Mật khẩu không chính xác!',
+                        'message' => 'パスワードが正しくありません！',
                     ], 422);
                 }
             }
@@ -101,14 +101,14 @@ class UserController extends Controller
             $token = $user->createToken('token_name')->plainTextToken;
 
             return response()->json([
-                'message' => 'Đăng nhập thành công.',
+                'message' => 'ログインに成功しました。',
                 'access_token' => $token,
                 'token_type' => 'Bearer',
                 'user' => $user,
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Lỗi đăng nhập: ' . $e->getMessage()
+                'message' => 'ログインエラー: ' . $e->getMessage()
             ], 500);
         }
     }
@@ -120,12 +120,12 @@ class UserController extends Controller
 
         if (!$user) {
             return response()->json([
-                'message' => 'Không tìm thấy người dùng!',
+                'message' => 'ユーザーが見つかりません！',
             ], 404);
         }
 
         return response()->json([
-            'message' => "Lấy thành công thông tin người dùng",
+            'message' => "ユーザー情報の取得に成功しました。",
             'user' => $user
         ], 200);
     }
@@ -136,7 +136,7 @@ class UserController extends Controller
 
         if (!$user) {
             return response()->json([
-                'message' => 'Không tìm thấy người dùng!',
+                'message' => 'ユーザーが見つかりません！',
             ], 404);
         }
 
@@ -158,7 +158,7 @@ class UserController extends Controller
 
         if ($validator->fails()) {
             return response()->json([
-                'message' => 'Dữ liệu không hợp lệ',
+                'message' => '無効なデータです。',
                 'errors' => $validator->errors()
             ], 422);
         }
@@ -195,7 +195,7 @@ class UserController extends Controller
             $locations = $this->locationService->getCoordinates($request->input('address'));
             if (!$locations) {
                 return response()->json([
-                    'message' => 'Địa chỉ không hợp lệ',
+                    'message' => '住所が無効です。',
                 ], 422);
             }
 
@@ -206,7 +206,7 @@ class UserController extends Controller
         $user->save();
 
         return response()->json([
-            'message' => 'Cập nhật thông tin người dùng thành công!',
+            'message' => 'ユーザー情報の更新に成功しました！',
             'user' => $user,
         ], 200);
     }

@@ -28,7 +28,7 @@ class ReviewController extends Controller
         $reviews = $reviews->limit($limit)->get();
 
         return response()->json([
-            'message' => "Lấy thành công reviews",
+            'message' => "レビューの取得に成功しました。",
             'reviews' => $reviews
         ], 200);
     }
@@ -75,7 +75,7 @@ class ReviewController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Review created successfully',
+                'message' => 'レビューが正常に作成されました。',
                 'image' =>  $imagePath,
                 'data' => [
                     'id' => $review->id,
@@ -95,7 +95,7 @@ class ReviewController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error creating review',
+                'message' => 'レビューの作成中にエラーが発生しました。',
                 'error' => $e->getMessage()
             ], 400);
         }
