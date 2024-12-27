@@ -4,7 +4,7 @@ import images from '~/assets/images';
 import background from '~/assets/background';
 import Button from '~/components/Button';
 import styles from './Home.module.scss';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import config from '~/config';
 import axios from 'axios';
 import { AuthContext } from '~/context/AuthContext';
@@ -14,6 +14,7 @@ const Home = () => {
     const [search, setSearch] = useState('');
     const [newRestaurant, setNewRestaurant] = useState([]);
     const [favoriteRestaurant, setFavoriteRestaurant] = useState([]);
+    const navigate = useNavigate();
 
     console.log(newRestaurant);
 
@@ -51,8 +52,7 @@ const Home = () => {
 
     const searchProducts = (event) => {
         if (event.key === 'Enter') {
-            console.log(`Searching for: ${search}`);
-            // Thực hiện logic tìm kiếm ở đây
+            navigate(`${config.routes.user.findRestaurant}?name=${search}`);
         }
     };
 

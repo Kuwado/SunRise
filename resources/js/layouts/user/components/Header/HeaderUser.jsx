@@ -8,6 +8,8 @@ import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import config from '~/config';
 import { AuthContext } from '~/context/AuthContext';
+import { useLocation } from 'react-router-dom';
+
 const cx = classNames.bind(styles);
 
 export default function HeaderUser() {
@@ -15,6 +17,7 @@ export default function HeaderUser() {
     const navigate = useNavigate();
     const [showMenu, setShowMenu] = useState(false);
     const menuRef = useRef(null);
+    const location = useLocation();
 
     // Đóng menu khi click bên ngoài
     useEffect(() => {
@@ -35,13 +38,22 @@ export default function HeaderUser() {
                 SunRise
             </Link>
             <div className={cx('tab-menu')}>
-                <Link to={config.routes.user.home} className={cx('tab-home')}>
+                <Link
+                    to={config.routes.user.home}
+                    className={cx('tab-item', { active: location.pathname === config.routes.user.home })}
+                >
                     ホーム
                 </Link>
-                <Link to={config.routes.user.findRestaurant} className={cx('tab-restaurant')}>
+                <Link
+                    to={config.routes.user.findRestaurant}
+                    className={cx('tab-item', { active: location.pathname === config.routes.user.findRestaurant })}
+                >
                     レストラン
                 </Link>
-                <Link to={config.routes.user.map} className={cx('tab-restaurant')}>
+                <Link
+                    to={config.routes.user.map}
+                    className={cx('tab-item', { active: location.pathname === config.routes.user.map })}
+                >
                     地図
                 </Link>
             </div>
@@ -71,7 +83,7 @@ export default function HeaderUser() {
                                     navigate('/userInfor');
                                 }}
                             >
-                                UserInfor
+                                プロフィール
                             </div>
                             <div
                                 className={cx('menu-item')}
@@ -80,7 +92,7 @@ export default function HeaderUser() {
                                     navigate('/login');
                                 }}
                             >
-                                Logout
+                                ログアウト
                             </div>
                         </div>
                     )}
