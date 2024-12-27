@@ -31,6 +31,9 @@ Route::delete('/restaurant/delete/{id}', [RestaurantController::class, 'deleteRe
 Route::get('/restaurant', [RestaurantController::class, 'getRestaurant']);
 Route::get('/restaurants', [RestaurantController::class, 'getRestaurants']);
 Route::get('/restaurants/count', [RestaurantController::class, 'getCounts']);
+Route::get('restaurant/styles', [RestaurantController::class, 'getStylesOfRestaurant']);
+Route::post('restaurant/style/update/{id}', [RestaurantController::class, 'updateStyleOfRestaurant']);
+Route::delete('restaurant/style/delete/{id}', [RestaurantController::class, 'deleteStyleOfRestaurant']);
 
 // Reviews
 Route::get('/reviews', [ReviewController::class, 'getReviews']);
