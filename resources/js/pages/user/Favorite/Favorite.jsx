@@ -319,7 +319,7 @@ export default function Favorite() {
                                         price_end={restaurant.price_range.end}
                                         time_ago={restaurant.time_ago}
                                         rating={restaurant.rating}
-                                        reviews={restaurant.reviews}
+                                        number_reviews={restaurant.num_of_review}
                                         onRefetchCollections={refetchCollections}
                                     />
                                 ))
