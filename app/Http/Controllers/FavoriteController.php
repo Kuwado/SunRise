@@ -25,7 +25,7 @@ class FavoriteController extends Controller
         ]);
 
         return response()->json([
-            'message' => 'Favorite created successfully',
+            'message' => 'お気に入りが正常に作成されました。',
             'favorite' => $favorite,
         ], 200);
     }
@@ -46,7 +46,7 @@ class FavoriteController extends Controller
         // Kiểm tra xem mục yêu thích có tồn tại không
         if (!$favorite) {
             return response()->json([
-                'message' => 'Favorite not found'
+                'message' => 'お気に入りが見つかりませんでした。'
             ], 404);
         }
 
@@ -55,7 +55,7 @@ class FavoriteController extends Controller
 
         // Trả về phản hồi thành công
         return response()->json([
-            'message' => 'Favorite deleted successfully!',
+            'message' => 'お気に入りが正常に削除されました！',
         ], 200);
     }
     public function getFavorites(Request $request)
@@ -182,7 +182,7 @@ class FavoriteController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error fetching favorites',
+                'message' => 'お気に入りの取得中にエラーが発生しました。',
                 'error' => $e->getMessage()
             ], 500);
         }
