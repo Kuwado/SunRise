@@ -20,6 +20,7 @@ import config from '~/config';
 const cx = classNames.bind(styles);
 
 export default function FavoriteItem({
+    fetchCollections,
     fetchFavorite,
     restaurant_id,
     id,
@@ -49,7 +50,13 @@ export default function FavoriteItem({
 
     return (
         <>
-            {isShowPopUp && <AddCollectionPopup favorite_id={id} onClose={() => setIsShowPopup(false)} />}
+            {isShowPopUp && (
+                <AddCollectionPopup
+                    fetchCollections={fetchCollections}
+                    favorite_id={id}
+                    onClose={() => setIsShowPopup(false)}
+                />
+            )}
 
             <div className={cx('favorite-item')}>
                 <div className={cx('image-container')}>
