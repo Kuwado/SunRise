@@ -4,17 +4,14 @@ import { faRedo, faTrashCan, faPen, faAngleRight, faAngleLeft } from '@fortaweso
 import axios from 'axios';
 import images from '~/assets/images';
 import Dropdown from '~/components/Dropdown';
-import Rating from '~/components/Rating';
 import Button from '~/components/Button';
 import classNames from 'classnames/bind';
 import styles from './Favorite.module.scss';
 import RadioInput from '~/components/radio';
 import FavoriteItem from '../components/restaurants/FavoriteItem';
-import { AddCollectionPopup } from '../components/CollectionPopup';
 
 const cx = classNames.bind(styles);
 export default function Favorite() {
-    const [types, setTypes] = useState([]);
     const [user, setUser] = useState({});
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
@@ -22,57 +19,11 @@ export default function Favorite() {
     const [priceType, setPriceType] = useState();
     const [products, setProducts] = useState([]);
     const [filterDrPrice, setFilterDrPrice] = useState('並べ替え 評価:低から高', '並べ替え 評価:高から低');
-    // const [totalPriceProducts, setTotalPriceroducts] = useState([]);
     const [collection, setCollection] = useState('すべてのいい');
     const [editCollection, setEditCollection] = useState(false);
     const [collections, setCollections] = useState([]);
     const [collectionId, setCollectionId] = useState(-1);
 
-    const fetchFavorites = async () => {
-        axios
-            .get('/api/favorites', {
-                params: {
-                    user_id: localStorage.getItem('userId'),
-                    sort_price: filterDrPrice === '' ? '' : filterDrPrice === '並べ替え 評価:低から高' ? 'asc' : 'desc',
-                    perPage: 4,
-                    page: currentPage,
-                    start: priceRange.start || '',
-                    end: priceRange.end || '',
-                },
-            })
-            .then((response) => {
-                setProducts(response.data.data.data);
-                setTotalPages(response.data.data.last_page);
-            })
-            .catch((error) => {
-                console.log(error);
-            });
-    };
-    // console.log('collection_id :', collectionId);
-
-    useEffect(() => {
-        const fetchProducts = async () => {
-            const response = await axios
-                .get('/api/collection', {
-                    params: {
-                        id: collectionId,
-                    },
-                })
-                .then((response) => {
-                    // console.log(response);
-                    setProducts(response.data.data.collection.restaurants.data);
-                })
-                .catch((error) => {
-                    console.log(error);
-                });
-        };
-
-        if (collectionId !== -1) fetchProducts();
-        else {
-            fetchFavorites();
-        }
-    }, [collectionId]);
-    // console.log(products)
 
     useEffect(() => {
         const fetchUser = async () => {
@@ -111,9 +62,51 @@ export default function Favorite() {
         fetchCollections();
     }, [collection]);
 
+    const fetchFavorites = async () => {
+        axios
+            .get('/api/favorites', {
+                params: {
+                    user_id: localStorage.getItem('userId'),
+                    sort_price: filterDrPrice === '' ? '' : filterDrPrice === '並べ替え 評価:低から高' ? 'asc' : 'desc',
+                    perPage: 4,
+                    page: currentPage,
+                    start: priceRange.start || '',
+                    end: priceRange.end || '',
+                },
+            })
+            .then((response) => {
+                setProducts(response.data.data.data);
+                setTotalPages(response.data.data.last_page);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    };
+
+    const fetchProducts = async () => {
+        await axios
+            .get('/api/collection', {
+                params: {
+                    id: collectionId,
+                    sort_price: filterDrPrice === '' ? '' : filterDrPrice === '並べ替え 評価:低から高' ? 'asc' : 'desc',
+                    page: currentPage,
+                    start: priceRange.start || '',
+                    end: priceRange.end || '',
+                },
+            })
+            .then((response) => {
+                setProducts(response.data.data.collection.restaurants.data);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    };
+
+
     useEffect(() => {
-        fetchFavorites();
-    }, [currentPage, filterDrPrice, priceRange]);
+        if (collectionId !== -1) fetchProducts();
+        else fetchFavorites();
+    }, [collectionId, currentPage, filterDrPrice, priceRange]);
 
     const handlePageChange = (page) => {
         setCurrentPage(page);
@@ -147,7 +140,6 @@ export default function Favorite() {
                 user_id: localStorage.getItem('userId'),
             })
             .then((response) => {
-                // console.log(response);
                 setEditCollection(false);
             })
             .catch((error) => {
@@ -163,7 +155,6 @@ export default function Favorite() {
         axios
             .delete(`/api/collection/delete/${collectionId}`, {})
             .then((response) => {
-                // console.log(response);
                 setCollection('すべてのいい');
                 setCollectionId(-1);
             })
@@ -202,7 +193,8 @@ export default function Favorite() {
     const refetchCollections = () => {
         fetchCollections();
     };
-    console.log(products);
+
+    console.log(products)
 
     return (
         <>
@@ -249,7 +241,7 @@ export default function Favorite() {
                                 width="width=227px"
                                 setValue={setFilterDrPrice}
                                 selected={filterDrPrice}
-                                // handleClick={handleSortPrice}
+                            // handleClick={handleSortPrice}
                             >
                                 <div>並べ替え 評価:低から高</div>
                                 <div>並べ替え 評価:高から低</div>
@@ -283,6 +275,10 @@ export default function Favorite() {
                                 unselectable="true"
                             />
                             <div hidden={!editCollection}>
+                                <Button onClick={() => setEditCollection(false)} curved secondary width={'120px'}>
+                                    {' '}
+                                    キャンセル
+                                </Button>
                                 <Button onClick={() => updateCollection()} curved primary width={'150px'}>
                                     {' '}
                                     アップデート
@@ -321,7 +317,9 @@ export default function Favorite() {
                                         rating={restaurant.rating}
                                         reviews={restaurant.reviews}
                                         onRefetchCollections={refetchCollections}
+                                        fetchFavorite={fetchFavorites}
                                     />
+
                                 ))
                             )}
                         </div>
