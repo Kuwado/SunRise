@@ -27,7 +27,7 @@ class CollectionController extends Controller
             if ($collection->favorites()->where('favorites.id', $validatedData['favorite_id'])->exists()) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'The favorite is already in the collection'
+                    'message' => 'お気に入りはすでにコレクションにあります。'
                 ], 409);
             }
 
@@ -36,7 +36,7 @@ class CollectionController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Favorite added to collection successfully',
+                'message' => 'コレクションに正常に追加されました！',
                 'collection_favorite' => [
                     'collection_id' => $collection->id,
                     'favorite_id' => $validatedData['favorite_id']
@@ -45,7 +45,7 @@ class CollectionController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error adding favorite to collection',
+                'message' => 'お気に入りをコレクションに追加中にエラーが発生しました。',
                 'error' => $e->getMessage()
             ], 400);
         }
@@ -166,7 +166,7 @@ class CollectionController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Collection not found or error occurred',
+                'message' => 'コレクションが見つからないか、エラーが発生しました。',
                 'error' => $e->getMessage()
             ], 404);
         }
@@ -186,7 +186,7 @@ class CollectionController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Collection created successfully',
+                'message' => 'コレクションが正常に作成されました。',
                 'data' => [
                     'id' => $collection->id,
                     'name' => $collection->name,
@@ -197,7 +197,7 @@ class CollectionController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error creating collection',
+                'message' => 'コレクションの作成中にエラーが発生しました。',
                 'error' => $e->getMessage()
             ], 400);
         }
@@ -223,7 +223,7 @@ class CollectionController extends Controller
             if (isset($validatedData['user_id']) && $collection->user_id != $validatedData['user_id']) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'You do not have permission to update this collection'
+                    'message' => 'このコレクションを更新する権限がありません。'
                 ], 403);
             }
 
@@ -234,7 +234,7 @@ class CollectionController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Collection updated successfully',
+                'message' => 'コレクションが正常に更新されました。',
                 'data' => [
                     'id' => $collection->id,
                     'name' => $collection->name,
@@ -245,7 +245,7 @@ class CollectionController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error updating collection',
+                'message' => 'コレクションの更新中にエラーが発生しました。',
                 'error' => $e->getMessage()
             ], 400);
         }
@@ -276,7 +276,7 @@ class CollectionController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error fetching collections',
+                'message' => 'コレクションの取得中にエラーが発生しました。',
                 'error' => $e->getMessage()
             ], 400);
         }
@@ -298,12 +298,12 @@ class CollectionController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Collection deleted successfully'
+                'message' => 'コレクションが正常に削除されました。'
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error deleting collection',
+                'message' => 'コレクションの削除中にエラーが発生しました。',
                 'error' => $e->getMessage()
             ], 400);
         }
@@ -333,7 +333,7 @@ class CollectionController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error fetching collections for the favorite',
+                'message' => 'お気に入りのコレクションを取得中にエラーが発生しました。',
                 'error' => $e->getMessage(),
             ], 500);
         }
