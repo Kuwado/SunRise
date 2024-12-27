@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 
+
 class RestaurantController extends Controller
 {
     //
@@ -45,29 +46,29 @@ class RestaurantController extends Controller
                 'open_time' => 'required|date_format:H:i:s',
                 'close_time' => 'required|date_format:H:i:s',
                 'avatar' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-                'media.*' => [
-                    'nullable',
-                    function ($attribute, $value, $fail) {
-                        if (is_string($value)) {
-                            // Nếu là chuỗi, kiểm tra độ dài tối đa (nếu cần)
-                            if (strlen($value) > 255) {
-                                $fail("The $attribute must not exceed 255 characters.");
-                            }
-                        } elseif ($value instanceof \Illuminate\Http\UploadedFile) {
-                            // Nếu là file, kiểm tra mime types và size
-                            $allowedMimeTypes = ['jpg', 'jpeg', 'png', 'mp4', 'avi', 'mkv'];
-                            if (!in_array($value->getClientOriginalExtension(), $allowedMimeTypes)) {
-                                $fail("The $attribute must be a file of type: " . implode(', ', $allowedMimeTypes) . ".");
-                            }
+                // 'media.*' => [
+                //     'nullable',
+                //     function ($attribute, $value, $fail) {
+                //         if (is_string($value)) {
+                //             // Nếu là chuỗi, kiểm tra độ dài tối đa (nếu cần)
+                //             if (strlen($value) > 255) {
+                //                 $fail("The $attribute must not exceed 255 characters.");
+                //             }
+                //         } elseif ($value instanceof \Illuminate\Http\UploadedFile) {
+                //             // Nếu là file, kiểm tra mime types và size
+                //             $allowedMimeTypes = ['jpg', 'jpeg', 'png', 'mp4', 'avi', 'mkv'];
+                //             if (!in_array($value->getClientOriginalExtension(), $allowedMimeTypes)) {
+                //                 $fail("The $attribute must be a file of type: " . implode(', ', $allowedMimeTypes) . ".");
+                //             }
 
-                            if ($value->getSize() > 204800000) {
-                                $fail("The $attribute may not be greater than 20480 KB.");
-                            }
-                        } else {
-                            $fail("The $attribute must be a valid file or string.");
-                        }
-                    },
-                ],
+                //             if ($value->getSize() > 204800000) {
+                //                 $fail("The $attribute may not be greater than 20480 KB.");
+                //             }
+                //         } else {
+                //             $fail("The $attribute must be a valid file or string.");
+                //         }
+                //     },
+                // ],
             ];
 
             // Tùy chỉnh thông báo lỗi (nếu cần)
@@ -126,9 +127,9 @@ class RestaurantController extends Controller
                 $validatedData['avatar'] = "/storage/images/$avatarName";
 
                 // Xóa ảnh avatar cũ (nếu cần)
-                if ($restaurant->avatar && file_exists(public_path($restaurant->avatar))) {
-                    unlink(public_path($restaurant->avatar));
-                }
+                // if ($restaurant->avatar && file_exists(public_path($restaurant->avatar))) {
+                //     unlink(public_path($restaurant->avatar));
+                // }
             }
 
             if ($request->input('media') === null) {
@@ -136,9 +137,12 @@ class RestaurantController extends Controller
                 $oldMedia = json_decode($restaurant->media, true);
                 if (is_array($oldMedia)) {
                     foreach ($oldMedia as $oldMediaPath) {
-                        if (file_exists(public_path($oldMediaPath))) {
-                            unlink(public_path($oldMediaPath));
-                        }
+                        // $imageName = basename($oldMediaPath);
+                        // Storage::delete("public/images/$imageName");
+                        $filePath = public_path($oldMediaPath);
+                        if (file_exists($filePath)) {
+                            unlink($filePath);
+                        } 
                     }
                 }
                 $validatedData['media'] = null;
@@ -189,6 +193,10 @@ class RestaurantController extends Controller
                 }
                 $validatedData['media'] = json_encode($mediaStrings);
             }
+
+
+
+
 
             // Cập nhật thông tin cửa hàng
             $restaurant->update($validatedData);
