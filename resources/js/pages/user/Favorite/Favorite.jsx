@@ -24,7 +24,6 @@ export default function Favorite() {
     const [collections, setCollections] = useState([]);
     const [collectionId, setCollectionId] = useState(-1);
 
-
     useEffect(() => {
         const fetchUser = async () => {
             try {
@@ -60,7 +59,7 @@ export default function Favorite() {
 
     useEffect(() => {
         fetchCollections();
-    }, [collection]);
+    }, [collectionId]);
 
     const fetchFavorites = async () => {
         axios
@@ -101,7 +100,6 @@ export default function Favorite() {
                 console.log(error);
             });
     };
-
 
     useEffect(() => {
         if (collectionId !== -1) fetchProducts();
@@ -194,7 +192,7 @@ export default function Favorite() {
         fetchCollections();
     };
 
-    console.log(products)
+    console.log(products);
 
     return (
         <>
@@ -241,7 +239,7 @@ export default function Favorite() {
                                 width="width=227px"
                                 setValue={setFilterDrPrice}
                                 selected={filterDrPrice}
-                            // handleClick={handleSortPrice}
+                                // handleClick={handleSortPrice}
                             >
                                 <div>並べ替え 評価:低から高</div>
                                 <div>並べ替え 評価:高から低</div>
@@ -318,8 +316,8 @@ export default function Favorite() {
                                         number_reviews={restaurant.num_of_review}
                                         onRefetchCollections={refetchCollections}
                                         fetchFavorite={fetchFavorites}
+                                        fetchCollections={fetchCollections}
                                     />
-
                                 ))
                             )}
                         </div>
