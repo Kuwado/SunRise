@@ -25,7 +25,7 @@ const Search = ({
     };
     const handleKeyDown = (e) => {
         if (e.key === 'Enter') {
-            onKeyDown && onKeyDown();
+            onKeyDown && onKeyDown(e);
         }
     };
 

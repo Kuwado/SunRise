@@ -19,7 +19,7 @@ const CafeItem = ({
     price_end,
     distance,
     rating,
-    reviews,
+    number_reviews,
     isListView,
     open_time,
     close_time,
@@ -76,7 +76,7 @@ const CafeItem = ({
 
                     <div className={cx('rating')}>
                         <Rating small rate={rating} />
-                        <span>({reviews})</span>
+                        <span>({number_reviews})</span>
                     </div>
                 </div>
             </Link>

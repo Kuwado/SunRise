@@ -30,7 +30,7 @@ class RestaurantController extends Controller
             $restaurant = Restaurant::find($id);
 
             if (!$restaurant) {
-                return response()->json(['message' => 'Restaurant not found'], 404);
+                return response()->json(['message' => 'レストランが見つかりません。'], 404);
             }
 
             // Định nghĩa các quy tắc validate
@@ -72,12 +72,12 @@ class RestaurantController extends Controller
 
             // Tùy chỉnh thông báo lỗi (nếu cần)
             $messages = [
-                'name.required' => 'Tên cửa hàng là bắt buộc.',
-                'email.required' => 'Email là bắt buộc.',
-                'price_start.required' => 'Giá bắt đầu là bắt buộc.',
-                'price_start.numeric' => 'Giá bắt đầu phải là số.',
-                'price_end.required' => 'Giá kết thúc là bắt buộc.',
-                'price_end.numeric' => 'Giá kết thúc phải là số.',
+                'name.required' => '店舗名は必須です。',
+                'email.required' => 'メールアドレスは必須です。',
+                'price_start.required' => '開始価格は必須です。',
+                'price_start.numeric' => '開始価格は数値でなければなりません。',
+                'price_end.required' => '終了価格は必須です。',
+                'price_end.numeric' => '終了価格は数値でなければなりません。',
             ];
 
             // Thực hiện validate
@@ -85,7 +85,7 @@ class RestaurantController extends Controller
 
             if ($validator->fails()) {
                 return response()->json([
-                    'message' => 'Dữ liệu không hợp lệ',
+                    'message' => '無効なデータです。',
                     'errors' => $validator->errors(),
                 ], 422); // HTTP 422: Unprocessable Entity
             }
@@ -95,14 +95,14 @@ class RestaurantController extends Controller
             // Kiểm tra điều kiện giá bắt đầu < giá kết thúc
             if ($validatedData['price_start'] >= $validatedData['price_end']) {
                 return response()->json([
-                    'message' => 'Giá bắt đầu phải nhỏ hơn giá kết thúc.',
+                    'message' => '開始価格は終了価格より小さくなければなりません。',
                 ], 422);
             }
 
             // Kiểm tra điều kiện thời gian mở < thời gian đóng
             if ($validatedData['open_time'] >= $validatedData['close_time']) {
                 return response()->json([
-                    'message' => 'Thời gian mở phải nhỏ hơn thời gian đóng.',
+                    'message' => '開店時間は閉店時間より早くなければなりません。',
                 ], 422);
             }
 
@@ -110,7 +110,7 @@ class RestaurantController extends Controller
                 $locations = $this->locationService->getCoordinates($request->input('address'));
                 if (!$locations) {
                     return response()->json([
-                        'message' => 'Địa chỉ không hợp lệ',
+                        'message' => '住所は無効です。',
                     ], 422);
                 }
 
@@ -194,12 +194,12 @@ class RestaurantController extends Controller
             $restaurant->update($validatedData);
 
             return response()->json([
-                'message' => 'Cập nhật nhà hàng thành công',
+                'message' => 'レストランの更新が成功しました。',
                 'restaurant' => $restaurant,
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'An error occurred while updating the restaurant.',
+                'message' => 'レストランの更新中にエラーが発生しました。',
                 'error' => $e->getMessage(),
             ], 500);
         }
@@ -214,7 +214,7 @@ class RestaurantController extends Controller
 
         if (!$restaurant) {
             return response()->json([
-                'message' => 'Cửa hàng không tồn tại'
+                'message' => '店舗は存在しません。'
             ], 404);
         }
 
@@ -232,7 +232,7 @@ class RestaurantController extends Controller
 
 
         return response()->json([
-            'message' => 'Lấy thành công cửa hàng',
+            'message' => '店舗の取得に成功しました。',
             'restaurant' => new RestaurantResource($restaurant, $userId),
         ], 200);
     }
@@ -360,7 +360,7 @@ class RestaurantController extends Controller
             $restaurants = $restaurants->where('name', 'like', "%{$name}%");
             if ($restaurants->count() == 0) {
                 return response()->json([
-                    'message' => 'Không tìm thấy nhà hàng nào',
+                    'message' => 'レストランが見つかりませんでした。',
                     'restaurants' => [
                         'data' => [],
                         // 'data' => $restaurants,
@@ -405,7 +405,7 @@ class RestaurantController extends Controller
         $restaurants = $restaurants->paginate($perPage);
 
         return response()->json([
-            'message' => 'Lấy thành công danh sách cửa hàng',
+            'message' => '店舗一覧の取得に成功しました。',
             'restaurants' => [
                 'data' => RestaurantResource::collection($restaurants->map(function ($restaurant) use ($userId) {
                     return new RestaurantResource($restaurant, $userId);
@@ -438,16 +438,16 @@ class RestaurantController extends Controller
         ]);
 
         if ($request->input('price_start') >= $request->input('price_end')) {
-            return response()->json(['message' => 'Giá bắt đầu phải nhỏ hơn giá kết thúc.',], 422);
+            return response()->json(['message' => '開始価格は終了価格より小さくなければなりません。',], 422);
         } // Kiểm tra điều kiện thời gian mở < thời gian đóng 
         if ($request->input('open_time') >= $request->input('close_time')) {
-            return response()->json(['message' => 'Thời gian mở phải nhỏ hơn thời gian đóng.',], 422);
+            return response()->json(['message' => '開店時間は閉店時間より早くなければなりません。',], 422);
         }
 
 
         if ($validator->fails()) {
             return response()->json([
-                'message' => 'Dữ liệu không hợp lệ',
+                'message' => '無効なデータです。',
                 'errors' => $validator->errors()
             ], 422);
         }
@@ -457,7 +457,7 @@ class RestaurantController extends Controller
         $locations = $this->locationService->getCoordinates($address);
         if (!$locations) {
             return response()->json([
-                'message' => 'Địa chỉ không hợp lệ',
+                'message' => '住所が無効です。',
             ], 422);
         }
 
@@ -494,7 +494,7 @@ class RestaurantController extends Controller
             'close_time' => $request->input('close_time'),
         ]);
         return response()->json([
-            'message' => 'Nhà hàng đã được tạo thành công!',
+            'message' => 'レストランが正常に作成されました！',
             'restaurant' => $restaurant,
         ], 200);
     }
@@ -522,11 +522,11 @@ class RestaurantController extends Controller
             $restaurant->delete();
 
             return response()->json([
-                'message' => 'Nhà hàng đã được xóa thành công!',
+                'message' => 'レストランが正常に削除されました！',
             ], 200);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json([
-                'message' => 'Không tìm thấy nhà hàng!',
+                'message' => 'レストランが見つかりませんでした。',
             ], 404);
         }
     }
@@ -620,17 +620,17 @@ class RestaurantController extends Controller
 
         // Kiểm tra điều kiện giá
         if ($request->input('price_start') >= $request->input('price_end')) {
-            return response()->json(['message' => 'Giá bắt đầu phải nhỏ hơn giá kết thúc.'], 422);
+            return response()->json(['message' => '開始価格は終了価格より小さくなければなりません。'], 422);
         }
 
         // Kiểm tra điều kiện thời gian mở và đóng
         if ($request->input('open_time') >= $request->input('close_time')) {
-            return response()->json(['message' => 'Thời gian mở phải nhỏ hơn thời gian đóng.'], 422);
+            return response()->json(['message' => '開店時間は閉店時間より早くなければなりません。'], 422);
         }
 
         if ($validator->fails()) {
             return response()->json([
-                'message' => 'Dữ liệu không hợp lệ',
+                'message' => '無効なデータです。',
                 'errors' => $validator->errors()
             ], 422);
         }
@@ -640,7 +640,7 @@ class RestaurantController extends Controller
         $locations = $this->locationService->getCoordinates($address);
         if (!$locations) {
             return response()->json([
-                'message' => 'Địa chỉ không hợp lệ',
+                'message' => '住所が無効です。',
             ], 422);
         }
 
@@ -681,7 +681,7 @@ class RestaurantController extends Controller
         ]);
 
         return response()->json([
-            'message' => 'Nhà hàng đã được tạo thành công!',
+            'message' => 'レストランが正常に作成されました！',
             'restaurant' => $restaurant,
         ], 200);
     }
@@ -700,7 +700,7 @@ class RestaurantController extends Controller
             if ($restaurant->styles()->where('style_id', $request->style_id)->exists()) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Style đã tồn tại cho nhà hàng này'
+                    'message' => 'このスタイルはすでにこのレストランに存在します。'
                 ], 400);
             }
 
@@ -709,12 +709,12 @@ class RestaurantController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Thêm style thành công'
+                'message' => 'スタイルの追加に成功しました。'
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Lỗi khi thêm style',
+                'message' => 'スタイルの追加中にエラーが発生しました。',
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -744,7 +744,7 @@ class RestaurantController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Lỗi khi lấy styles',
+                'message' => 'スタイルの取得中にエラーが発生しました。',
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -767,7 +767,7 @@ class RestaurantController extends Controller
             if (!$restaurantStyle) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Không tìm thấy style của nhà hàng'
+                    'message' => 'レストランのスタイルが見つかりませんでした。'
                 ], 404);
             }
 
@@ -780,7 +780,7 @@ class RestaurantController extends Controller
             if ($existingStyle) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Style mới đã tồn tại cho nhà hàng này'
+                    'message' => '新しいスタイルはすでにこのレストランに存在します。'
                 ], 400);
             }
 
@@ -790,12 +790,12 @@ class RestaurantController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Cập nhật style thành công'
+                'message' => 'スタイルの更新に成功しました。'
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Lỗi khi cập nhật style',
+                'message' => 'スタイルの更新中にエラーが発生しました。',
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -808,18 +808,18 @@ class RestaurantController extends Controller
             if (!$deleted) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Không tìm thấy style của nhà hàng'
+                    'message' => 'レストランのスタイルが見つかりませんでした。'
                 ], 404);
             }
 
             return response()->json([
                 'success' => true,
-                'message' => 'Xóa style thành công'
+                'message' => 'スタイルの削除に成功しました。'
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Lỗi khi xóa style',
+                'message' => 'スタイルの削除中にエラーが発生しました。',
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -875,7 +875,7 @@ class RestaurantController extends Controller
             if (count($restaurantIds) > 1) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Restaurant ID phải giống nhau'
+                    'message' => 'レストランのIDは同じでなければなりません。'
                 ], 400);
             }
 
@@ -884,7 +884,7 @@ class RestaurantController extends Controller
             if (count($styleIds) !== count(array_unique($styleIds))) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Style ID không được trùng nhau'
+                    'message' => 'スタイルのIDは重複してはいけません。'
                 ], 400);
             }
 
@@ -942,12 +942,12 @@ class RestaurantController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Cập nhật thành công'
+                'message' => '更新に成功しました。'
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Lỗi khi cập nhật',
+                'message' => '更新中にエラーが発生しました。',
                 'error' => $e->getMessage()
             ], 500);
         }

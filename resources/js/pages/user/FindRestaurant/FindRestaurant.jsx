@@ -15,6 +15,7 @@ import classNames from 'classnames/bind';
 import styles from './FindRestaurant.module.scss';
 import RadioInput from '~/components/radio';
 import { AuthContext } from '~/context/AuthContext';
+import { useLocation } from 'react-router-dom';
 const cx = classNames.bind(styles);
 
 const FindRestaurant = () => {
@@ -33,6 +34,10 @@ const FindRestaurant = () => {
     const [totalStyleProducts, setTotalStyleProducts] = useState([]);
     const [favoriteProducts, setFavoriteProducts] = useState([]);
     const [favoriteProductsIds, setFavoriteProductsIds] = useState([]);
+
+    const location = useLocation();
+    const urlParams = new URLSearchParams(location.search);
+    const name = urlParams.get('name');
 
     //state filter
 
@@ -57,6 +62,7 @@ const FindRestaurant = () => {
                         end: priceRange.end || '',
                         distance_type: distances.toString(),
                         user_id: userId,
+                        name: name,
                     },
                 });
                 // console.log(response.data.restaurants);
@@ -73,7 +79,7 @@ const FindRestaurant = () => {
         };
 
         fetchProducts();
-    }, [types, ratings, styles, currentPage, filterDrPrice, filterDrRating, priceType, distances]);
+    }, [types, ratings, styles, currentPage, filterDrPrice, filterDrRating, priceType, distances, name]);
 
     useEffect(() => {
         const fetchTotalProducts = async () => {
@@ -98,6 +104,7 @@ const FindRestaurant = () => {
         };
         fetchTotalProducts();
     }, []);
+
     useEffect(() => {
         const fetchUser = async () => {
             const userId = localStorage.getItem('userId');
@@ -193,10 +200,10 @@ const FindRestaurant = () => {
         });
     };
 
-    const searchProducts = async () => {
+    const searchProducts = async (searchS) => {
         try {
             const response = await axios.get('/api/restaurants', {
-                params: { name: search },
+                params: { name: searchS },
             });
             if (response.status === 200) {
                 setProducts(response.data.restaurants.data);
@@ -237,7 +244,7 @@ const FindRestaurant = () => {
                         placeholder="名前、料理、場所からレストランを検索"
                         value={search}
                         setValue={setSearch}
-                        onKeyDown={searchProducts}
+                        onKeyDown={(e) => searchProducts(e.target.value)}
                     />
                 </div>
             </div>
@@ -407,7 +414,7 @@ const FindRestaurant = () => {
                             open_time={cafe.open_time}
                             close_time={cafe.close_time}
                             rating={cafe.rating}
-                            reviews={cafe.reviews}
+                            number_reviews={cafe.number}
                             isListView={!isGridView}
                             isFavorited={cafe.isFavorited}
                         />
