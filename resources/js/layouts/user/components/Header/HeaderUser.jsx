@@ -71,7 +71,7 @@ export default function HeaderUser() {
                                     navigate('/userInfor');
                                 }}
                             >
-                                UserInfor
+                                ユーザー情報
                             </div>
                             <div
                                 className={cx('menu-item')}
@@ -80,7 +80,7 @@ export default function HeaderUser() {
                                     navigate('/login');
                                 }}
                             >
-                                Logout
+                                ログアウト
                             </div>
                         </div>
                     )}

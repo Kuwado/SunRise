@@ -407,7 +407,7 @@ const FindRestaurant = () => {
                             open_time={cafe.open_time}
                             close_time={cafe.close_time}
                             rating={cafe.rating}
-                            reviews={cafe.reviews}
+                            number_reviews={cafe.number}
                             isListView={!isGridView}
                             isFavorited={cafe.isFavorited}
                         />
