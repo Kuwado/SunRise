@@ -685,4 +685,271 @@ class RestaurantController extends Controller
             'restaurant' => $restaurant,
         ], 200);
     }
+
+    public function restaurantStyleCreate(Request $request)
+    {
+        try {
+            $request->validate([
+                'restaurant_id' => 'required|exists:restaurants,id',
+                'style_id' => 'required|exists:styles,id'
+            ]);
+
+            $restaurant = Restaurant::find($request->restaurant_id);
+
+            // Kiểm tra xem style đã tồn tại chưa
+            if ($restaurant->styles()->where('style_id', $request->style_id)->exists()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Style đã tồn tại cho nhà hàng này'
+                ], 400);
+            }
+
+            // Thêm style mới
+            $restaurant->styles()->attach($request->style_id);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Thêm style thành công'
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Lỗi khi thêm style',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function getStylesOfRestaurant(Request $request)
+    {
+        try {
+            $request->validate([
+                'restaurant_id' => 'required|exists:restaurants,id'
+            ]);
+
+            $styles = DB::table('restaurants_styles')
+                ->join('styles', 'restaurants_styles.style_id', '=', 'styles.id')
+                ->where('restaurant_id', $request->restaurant_id)
+                ->select(
+                    'styles.id as style_id',
+                    'styles.name',
+                    'restaurants_styles.id as restaurants_styles_id'
+                )
+                ->get();
+
+            return response()->json([
+                'success' => true,
+                'data' => $styles
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Lỗi khi lấy styles',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function updateStyleOfRestaurant(Request $request, $id)
+    {
+        try {
+            $request->validate([
+                'restaurant_id' => 'required|exists:restaurants,id',
+                'new_style_id' => 'required|exists:styles,id'
+            ]);
+
+            // Kiểm tra xem bản ghi restaurants_styles có tồn tại không
+            $restaurantStyle = DB::table('restaurants_styles')
+                ->where('id', $id)
+                ->where('restaurant_id', $request->restaurant_id)
+                ->first();
+
+            if (!$restaurantStyle) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Không tìm thấy style của nhà hàng'
+                ], 404);
+            }
+
+            // Kiểm tra xem style mới đã tồn tại cho nhà hàng chưa
+            $existingStyle = DB::table('restaurants_styles')
+                ->where('restaurant_id', $request->restaurant_id)
+                ->where('style_id', $request->new_style_id)
+                ->first();
+
+            if ($existingStyle) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Style mới đã tồn tại cho nhà hàng này'
+                ], 400);
+            }
+
+            DB::table('restaurants_styles')
+                ->where('id', $id)
+                ->update(['style_id' => $request->new_style_id]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Cập nhật style thành công'
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Lỗi khi cập nhật style',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+    public function deleteStyleOfRestaurant($id)
+    {
+        try {
+            $deleted = DB::table('restaurants_styles')->where('id', $id)->delete();
+
+            if (!$deleted) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Không tìm thấy style của nhà hàng'
+                ], 404);
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Xóa style thành công'
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Lỗi khi xóa style',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    private function deleteRestaurantStyle($id)
+    {
+        try {
+            $deleted = DB::table('restaurants_styles')->where('id', $id)->delete();
+            return $deleted;
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
+    private function createRestaurantStyle($restaurant_id, $style_id)
+    {
+        try {
+            return DB::table('restaurants_styles')->insertGetId([
+                'restaurant_id' => $restaurant_id,
+                'style_id' => $style_id
+            ]);
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
+    private function updateRestaurantStyle($id, $style_id)
+    {
+        try {
+            return DB::table('restaurants_styles')
+                ->where('id', $id)
+                ->update(['style_id' => $style_id]);
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
+    public function batchUpdateRestaurantStyles(Request $request)
+    {
+        try {
+            $request->validate([
+                'data' => 'required|array',
+                'data.*.0' => 'required', // id
+                'data.*.1' => 'required|exists:restaurants,id', // restaurant_id 
+                'data.*.2' => 'required|exists:styles,id' // style_id
+            ]);
+
+            $requestData = $request->data;
+
+            // Kiểm tra restaurant_id giống nhau
+            $restaurantIds = array_unique(array_column($requestData, 1));
+            if (count($restaurantIds) > 1) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Restaurant ID phải giống nhau'
+                ], 400);
+            }
+
+            // Kiểm tra style_id không trùng nhau
+            $styleIds = array_column($requestData, 2);
+            if (count($styleIds) !== count(array_unique($styleIds))) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Style ID không được trùng nhau'
+                ], 400);
+            }
+
+            // Lấy dữ liệu từ database
+            $dbData = DB::table('restaurants_styles')
+                ->where('restaurant_id', $restaurantIds[0])
+                ->get()
+                ->map(function ($item) {
+                    return [$item->id, $item->restaurant_id, $item->style_id];
+                })
+                ->toArray();
+
+            // Tìm các phần tử trùng nhau giữa 2 mảng
+            $commonElements = array_filter($requestData, function ($item1) use ($dbData) {
+                return in_array($item1, $dbData);
+            });
+
+            // Loại bỏ phần tử trùng khỏi cả 2 mảng
+            $requestData = array_diff_key($requestData, $commonElements);
+            $dbData = array_diff_key($dbData, $commonElements);
+
+            // Tách id thành mảng riêng
+            $requestIds = array_column($requestData, 0);
+            $dbIds = array_column($dbData, 0);
+
+            // Tìm các id cần xóa
+            $idsToDelete = array_diff($dbIds, $requestIds);
+
+            // Tìm các id trùng nhau để update
+            $idsToUpdate = array_intersect($dbIds, $requestIds);
+
+            // Tìm các id mới để create
+            $newElements = array_filter($requestData, function ($item) use ($dbIds) {
+                return !in_array($item[0], $dbIds);
+            });
+
+            // Thực hiện xóa
+            foreach ($idsToDelete as $id) {
+                $this->deleteRestaurantStyle($id);
+            }
+
+            // Thực hiện update
+            foreach ($idsToUpdate as $id) {
+                $requestItem = array_filter($requestData, function ($item) use ($id) {
+                    return $item[0] == $id;
+                });
+                $requestItem = reset($requestItem);
+                $this->updateRestaurantStyle($id, $requestItem[2]);
+            }
+
+            // Thực hiện create
+            foreach ($newElements as $item) {
+                $this->createRestaurantStyle($item[1], $item[2]);
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Cập nhật thành công'
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Lỗi khi cập nhật',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 }
