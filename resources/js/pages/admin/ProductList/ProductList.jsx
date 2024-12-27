@@ -214,7 +214,7 @@ const ProductList = () => {
                     <div className={cx('content')}>
                         <div className={cx('product-list')}>
                             {products.length === 0 ? (
-                                <div className={cx('no-result')}>No result</div>
+                                <div className={cx('no-result')}>結果なし</div>
                             ) : (
                                 products.map((restaurant, index) => (
                                     <ProductItem key={index} restaurant={restaurant} onReFetch={handleReFetch} />
