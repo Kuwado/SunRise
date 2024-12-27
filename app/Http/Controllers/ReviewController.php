@@ -11,7 +11,7 @@ class ReviewController extends Controller
     {
         $userId = $request->query('user_id') ?? null;
         $restaurantId = $request->query('restaurant_id') ?? null;
-        $limit = $request->query('limit', 10); // Mặc định trả về 10 kết quả
+        $limit = $request->query('limit', 20); // Mặc định trả về 10 kết quả
 
         // Truy vấn bảng reviews với quan hệ tới user và restaurant
         $query = Review::with(['user', 'restaurant']);
@@ -24,7 +24,8 @@ class ReviewController extends Controller
             $query->where('restaurant_id', $restaurantId);
         }
 
-        $reviews = $query->limit($limit)->get();
+        $reviews = $query->orderBy('created_at', 'desc');
+        $reviews = $reviews->limit($limit)->get();
 
         return response()->json([
             'message' => "Lấy thành công reviews",
@@ -38,27 +39,44 @@ class ReviewController extends Controller
                 'user_id' => 'required|integer|exists:users,id',
                 'restaurant_id' => 'required|integer|exists:restaurants,id',
                 'rating' => 'required|integer|min:1|max:5',
-                'comment' => 'nullable|string|max:1000'
+                'comment' => 'nullable|string|max:1000',
+                // 'image' => 'nullable',
             ]);
 
-            $existingReview = Review::where('user_id', $validatedData['user_id'])
-                ->where('restaurant_id', $validatedData['restaurant_id'])
-                ->first();
+            // $existingReview = Review::where('user_id', $validatedData['user_id'])
+            //     ->where('restaurant_id', $validatedData['restaurant_id'])
+            //     ->first();
 
-            if ($existingReview) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'You have already reviewed this restaurant'
-                ], 400);
+            // if ($existingReview) {
+            //     return response()->json([
+            //         'success' => false,
+            //         'message' => 'You have already reviewed this restaurant'
+            //     ], 400);
+            // }
+                    // Xử lý avatar (nếu có)
+            $imagePath = null;
+            if ($request->hasFile('image')) {
+                $imagePath = "hh";
+                $image = $request->file('image');
+                $imageName = time() . '_image_' . uniqid() . '.' . $image->extension();
+                $image->storeAs('images', $imageName, 'public');
+                $imagePath = "/storage/images/$imageName";
             }
 
-            $review = Review::create($validatedData);
+            $review = Review::create([
+                'user_id' => $validatedData['user_id'],
+                'restaurant_id' => $validatedData['restaurant_id'],
+                'rating' => $validatedData['rating'],
+                'comment' => $validatedData['comment'] ?? null,
+                'image' => $imagePath
+            ]);
 
             $review->load(['user:id,name', 'restaurant:id,name']);
 
             return response()->json([
                 'success' => true,
                 'message' => 'Review created successfully',
+                'image' =>  $imagePath,
                 'data' => [
                     'id' => $review->id,
                     'rating' => $review->rating,

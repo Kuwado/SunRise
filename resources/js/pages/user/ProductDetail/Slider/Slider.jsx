@@ -30,8 +30,7 @@ const responsive = {
     },
 };
 
-const Slider = ({ images = [] }) => {
-    console.log(images);
+const Slider = ({ medias = [] }) => {
     return (
         <div className={cx('slider')}>
             <Carousel
@@ -41,12 +40,23 @@ const Slider = ({ images = [] }) => {
                 keyBoardControl={true}
                 removeArrowOnDeviceType={['minitablet', 'mobile']}
             >
-                {images && images.length > 0 &&
-                    images.map((item, index) => (
-                        <div key={`image-${index}`} className={cx('slider-item')}>
-                            <img src={item} alt="item" />
-                        </div>
-                    ))}
+                {medias &&
+                    medias.length > 0 &&
+                    medias.map((item, index) => {
+                        const extension = item.split('.').pop().toLowerCase();
+                        return (
+                            <div key={`image-${index}`} className={cx('slider-item')}>
+                                {extension === 'mp4' ? (
+                                    <video controls style={{ width: '100%', height: '100%' }}>
+                                        <source src={item} />
+                                        Your browser does not support the video tag.
+                                    </video>
+                                ) : (
+                                    <img src={item} alt="item" />
+                                )}
+                            </div>
+                        );
+                    })}
             </Carousel>
         </div>
     );

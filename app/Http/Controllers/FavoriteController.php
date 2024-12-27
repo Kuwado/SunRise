@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\RestaurantResource;
 use Illuminate\Http\Request;
 use App\Models\Favorite;
 
