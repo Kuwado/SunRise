@@ -5,6 +5,7 @@ import axios from 'axios';
 
 import { DefaultInput } from '../Input';
 import Button from '../Button';
+import Dropdown from '../Dropdown';
 
 import styles from './Popup.module.scss';
 import classNames from 'classnames/bind';
@@ -24,7 +25,31 @@ const DeletePopup = ({ id, onClose, onReFetch }) => {
     const [medias, setMedias] = useState('');
     const [images, setImages] = useState([]);
     const [openTime, setOpenTime] = useState('');
-    const [closeTime, setCloseTime] = useState('');
+    const [closeTime, setCloseTime] = useState('');    
+    const [styles, setStyles] = useState('');
+    const styleOptions = [
+        { id: 1, label: '開放的な空間' }, // Quán cà phê hiện đại
+        { id: 2, label: '現代的な空間' }, // Quán cà phê cổ điển
+        { id: 3, label: 'レトロな空間' }, // Nơi hòa mình vào thiên nhiên
+        { id: 4, label: '落ち着いた空間' }, // Không gian yên tĩnh
+        { id: 5, label: '高級な空間' }, // Quán cà phê với âm nhạc
+        { id: 6, label: '共有スペース' }, // Quán cà phê có phòng triển lãm nghệ thuật
+    ];
+
+    const fetchRestaurantStyles = async (id) => {
+        console.log('fetchRestaurantStyles', id);
+        try {
+            const response = await axios.get(
+                `/api/restaurant/styles?restaurant_id=${id}`
+            );
+            if (response.status === 200) {
+                console.log('fetchRestaurantStyles', response);
+                setStyles(response.data.data[0].style_id);
+            }
+        } catch (error) {
+            console.error("Error fetching restaurant styles:", error);
+        }
+    };
 
     useEffect(() => {
         const fetchRestaurant = async () => {
@@ -45,7 +70,7 @@ const DeletePopup = ({ id, onClose, onReFetch }) => {
                     setFiles(response.data.restaurant.media ? response.data.restaurant.media : []);
                     setOpenTime(response.data.restaurant.open_time);
                     setCloseTime(response.data.restaurant.close_time);
-
+                    fetchRestaurantStyles(response.data.restaurant.id);
                 }
             } catch (error) {
                 console.error("Error fetching restaurant:", error);
@@ -59,14 +84,12 @@ const DeletePopup = ({ id, onClose, onReFetch }) => {
         const newImages = [];
         let newMedias = '';
         files.forEach((file) => {
-            if (!file.includes(".mp4")) newImages.push(file);
+            if (file && !file.includes(".mp4")) newImages.push(file);
             else newMedias = file;
         });
         setImages(newImages);
         setMedias(newMedias);
     }, [files]);
-
-    console.log(medias);
 
     const onSubmitHandler = async () => {
         try {
@@ -104,6 +127,16 @@ const DeletePopup = ({ id, onClose, onReFetch }) => {
                                 <div className={cx('flex-col')} style={{ gap: 6 }}>
                                     <DefaultInput readOnly value={name} id='' label='カフェ名'></DefaultInput>
                                     <DefaultInput readOnly value={desc} id='' label='説明'></DefaultInput>
+                                    <Dropdown id='' label='スペース'
+                                        selected={
+                                            styleOptions.find((option) => option.id === styles)?.label ||
+                                            'なし'
+                                        }
+                                        width="100%">
+                                        {styleOptions.map((option, index) => (
+                                            <div key={index}>{option.label}</div>
+                                        ))}
+                                    </Dropdown>
                                 </div>
                             </div>
                             <div className={cx('content-item', 'flex-col')}>
@@ -131,19 +164,19 @@ const DeletePopup = ({ id, onClose, onReFetch }) => {
                                         <div className={cx('upload__avatar-wrapper')}>
                                             <img
                                                 src={avatar}
-                                                width="100"
-                                                height="100"
+                                                width="120"
+                                                height="120"
                                             />
                                         </div>
                                     </div>
                                     <div className={cx('VideoInput')}>
                                         <label className={cx('label')}>ビデオ</label>
                                         <div className={cx('VideoInput_container')}>
-                                            {medias.length > 0 && (
+                                            {medias && (
                                                 <video
                                                     className={cx('VideoInput_video')}
                                                     width={200}
-                                                    height={100}
+                                                    height={118}
                                                     controls
                                                     src={medias}
                                                 />
@@ -156,7 +189,7 @@ const DeletePopup = ({ id, onClose, onReFetch }) => {
                                     <div className={cx('image-list')}>
                                         {images.length > 0 && images.map((image, index) => (
                                             <div key={index} className={cx('image-item')}>
-                                                <img src={image} alt="" width="100" height='75' />
+                                                <img src={image} alt="" width="150" height='90' />
                                             </div>
                                         ))}
                                     </div>

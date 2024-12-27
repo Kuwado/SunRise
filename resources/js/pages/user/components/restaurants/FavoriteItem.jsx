@@ -20,6 +20,7 @@ import config from '~/config';
 const cx = classNames.bind(styles);
 
 export default function FavoriteItem({
+    fetchFavorite,
     restaurant_id,
     id,
     image,
@@ -43,7 +44,7 @@ export default function FavoriteItem({
                 params: { user_id: user_id, restaurant_id: restaurant_id },
             });
         }
-        setIsFavorite(!isFavorite);
+        fetchFavorite();
     };
 
     return (
@@ -62,7 +63,6 @@ export default function FavoriteItem({
                             <span>{location}</span>
                         </div>
                         <div className={cx('cafe-price')}>
-                            <FontAwesomeIcon icon={faYenSign} />
                             <span>{price_start}.000 đ 以下</span>
                         </div>
                         <div className={cx('cafe-time_save')}>

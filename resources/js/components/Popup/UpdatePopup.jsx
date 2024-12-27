@@ -7,6 +7,7 @@ import axios from 'axios';
 
 import { DefaultInput } from '../Input';
 import Button from '../Button';
+import Dropdown from '../Dropdown';
 
 import styles from './Popup.module.scss';
 import classNames from 'classnames/bind';
@@ -30,6 +31,17 @@ const UpdatePopup = ({ id, onClose, onReFetch }) => {
     const [openTime, setOpenTime] = useState('');
     const [closeTime, setCloseTime] = useState('');
     const maxNumber = 4;
+    const [restaurantStyles, setRestaurantStyles] = useState([]);
+    const [styles, setStyles] = useState('');
+    const [restaurantStyleId, setRestaurantStyleId] = useState('');
+    const styleOptions = [
+        { id: 1, label: '開放的な空間' }, // Quán cà phê hiện đại
+        { id: 2, label: '現代的な空間' }, // Quán cà phê cổ điển
+        { id: 3, label: 'レトロな空間' }, // Nơi hòa mình vào thiên nhiên
+        { id: 4, label: '落ち着いた空間' }, // Không gian yên tĩnh
+        { id: 5, label: '高級な空間' }, // Quán cà phê với âm nhạc
+        { id: 6, label: '共有スペース' }, // Quán cà phê có phòng triển lãm nghệ thuật
+    ];
 
     const inputRef = React.useRef();
 
@@ -45,6 +57,23 @@ const UpdatePopup = ({ id, onClose, onReFetch }) => {
 
     const handleChoose = (event) => {
         inputRef.current.click();
+    };
+
+    const fetchRestaurantStyles = async (id) => {
+        console.log('fetchRestaurantStyles', id);
+        try {
+            const response = await axios.get(
+                `/api/restaurant/styles?restaurant_id=${id}`
+            );
+            if (response.status === 200) {
+                console.log('fetchRestaurantStyles', response);
+                setRestaurantStyles(response.data.data[0].style_id);
+                setStyles(response.data.data[0].style_id);
+                setRestaurantStyleId(response.data.data[0].restaurants_styles_id);
+            }
+        } catch (error) {
+            console.error("Error fetching restaurant styles:", error);
+        }
     };
 
     useEffect(() => {
@@ -67,6 +96,7 @@ const UpdatePopup = ({ id, onClose, onReFetch }) => {
                     setFiles(response.data.restaurant.media || []);
                     setOpenTime(response.data.restaurant.open_time);
                     setCloseTime(response.data.restaurant.close_time);
+                    fetchRestaurantStyles(response.data.restaurant.id);
                 }
             } catch (error) {
                 console.error("Error fetching restaurants:", error);
@@ -75,12 +105,12 @@ const UpdatePopup = ({ id, onClose, onReFetch }) => {
 
         fetchRestaurant();
     }, []);
-
+    
     useEffect(() => {
         const newImages = [];
         let newMedia = '';
         if (files.length > 0) files.forEach((file) => {
-            if (!file.includes(".mp4")) newImages.push(file);
+            if (file && !file.includes(".mp4")) newImages.push(file);
             else newMedia = file;
         });
         setImages(newImages);
@@ -103,9 +133,8 @@ const UpdatePopup = ({ id, onClose, onReFetch }) => {
 
     const onSubmitHandler = async (e) => {
         e.preventDefault();
-        console.log(media);
         if (media.length > 0) imagesFile.push(media[0]);
-        console.log(imagesFile);
+        console.log({name, description: desc, address, phone, email, price_start: priceStart, price_end: priceEnd, avatar: avatarFile, media: imagesFile.length > 0 ? imagesFile : null, open_time: openTime, close_time: closeTime});
         try {
             const data = await axios.post(`/api/restaurant/update/${id}`,
                 { name, description: desc, address, phone, email, price_start: priceStart, price_end: priceEnd, avatar: avatarFile, media: imagesFile.length > 0 ? imagesFile : null, open_time: openTime, close_time: closeTime },
@@ -116,14 +145,39 @@ const UpdatePopup = ({ id, onClose, onReFetch }) => {
                 }
             ).then((response) => {
                 // console.log(response);
-                alert(response.data.message);
-                onClose();
-                onReFetch();
+                if (styles !== restaurantStyles) {
+                    updateStyleToRestaurant(id);
+                } else {
+                    alert('カフェ情報を編集が成功しました');
+                    onClose();
+                    onReFetch();
+                }
             });
         } catch (error) {
             alert('Error updating restaurant: ' + error?.response?.data?.message);
             console.error("Error updating restaurant:", error);
         }
+    }
+
+    const updateStyleToRestaurant = async () => {
+        console.log('updateStyleToRestaurant', id, restaurantStyleId, styles);
+        await axios.post(`/api/restaurant/style/update/${restaurantStyleId}`,
+            {
+                restaurant_id: id,
+                new_style_id: styles
+            },
+            {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            }
+        ).then((response) => {
+            alert('カフェ情報を編集が成功しました');
+            onClose();
+            onReFetch();
+        }).catch((error) => {
+            alert('Error adding style to restaurant ' + error?.response?.data?.message)
+        })
     }
 
     return (
@@ -143,6 +197,23 @@ const UpdatePopup = ({ id, onClose, onReFetch }) => {
                                 <div className={cx('flex-col')} style={{ gap: 6 }}>
                                     <DefaultInput value={name} setValue={setName} id='' label='カフェ名'></DefaultInput>
                                     <DefaultInput setValue={setDesc} value={desc} id='' label='説明'></DefaultInput>
+                                    <Dropdown id='' label='スペース'
+                                        title="エスプレッソ"
+                                        selected={
+                                            styleOptions.find((option) => option.id === styles)?.label ||
+                                            'なし'
+                                        }
+                                        setValue={(value) => {
+                                            const selectedOption = styleOptions.find((option) => option.label === value);
+                                            if (selectedOption) {
+                                                setStyles(selectedOption.id);
+                                            }
+                                        }}
+                                        width="100%">
+                                        {styleOptions.map((option, index) => (
+                                            <div key={index}>{option.label}</div>
+                                        ))}
+                                    </Dropdown>
                                 </div>
                             </div>
                             <div className={cx('content-item', 'flex-col')}>
@@ -176,8 +247,8 @@ const UpdatePopup = ({ id, onClose, onReFetch }) => {
                                                     {avatar ? (
                                                         <img
                                                             src={avatar}
-                                                            width="100"
-                                                            height="100"
+                                                            width="120"
+                                                            height="120"
                                                             onClick={onImageUpdate} />
                                                     ) :
                                                         (<button onClick={onImageUpload}>
@@ -205,7 +276,7 @@ const UpdatePopup = ({ id, onClose, onReFetch }) => {
                                                     <video
                                                         className={cx('VideoInput_video')}
                                                         width={200}
-                                                        height={100}
+                                                        height={118}
                                                         controls
                                                         src={source}
                                                     />
@@ -239,7 +310,7 @@ const UpdatePopup = ({ id, onClose, onReFetch }) => {
                                                 <div className={cx('image-list')}>
                                                     {imageList.map((image, index) => (
                                                         <div key={index} className={cx('image-item')}>
-                                                            <img src={image.data_url ? image?.data_url : image} alt="" width="100" height='75' onClick={() => onImageUpdate(index)} />
+                                                            <img src={image.data_url ? image?.data_url : image} alt="" width="150" height='90' onClick={() => onImageUpdate(index)} />
                                                             <div className={cx('image-item__btn-wrapper')}>
                                                                 <button onClick={() => onImageRemove(index)}>
                                                                     <FontAwesomeIcon icon={faTimes}></FontAwesomeIcon>
