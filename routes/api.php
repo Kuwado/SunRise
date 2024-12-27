@@ -34,6 +34,7 @@ Route::get('/restaurants/count', [RestaurantController::class, 'getCounts']);
 Route::get('restaurant/styles', [RestaurantController::class, 'getStylesOfRestaurant']);
 Route::post('restaurant/style/update/{id}', [RestaurantController::class, 'updateStyleOfRestaurant']);
 Route::delete('restaurant/style/delete/{id}', [RestaurantController::class, 'deleteStyleOfRestaurant']);
+Route::post('restaurant/style/crud', [RestaurantController::class, 'batchUpdateRestaurantStyles']);
 
 // Reviews
 Route::get('/reviews', [ReviewController::class, 'getReviews']);
