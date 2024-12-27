@@ -14,6 +14,7 @@ import {
     faBars,
     faChevronLeft,
     faClock,
+    faDoorOpen,
     faLocation,
     faLocationArrow,
     faLocationDot,
@@ -30,8 +31,19 @@ const ProductDetail = () => {
     const { restaurantId } = useParams();
     const [restaurant, setRestaurant] = useState(null);
     const [reviews, setReviews] = useState([]);
-    console.log(restaurant);
-    console.log(reviews);
+
+    const fetchReviews = async () => {
+        try {
+            const response = await axios.get('/api/reviews', {
+                params: { restaurant_id: restaurantId },
+            });
+            if (response.status === 200) {
+                setReviews(response.data.reviews);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
     useEffect(() => {
         const fetchRestaurant = async () => {
@@ -41,19 +53,6 @@ const ProductDetail = () => {
                 });
                 if (response.status === 200) {
                     setRestaurant(response.data.restaurant);
-                }
-            } catch (error) {
-                console.log(error);
-            }
-        };
-
-        const fetchReviews = async () => {
-            try {
-                const response = await axios.get('/api/reviews', {
-                    params: { restaurant_id: restaurantId },
-                });
-                if (response.status === 200) {
-                    setReviews(response.data.reviews);
                 }
             } catch (error) {
                 console.log(error);
@@ -92,7 +91,7 @@ const ProductDetail = () => {
                                 <span>戻る</span>
                             </div>
                             <div className={cx('line')}></div>
-                            <Slider images={restaurant.media ?? []} />
+                            <Slider medias={restaurant.media ?? []} />
                         </div>
 
                         <div className={cx('detail-box')}>
@@ -128,6 +127,17 @@ const ProductDetail = () => {
                                         </span>
                                     </div>
 
+                                    <div className={cx('style')}>
+                                        <FontAwesomeIcon icon={faDoorOpen} />
+                                        {restaurant.styles.length > 0 &&
+                                            restaurant.styles.map((style, index) => (
+                                                <span key={index}>
+                                                    {style}
+                                                    {index < restaurant.styles.length - 1 && <span>, </span>}
+                                                </span>
+                                            ))}
+                                    </div>
+
                                     <Rating rate={restaurant.rating} />
                                 </div>
 
@@ -141,7 +151,7 @@ const ProductDetail = () => {
                             <div className={cx('line')}></div>
                         </div>
 
-                        <CommentInput restaurantId={restaurantId} />
+                        <CommentInput restaurantId={restaurantId} onUpload={fetchReviews} />
 
                         <div className={cx('comment-box')}>
                             {reviews.length > 0 &&
@@ -153,6 +163,13 @@ const ProductDetail = () => {
                                         <div className={cx('comment-right')}>
                                             <p className={cx('user-name')}>{review.user.name}</p>
                                             <p className={cx('user-comment')}>{review.comment}</p>
+                                            {review.image && (
+                                                <img
+                                                    className={cx('image-commnet')}
+                                                    src={review.image}
+                                                    alt="img-commnet"
+                                                />
+                                            )}
                                             <p className={cx('user-time')}>{formatDateTime(review.created_at)}</p>
                                             <Rating rate={review.rating} />
                                         </div>

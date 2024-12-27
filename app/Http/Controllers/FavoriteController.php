@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\RestaurantResource;
 use Illuminate\Http\Request;
 use App\Models\Favorite;
 
@@ -55,7 +56,6 @@ class FavoriteController extends Controller
         // Trả về phản hồi thành công
         return response()->json([
             'message' => 'Favorite deleted successfully!',
-            'favorite' => $favorite,
         ], 200);
     }
     public function getFavorites(Request $request)
@@ -135,6 +135,7 @@ class FavoriteController extends Controller
                         'longitude' => $favorite->restaurant->longitude
                     ],
                     'rating' => round($favorite->restaurant->reviews->avg('rating'), 2),
+                    'num_of_review' => $favorite->restaurant->reviews->count(),
                     'num_of_days_favorited' => abs(round($now->diffInDays($favorite->created_at))),
                     'days_favorited' => $favorite->created_at,
                     'now' => $now,

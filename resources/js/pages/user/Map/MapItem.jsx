@@ -7,8 +7,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClock, faHeart, faLocationArrow, faLocationDot, faMoneyBill } from '@fortawesome/free-solid-svg-icons';
 import Rating from '~/components/Rating';
 import { useNavigate } from 'react-router-dom';
-import { useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '~/context/AuthContext';
+import axios from 'axios';
 
 const cx = classNames.bind(styles);
 
@@ -74,7 +75,49 @@ const createRandomColorIcon = () => {
 
 const MapItem = ({ latitude, longitude, restaurant, location = false }) => {
     const { userId } = useContext(AuthContext);
+    const [favorite, setFavorite] = useState(false);
     const navigate = useNavigate();
+    console.log(restaurant);
+
+    useEffect(() => {
+        if (restaurant) {
+            setFavorite(restaurant.isFavorited ?? false);
+        }
+    }, [restaurant]);
+
+    const handleFavortie = async () => {
+        try {
+            console.log(restaurant.id);
+            const respose = await axios.post('api/favorite/create', { user_id: userId, restaurant_id: restaurant.id });
+            if (respose.status === 200) {
+                alert(`お気に入りに${restaurant.name}を追加しました。`);
+            }
+        } catch (error) {
+            console.log(error);
+        } finally {
+            setFavorite(true);
+        }
+    };
+
+    const handleUnFavorite = async () => {
+        try {
+            await axios.delete('api/favorite/delete', {
+                data: { user_id: userId, restaurant_id: restaurant.id }, // Gửi dữ liệu trong body
+            });
+        } catch (error) {
+            console.log(error);
+        } finally {
+            setFavorite(false);
+        }
+    };
+
+    const handleClickFavorite = () => {
+        if (favorite) {
+            handleUnFavorite();
+        } else {
+            handleFavortie();
+        }
+    };
 
     const handleSeeDetail = () => {
         navigate(`/restaurant/${restaurant.id}`);
@@ -127,7 +170,8 @@ const MapItem = ({ latitude, longitude, restaurant, location = false }) => {
                                         <Rating id={restaurant.id} rate={restaurant.rating} />
                                         <div
                                             className={cx('favorite-btn')}
-                                            style={{ color: restaurant.isFavorited ? 'red' : 'gray' }}
+                                            style={{ color: favorite ? 'red' : 'gray' }}
+                                            onClick={handleClickFavorite}
                                         >
                                             <FontAwesomeIcon icon={faHeart} />
                                         </div>

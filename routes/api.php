@@ -26,10 +26,15 @@ Route::get('/user', [UserController::class, 'getUser']);
 Route::post('/restaurant/create', [RestaurantController::class, 'createRestaurant']);
 Route::post('/restaurant/create-v', [RestaurantController::class, 'createRestaurantV']);
 Route::post('/restaurant/update/{id}', [RestaurantController::class, 'updateRestaurant']);
+Route::post('/restaurant/style/create', [RestaurantController::class, 'restaurantStyleCreate']);
 Route::delete('/restaurant/delete/{id}', [RestaurantController::class, 'deleteRestaurant']);
 Route::get('/restaurant', [RestaurantController::class, 'getRestaurant']);
 Route::get('/restaurants', [RestaurantController::class, 'getRestaurants']);
 Route::get('/restaurants/count', [RestaurantController::class, 'getCounts']);
+Route::get('restaurant/styles', [RestaurantController::class, 'getStylesOfRestaurant']);
+Route::post('restaurant/style/update/{id}', [RestaurantController::class, 'updateStyleOfRestaurant']);
+Route::delete('restaurant/style/delete/{id}', [RestaurantController::class, 'deleteStyleOfRestaurant']);
+Route::post('restaurant/style/crud', [RestaurantController::class, 'batchUpdateRestaurantStyles']);
 
 // Reviews
 Route::get('/reviews', [ReviewController::class, 'getReviews']);
