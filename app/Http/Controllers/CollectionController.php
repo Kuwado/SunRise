@@ -126,6 +126,7 @@ class CollectionController extends Controller
                         'longitude' => $favorite->restaurant->longitude
                     ],
                     'rating' => round($favorite->restaurant->reviews->avg('rating'), 2),
+                    'num_of_review' => $favorite->restaurant->reviews->count(),
                     'num_of_days_favorited' => abs(round($now->diffInDays($favorite->created_at))),
                     'days_favorited' => $favorite->created_at,
                     'now' => $now,
