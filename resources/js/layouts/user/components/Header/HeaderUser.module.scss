@@ -32,16 +32,18 @@
     justify-content: center;
     align-items: center;
 
-    .tab-home {
+    .tab-item {
         font-weight: 400;
         font-size: 16px;
         cursor: pointer;
     }
 
-    .tab-restaurant {
+    .tab-item:hover {
+        font-weight: 500;
+    }
+
+    .tab-item.active {
         font-weight: 600;
-        font-size: 16px;
-        cursor: pointer;
     }
 }
 
