@@ -719,4 +719,92 @@ class RestaurantController extends Controller
             ], 500);
         }
     }
+
+    public function getStylesOfRestaurant(Request $request)
+    {
+        try {
+            $request->validate([
+                'restaurant_id' => 'required|exists:restaurants,id'
+            ]);
+
+            $styles = DB::table('restaurants_styles')
+                ->join('styles', 'restaurants_styles.style_id', '=', 'styles.id')
+                ->where('restaurant_id', $request->restaurant_id)
+                ->select(
+                    'styles.id as style_id',
+                    'styles.name',
+                    'restaurants_styles.id as restaurants_styles_id'
+                )
+                ->get();
+
+            return response()->json([
+                'success' => true,
+                'data' => $styles
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Lỗi khi lấy styles',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function updateStyleOfRestaurant(Request $request, $id)
+    {
+        try {
+            $request->validate([
+                'new_style_id' => 'required|exists:styles,id'
+            ]);
+
+            $restaurantStyle = DB::table('restaurants_styles')->where('id', $id)->first();
+
+            if (!$restaurantStyle) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Không tìm thấy style của nhà hàng'
+                ], 404);
+            }
+
+            DB::table('restaurants_styles')
+                ->where('id', $id)
+                ->update(['style_id' => $request->new_style_id]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Cập nhật style thành công'
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Lỗi khi cập nhật style',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function deleteStyleOfRestaurant($id)
+    {
+        try {
+            $deleted = DB::table('restaurants_styles')->where('id', $id)->delete();
+
+            if (!$deleted) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Không tìm thấy style của nhà hàng'
+                ], 404);
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Xóa style thành công'
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Lỗi khi xóa style',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 }
