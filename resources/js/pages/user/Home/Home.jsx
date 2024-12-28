@@ -36,9 +36,8 @@ const Home = () => {
     useEffect(() => {
         const fetchFavorite = async () => {
             try {
-                const response = await axios.get(
-                    `/api/restaurants?style_id=${user.style_id}&per_page=4&page=1&user_id=${userId}`,
-                );
+                const response = await axios.get(`/api/favorites_home?user_id=${userId}`);
+                console.log(response);
                 if (response.status === 200) {
                     setFavoriteRestaurant(response.data.restaurants.data);
                 }

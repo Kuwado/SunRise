@@ -14,12 +14,12 @@ class StyleSeeder extends Seeder
     public function run(): void
     {
         DB::table('styles')->insert([
-            ['name' => 'エスプレッソ'],
-            ['name' => 'アメリカ人'],
-            ['name' => 'カプチーノ'],
-            ['name' => 'マキアートコーヒー'],
-            ['name' => 'ラテ'],
-            ['name' => 'フラットホワイト'],
+            ['name' => '開放的な空間'],
+            ['name' => '現代的な空間'],
+            ['name' => 'レトロな空間'],
+            ['name' => '落ち着いた空間'],
+            ['name' => '高級な空間'],
+            ['name' => '共有スペース'],
         ]);
     }
 }
