@@ -380,10 +380,10 @@ const FindRestaurant = () => {
                     <div className={cx('filter-option')}>
                         <h3>距離</h3>
                         <CheckboxInput id="16" onChange={() => handleDistanceChange(1)}>
-                            0.5km 以内{' '}
+                            0.5km 以内
                         </CheckboxInput>
                         <CheckboxInput id="17" onChange={() => handleDistanceChange(2)}>
-                            0.5～1km{' '}
+                            0.5～1km
                         </CheckboxInput>
                         <CheckboxInput id="18" onChange={() => handleDistanceChange(3)}>
                             1～1.5km

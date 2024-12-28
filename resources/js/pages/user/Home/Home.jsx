@@ -21,7 +21,9 @@ const Home = () => {
     useEffect(() => {
         const fetchNew = async () => {
             try {
-                const response = await axios.get(`/api/restaurants?sort_time=asc&per_page=4&page=1&user_id=${userId}`);
+                const response = await axios.get(
+                    `/api/restaurants?style_id=${user.style_id ?? 1}&per_page=5&page=1&user_id=${userId}`,
+                );
                 if (response.status === 200) {
                     setNewRestaurant(response.data.restaurants.data);
                 }

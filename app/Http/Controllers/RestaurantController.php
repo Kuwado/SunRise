@@ -249,19 +249,19 @@ class RestaurantController extends Controller
     {
         switch ($type) {
             case 1:
-                $restaurants = $restaurants->orHavingRaw('distance <= ?', [10]);
+                $restaurants = $restaurants->orHavingRaw('distance <= ?', [0.5]);
                 break;
             case 2:
-                $restaurants = $restaurants->orHavingRaw('distance > ? AND distance <= ?', [10, 20]);
+                $restaurants = $restaurants->orHavingRaw('distance > ? AND distance <= ?', [0.5, 1]);
                 break;
             case 3:
-                $restaurants = $restaurants->orHavingRaw('distance > ? AND distance <= ?', [20, 30]);
+                $restaurants = $restaurants->orHavingRaw('distance > ? AND distance <= ?', [1, 1.5]);
                 break;
             case 4:
-                $restaurants = $restaurants->orHavingRaw('distance > ? AND distance <= ?', [30, 40]);
+                $restaurants = $restaurants->orHavingRaw('distance > ? AND distance <= ?', [1.5, 2]);
                 break;
             case 5:
-                $restaurants = $restaurants->orHavingRaw('distance > ?', [40]);
+                $restaurants = $restaurants->orHavingRaw('distance > ?', [2]);
                 break;
             default:
                 break;
@@ -358,6 +358,7 @@ class RestaurantController extends Controller
             $restaurants = $this->getDistance($restaurants, $distanceType);
         } else if ($distanceTypes) {
             $typeArray = explode(',', $distanceTypes);
+            $restaurantsOld = $restaurants;
             foreach ($typeArray as $t) {
                 $restaurants = $this->getDistance($restaurants, $t);
             }
@@ -563,11 +564,11 @@ class RestaurantController extends Controller
             "));
 
             $distances = [
-                "1" => (clone $restaurantsQuery)->havingRaw('distance <= ?', [10])->count(),
-                "2" => (clone $restaurantsQuery)->havingRaw('distance > ? AND distance <= ?', [10, 20])->count(),
-                "3" => (clone $restaurantsQuery)->havingRaw('distance > ? AND distance <= ?', [20, 30])->count(),
-                "4" => (clone $restaurantsQuery)->havingRaw('distance > ? AND distance <= ?', [30, 40])->count(),
-                "5" => (clone $restaurantsQuery)->havingRaw('distance > ?', [40])->count(),
+                "1" => (clone $restaurantsQuery)->havingRaw('distance <= ?', [0.5])->count(),
+                "2" => (clone $restaurantsQuery)->havingRaw('distance > ? AND distance <= ?', [0.5, 1])->count(),
+                "3" => (clone $restaurantsQuery)->havingRaw('distance > ? AND distance <= ?', [1, 1.5])->count(),
+                "4" => (clone $restaurantsQuery)->havingRaw('distance > ? AND distance <= ?', [1.5, 2])->count(),
+                "5" => (clone $restaurantsQuery)->havingRaw('distance > ?', [2])->count(),
             ];
         }
 
