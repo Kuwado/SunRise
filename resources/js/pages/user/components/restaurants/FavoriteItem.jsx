@@ -20,6 +20,7 @@ import config from '~/config';
 const cx = classNames.bind(styles);
 
 export default function FavoriteItem({
+    fetchCollections,
     fetchFavorite,
     restaurant_id,
     id,
@@ -49,18 +50,24 @@ export default function FavoriteItem({
 
     return (
         <>
-            {isShowPopUp && <AddCollectionPopup favorite_id={id} onClose={() => setIsShowPopup(false)} />}
+            {isShowPopUp && (
+                <AddCollectionPopup
+                    fetchCollections={fetchCollections}
+                    favorite_id={id}
+                    onClose={() => setIsShowPopup(false)}
+                />
+            )}
 
             <div className={cx('favorite-item')}>
                 <div className={cx('image-container')}>
-                    <img src={images.restaurantItem1} alt="Cafe" className={cx('cafe-image')} />
+                    <img src={image} alt="Cafe" className={cx('cafe-image')} />
                 </div>
                 <div className={cx('collection')}>
                     <div className={cx('cafe-name')}>{name}</div>
                     <div className={cx('cafe-infor')}>
                         <div className={cx('cafe-address')}>
                             <FontAwesomeIcon icon={faHouse} />
-                            <span>{location}</span>
+                            <span className={cx('location')}>{location}</span>
                         </div>
                         <div className={cx('cafe-price')}>
                             <span>{price_start}.000 đ 以下</span>
