@@ -1,12 +1,13 @@
 .favorite-item {
     display: flex;
-        align-items: flex-start;
-        padding: 6px;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        background-color: #fff;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        height: 235px;
+    align-items: flex-start;
+    padding: 6px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    height: 235px;
+    gap: 15px;
 
     .image-container {
         width: 24%;
@@ -17,21 +18,19 @@
             border-radius: 8px;
         }
     }
-
-
 }
-.collection{
+.collection {
     display: flex;
     flex-direction: column;
     width: 80%;
     gap: 25px;
     margin-right: 24px;
 }
-.cafe-infor{
+.cafe-infor {
     display: flex;
 }
 .cafe-name {
-    color: #EA6A12;
+    color: #ea6a12;
     font-size: 20px;
     font-weight: 600;
 }
@@ -71,11 +70,10 @@
     display: flex;
     gap: 5px;
     align-items: center;
-    span{
-        color: #989B9E;
+    span {
+        color: #989b9e;
     }
 }
-
 
 .cafe-left-action {
     display: flex;
@@ -90,16 +88,16 @@
 .add-collection {
     padding: 10px;
     border-radius: 7px;
-    background-color: #E8E8E8;
+    background-color: #e8e8e8;
     display: flex;
     justify-content: center;
     align-items: center;
     cursor: pointer;
-    span{
+    span {
         font-weight: 600;
     }
-    svg{
-        font-weight: 900; 
+    svg {
+        font-weight: 900;
         width: 26px;
         margin-right: 4px;
         color: #252525;
@@ -111,7 +109,7 @@
     border-radius: 7px;
     margin-left: 10px;
     cursor: pointer;
-    svg{
+    svg {
         width: 30px;
     }
 }
@@ -121,7 +119,7 @@
     justify-content: space-between;
     align-items: center;
 }
-.location{
+.location {
     margin-top: 2px;
 }
 
@@ -150,8 +148,8 @@
 .cafe-detail {
     padding: 10px;
     border-radius: 23px;
-    background-color: #EA6A12;
-    color: #FFFFFF;
+    background-color: #ea6a12;
+    color: #ffffff;
     font-weight: 600;
     display: flex;
     gap: 13px;
