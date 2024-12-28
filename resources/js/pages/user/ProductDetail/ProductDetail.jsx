@@ -45,20 +45,20 @@ const ProductDetail = () => {
         }
     };
 
-    useEffect(() => {
-        const fetchRestaurant = async () => {
-            try {
-                const response = await axios.get('/api/restaurant', {
-                    params: { id: restaurantId },
-                });
-                if (response.status === 200) {
-                    setRestaurant(response.data.restaurant);
-                }
-            } catch (error) {
-                console.log(error);
+    const fetchRestaurant = async () => {
+        try {
+            const response = await axios.get('/api/restaurant', {
+                params: { id: restaurantId },
+            });
+            if (response.status === 200) {
+                setRestaurant(response.data.restaurant);
             }
-        };
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
+    useEffect(() => {
         fetchRestaurant();
         fetchReviews();
     }, [restaurantId]);
@@ -78,6 +78,11 @@ const ProductDetail = () => {
         const year = date.getFullYear();
 
         return `${hours}:${minutes} ${day}-${month}-${year}`;
+    };
+
+    const handleComment = () => {
+        fetchRestaurant();
+        fetchReviews();
     };
 
     return (
@@ -151,7 +156,7 @@ const ProductDetail = () => {
                             <div className={cx('line')}></div>
                         </div>
 
-                        <CommentInput restaurantId={restaurantId} onUpload={fetchReviews} />
+                        <CommentInput restaurantId={restaurantId} onUpload={handleComment} />
 
                         <div className={cx('comment-box')}>
                             {reviews.length > 0 &&

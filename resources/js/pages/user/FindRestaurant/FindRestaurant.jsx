@@ -400,25 +400,29 @@ const FindRestaurant = () => {
                 </div>
 
                 <div className={cx('cafe-list', { 'grid-view': isGridView, 'list-view': !isGridView })}>
-                    {products.map((cafe, index) => (
-                        <CafeItem
-                            cafe={cafe}
-                            key={index}
-                            id={cafe.id}
-                            image={cafe.image}
-                            name={cafe.name}
-                            location={cafe.address}
-                            price_start={cafe.price_start}
-                            price_end={cafe.price_end}
-                            distance={cafe.distance}
-                            open_time={cafe.open_time}
-                            close_time={cafe.close_time}
-                            rating={cafe.rating}
-                            number_reviews={cafe.number}
-                            isListView={!isGridView}
-                            isFavorited={cafe.isFavorited}
-                        />
-                    ))}
+                    {products.length > 0 ? (
+                        products.map((cafe, index) => (
+                            <CafeItem
+                                cafe={cafe}
+                                key={index}
+                                id={cafe.id}
+                                image={cafe.image}
+                                name={cafe.name}
+                                location={cafe.address}
+                                price_start={cafe.price_start}
+                                price_end={cafe.price_end}
+                                distance={cafe.distance}
+                                open_time={cafe.open_time}
+                                close_time={cafe.close_time}
+                                rating={cafe.rating}
+                                number_reviews={cafe.number}
+                                isListView={!isGridView}
+                                isFavorited={cafe.isFavorited}
+                            />
+                        ))
+                    ) : (
+                        <div className={cx('no-result')}>結果なし</div>
+                    )}
                 </div>
             </div>
             <div className={cx('pagination')}>

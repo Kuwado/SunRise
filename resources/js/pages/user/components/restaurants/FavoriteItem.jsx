@@ -20,6 +20,7 @@ import config from '~/config';
 const cx = classNames.bind(styles);
 
 export default function FavoriteItem({
+    fetchCollections,
     fetchFavorite,
     restaurant_id,
     id,
@@ -49,7 +50,13 @@ export default function FavoriteItem({
 
     return (
         <>
-            {isShowPopUp && <AddCollectionPopup favorite_id={id} onClose={() => setIsShowPopup(false)} />}
+            {isShowPopUp && (
+                <AddCollectionPopup
+                    fetchCollections={fetchCollections}
+                    favorite_id={id}
+                    onClose={() => setIsShowPopup(false)}
+                />
+            )}
 
             <div className={cx('favorite-item')}>
                 <div className={cx('image-container')}>
@@ -60,7 +67,7 @@ export default function FavoriteItem({
                     <div className={cx('cafe-infor')}>
                         <div className={cx('cafe-address')}>
                             <FontAwesomeIcon icon={faHouse} />
-                            <span>{location}</span>
+                            <span className={cx('location')}>{location}</span>
                         </div>
                         <div className={cx('cafe-price')}>
                             <span>{price_start}.000 đ 以下</span>

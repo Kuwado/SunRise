@@ -11,7 +11,7 @@ import styles from './Popup.module.scss';
 import classNames from 'classnames/bind';
 const cx = classNames.bind(styles);
 
-const AddCollectionPopup = ({ favorite_id, onClose, onRefetchCollections }) => {
+const AddCollectionPopup = ({ favorite_id, onClose, onRefetchCollections, fetchCollections }) => {
     const [collections, setCollections] = useState([]);
     const [collectionsType, setCollectionsType] = useState([]);
     const [newCollection, setNewCollection] = useState('');
@@ -19,18 +19,19 @@ const AddCollectionPopup = ({ favorite_id, onClose, onRefetchCollections }) => {
 
     useEffect(() => {
         const fetchFavProductCollections = async () => {
-            await axios.get('/api/colfromfav', {
-                params: {
-                    favorite_id: favorite_id,
-                }
-            })
+            await axios
+                .get('/api/colfromfav', {
+                    params: {
+                        favorite_id: favorite_id,
+                    },
+                })
                 .then((response) => {
                     setFavCollections(response.data.data);
                 })
                 .catch((error) => {
                     alert('エラーが発生しました');
                 });
-        }
+        };
         fetchFavProductCollections();
     }, []);
 
@@ -41,8 +42,6 @@ const AddCollectionPopup = ({ favorite_id, onClose, onRefetchCollections }) => {
         });
         setCollectionsType(newCollectionsType);
     }, [favCollections]);
-
-
 
     useEffect(() => {
         axios
@@ -87,6 +86,7 @@ const AddCollectionPopup = ({ favorite_id, onClose, onRefetchCollections }) => {
             .catch((error) => {
                 console.log(error);
             });
+        fetchCollections();
     };
 
     const onSubmitHandler = (e) => {
