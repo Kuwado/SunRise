@@ -47,7 +47,7 @@ export default function FavoriteItem({
         }
         fetchFavorite();
     };
-
+    console.log(image);
     return (
         <>
             {isShowPopUp && (
