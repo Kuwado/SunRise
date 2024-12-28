@@ -60,7 +60,7 @@ export default function FavoriteItem({
 
             <div className={cx('favorite-item')}>
                 <div className={cx('image-container')}>
-                    <img src={images.restaurantItem1} alt="Cafe" className={cx('cafe-image')} />
+                    <img src={image} alt="Cafe" className={cx('cafe-image')} />
                 </div>
                 <div className={cx('collection')}>
                     <div className={cx('cafe-name')}>{name}</div>
