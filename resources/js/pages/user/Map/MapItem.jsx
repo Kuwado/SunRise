@@ -77,7 +77,6 @@ const MapItem = ({ latitude, longitude, restaurant, location = false }) => {
     const { userId } = useContext(AuthContext);
     const [favorite, setFavorite] = useState(false);
     const navigate = useNavigate();
-    console.log(restaurant);
 
     useEffect(() => {
         if (restaurant) {
@@ -87,7 +86,6 @@ const MapItem = ({ latitude, longitude, restaurant, location = false }) => {
 
     const handleFavortie = async () => {
         try {
-            console.log(restaurant.id);
             const respose = await axios.post('api/favorite/create', { user_id: userId, restaurant_id: restaurant.id });
             if (respose.status === 200) {
                 alert(`お気に入りに${restaurant.name}を追加しました。`);

@@ -60,7 +60,7 @@ const FindRestaurant = () => {
                         ratings: ratings.toString(),
                         start: priceRange.start || '',
                         end: priceRange.end || '',
-                        distance_type: distances.toString(),
+                        distance_types: distances.toString(),
                         user_id: userId,
                         name: name,
                     },
@@ -379,19 +379,19 @@ const FindRestaurant = () => {
                     </div>
                     <div className={cx('filter-option')}>
                         <h3>距離</h3>
-                        <CheckboxInput id="16" onChange={() => handleDistanceChange(1)}>
-                            0.5km 以内{' '}
+                        <CheckboxInput id="16" checked={distances.includes(1)} onChange={() => handleDistanceChange(1)}>
+                            0.5km 以内
                         </CheckboxInput>
-                        <CheckboxInput id="17" onChange={() => handleDistanceChange(2)}>
-                            0.5～1km{' '}
+                        <CheckboxInput id="17" checked={distances.includes(2)} onChange={() => handleDistanceChange(2)}>
+                            0.5～1km
                         </CheckboxInput>
-                        <CheckboxInput id="18" onChange={() => handleDistanceChange(3)}>
+                        <CheckboxInput id="18" checked={distances.includes(3)} onChange={() => handleDistanceChange(3)}>
                             1～1.5km
                         </CheckboxInput>
-                        <CheckboxInput id="19" onChange={() => handleDistanceChange(4)}>
+                        <CheckboxInput id="19" checked={distances.includes(4)} onChange={() => handleDistanceChange(4)}>
                             1.5～2km
                         </CheckboxInput>
-                        <CheckboxInput id="20" onChange={() => handleDistanceChange(5)}>
+                        <CheckboxInput id="20" checked={distances.includes(5)} onChange={() => handleDistanceChange(5)}>
                             2km 以上
                         </CheckboxInput>
                     </div>

@@ -225,7 +225,7 @@ export default function Favorite() {
                                         return (
                                             <RadioInput
                                                 key={index}
-                                                id={collection.id}
+                                                id={collection.id + 10}
                                                 onChange={() => handleCollectionIdChange(collection.id)}
                                                 checked={collection.id === collectionId}
                                             >
@@ -274,11 +274,9 @@ export default function Favorite() {
                             />
                             <div hidden={!editCollection}>
                                 <Button onClick={() => setEditCollection(false)} curved secondary width={'120px'}>
-                                    {' '}
                                     キャンセル
                                 </Button>
                                 <Button onClick={() => updateCollection()} curved primary width={'150px'}>
-                                    {' '}
                                     アップデート
                                 </Button>
                             </div>
