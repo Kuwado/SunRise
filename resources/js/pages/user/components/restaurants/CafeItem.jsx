@@ -49,7 +49,7 @@ const CafeItem = ({
                 {/* <Rating small rate={rating} /> */}
                 <div className={cx('image-container')}>
                     <Link to={`${config.routes.user.restaurantDetail.replace(':restaurantId', id)}`}>
-                        <img src={images} alt={name} className={cx('image')} />
+                        <img src={image} alt={name} className={cx('image')} />
                     </Link>
                     <div
                         className={cx('favorite-icon', { active: isFavorite })}

@@ -306,7 +306,7 @@ export default function Favorite() {
                                         key={index}
                                         id={restaurant.fav_id}
                                         restaurant_id={restaurant.id}
-                                        image={restaurant.image}
+                                        image={restaurant.avatar}
                                         name={restaurant.name}
                                         location={restaurant.address}
                                         price_start={restaurant.price_range.start}
