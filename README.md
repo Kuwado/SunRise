@@ -26,7 +26,7 @@ composer global require laravel/installer
 ## Cách chạy project
 
 ### 1. Clone repository
-Clone repository từ GitHub:
+Clone repository từ GitHub vào folder htdocs của xampp:
 ```sh
 git clone <https://github.com/Kuwado/SunRise.git>
 ```
