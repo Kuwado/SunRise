@@ -187,4 +187,33 @@ class FavoriteController extends Controller
             ], 500);
         }
     }
+
+    public function getFavoritesInHome(Request $request) {
+        $userId = $request->query('user_id') ?? null;
+        if (!$userId) {
+            return response()->json([
+                'restaurants' => [],
+                'message' => 'ユーザーIDが指定されていません。',
+            ], 400);
+        }
+    
+        $favorites = Favorite::where('user_id', $userId)
+            ->with('restaurant') 
+            ->limit(5)
+            ->get();
+    
+        $restaurants = $favorites->map(function ($fav) {
+            return $fav->restaurant; 
+        });
+    
+        return response()->json([
+            'restaurants' => [
+                'data' => RestaurantResource::collection($restaurants->map(function ($restaurant) use ($userId) {
+                    return new RestaurantResource($restaurant, $userId);
+                }))
+            ],
+            'message' => 'お気に入りのリストを取得しました。',
+        ], 200);
+    }
+    
 }
