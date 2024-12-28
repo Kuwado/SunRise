@@ -91,7 +91,7 @@ const FindRestaurant = () => {
                     },
                 });
                 if (response.status === 200) {
-                    console.log(response);
+                    // console.log(response);
                     setTotalStyleProducts(response.data.styles);
                     setTotalPriceroducts(response.data.prices);
 
@@ -108,7 +108,7 @@ const FindRestaurant = () => {
     useEffect(() => {
         const fetchUser = async () => {
             const userId = localStorage.getItem('userId');
-            console.log(userId);
+            // console.log(userId);
             try {
                 const response = await axios.get('/api/user', {
                     params: {
@@ -158,8 +158,6 @@ const FindRestaurant = () => {
         }
         setCurrentPage(1);
     };
-    console.log(user.price_start);
-    console.log(user.price_end);
 
     const handleStyleChange = (styleId) => {
         setStyles((prevStyles) => {
@@ -230,7 +228,7 @@ const FindRestaurant = () => {
     const handleSortRating = () => {
         setFilterDrPrice('');
     };
-    console.log(user);
+    console.log(products);
 
     return (
         <div className={cx('find-restaurant')}>
@@ -406,7 +404,7 @@ const FindRestaurant = () => {
                                 cafe={cafe}
                                 key={index}
                                 id={cafe.id}
-                                image={cafe.image}
+                                image={cafe.avatar}
                                 name={cafe.name}
                                 location={cafe.address}
                                 price_start={cafe.price_start}
