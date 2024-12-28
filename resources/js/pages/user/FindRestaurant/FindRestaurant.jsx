@@ -405,7 +405,7 @@ const FindRestaurant = () => {
                             cafe={cafe}
                             key={index}
                             id={cafe.id}
-                            image={cafe.image}
+                            image={cafe.avatar}
                             name={cafe.name}
                             location={cafe.address}
                             price_start={cafe.price_start}
