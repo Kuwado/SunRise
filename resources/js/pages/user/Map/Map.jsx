@@ -6,13 +6,21 @@ import styles from './Map.module.scss';
 import MapItem from './MapItem';
 import { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '~/context/AuthContext';
+import { useLocation } from 'react-router-dom';
 
 const cx = classNames.bind(styles);
 
 const Map = () => {
     const [restaurants, setRestaurants] = useState([]);
     const { user, userId } = useContext(AuthContext);
-    console.log(user.latitude);
+    const location = useLocation();
+
+    // Parse query params
+    const queryParams = new URLSearchParams(location.search);
+    const lng = queryParams.get('lng') ?? user.longitude;
+    const lat = queryParams.get('lat') ?? user.latitude;
+    console.log(lng, lat);
+
     // Tọa độ trung tâm
     const latitude = 21.017021;
     const longitude = 105.78348;
@@ -36,9 +44,9 @@ const Map = () => {
 
     return (
         <div className={cx('map')}>
-            {user.latitude && user.longitude && (
+            {lat && lng && (
                 <MapContainer
-                    center={[user.latitude, user.longitude]} // Tọa độ trung tâm
+                    center={[lat, lng]} // Tọa độ trung tâm
                     zoom={15} // Mức zoom phù hợp để hiển thị bán kính 2km
                     style={{ height: '100vh', width: '100%' }} // Kích thước bản đồ
                 >
@@ -51,7 +59,7 @@ const Map = () => {
                     {/* Vẽ hình tròn bán kính 2km */}
                     <Circle
                         center={[user.latitude, user.longitude]} // Tọa độ trung tâm
-                        radius={1000} // Bán kính 2km
+                        radius={user.desired_distance * 1000} // Bán kính 2km
                         // color="blue" // Màu viền
                         // fillColor="blue" // Màu nền
                         // fillOpacity={0.3} // Độ trong suốt

@@ -23,6 +23,7 @@ import {
 import CommentInput from './CommentInput/CommentInput';
 import images from '~/assets/images';
 import { CustomInput } from '~/components/Input';
+import config from '~/config';
 
 const cx = classNames.bind(styles);
 
@@ -108,7 +109,14 @@ const ProductDetail = () => {
                                         <FontAwesomeIcon icon={faLocationDot} />
                                         <div>
                                             <span>{restaurant.address} | </span>
-                                            <span className={cx('location-btn')}>
+                                            <span
+                                                className={cx('location-btn')}
+                                                onClick={() =>
+                                                    navigate(
+                                                        `${config.routes.user.map}?lng=${restaurant.longitude}&lat=${restaurant.latitude}`,
+                                                    )
+                                                }
+                                            >
                                                 <FontAwesomeIcon icon={faLocationArrow} />
                                                 <span style={{ fontWeight: 600 }}>方向を取得</span>
                                             </span>

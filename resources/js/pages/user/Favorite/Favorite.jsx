@@ -225,7 +225,7 @@ export default function Favorite() {
                                         return (
                                             <RadioInput
                                                 key={index}
-                                                id={collection.id}
+                                                id={collection.id + 10}
                                                 onChange={() => handleCollectionIdChange(collection.id)}
                                                 checked={collection.id === collectionId}
                                             >

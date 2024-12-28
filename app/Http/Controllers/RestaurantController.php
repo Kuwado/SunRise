@@ -249,25 +249,51 @@ class RestaurantController extends Controller
     {
         switch ($type) {
             case 1:
-                $restaurants = $restaurants->orHavingRaw('distance <= ?', [0.5]);
+                $restaurants = $restaurants->havingRaw('distance <= ?', [0.5]);
                 break;
             case 2:
-                $restaurants = $restaurants->orHavingRaw('distance > ? AND distance <= ?', [0.5, 1]);
+                $restaurants = $restaurants->havingRaw('distance > ? AND distance <= ?', [0.5, 1]);
                 break;
             case 3:
-                $restaurants = $restaurants->orHavingRaw('distance > ? AND distance <= ?', [1, 1.5]);
+                $restaurants = $restaurants->havingRaw('distance > ? AND distance <= ?', [1, 1.5]);
                 break;
             case 4:
-                $restaurants = $restaurants->orHavingRaw('distance > ? AND distance <= ?', [1.5, 2]);
+                $restaurants = $restaurants->havingRaw('distance > ? AND distance <= ?', [1.5, 2]);
                 break;
             case 5:
-                $restaurants = $restaurants->orHavingRaw('distance > ?', [2]);
+                $restaurants = $restaurants->havingRaw('distance > ?', [2]);
                 break;
             default:
                 break;
         }
         return $restaurants;
     }
+
+    private function getDistances($restaurants, $typeArray)
+    {
+         // Định nghĩa các điều kiện distance theo type
+        $distanceConditions = [
+            1 => ['distance <= ?', [0.5]],
+            2 => ['distance > ? AND distance <= ?', [0.5, 1]],
+            3 => ['distance > ? AND distance <= ?', [1, 1.5]],
+            4 => ['distance > ? AND distance <= ?', [1.5, 2]],
+            5 => ['distance > ?', [2]],
+        ];
+
+        // Thêm các điều kiện vào query
+        $restaurants = $restaurants->having(function ($query) use ($typeArray, $distanceConditions) {
+            foreach ($typeArray as $type) {
+                if (isset($distanceConditions[$type])) {
+                    $condition = $distanceConditions[$type];
+                    $query->orHavingRaw($condition[0], $condition[1]);
+                }
+            }
+        });
+    
+        return $restaurants;
+    }
+    
+
 
     public function getRestaurants(Request $request)
     {
@@ -358,10 +384,7 @@ class RestaurantController extends Controller
             $restaurants = $this->getDistance($restaurants, $distanceType);
         } else if ($distanceTypes) {
             $typeArray = explode(',', $distanceTypes);
-            $restaurantsOld = $restaurants;
-            foreach ($typeArray as $t) {
-                $restaurants = $this->getDistance($restaurants, $t);
-            }
+            $restaurants = $this->getDistances($restaurants, $typeArray);
         }
 
         // Name filter
