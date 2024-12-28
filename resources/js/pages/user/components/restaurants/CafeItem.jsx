@@ -49,7 +49,7 @@ const CafeItem = ({
                 {/* <Rating small rate={rating} /> */}
                 <div className={cx('image-container')}>
                     <Link to={`${config.routes.user.restaurantDetail.replace(':restaurantId', id)}`}>
-                        <img src={image} alt={name} className={cx('image')} />
+                        <img src={image ?? images.restaurantItem1} alt={name} className={cx('image')} />
                     </Link>
                     <div
                         className={cx('favorite-icon', { active: isFavorite })}
@@ -69,8 +69,8 @@ const CafeItem = ({
                     <h5>{distance}km</h5>
                     {isListView && (
                         <div className={cx('wrap-time')}>
-                            <p>Open: {open_time ? open_time.slice(0, 5) : ''}</p>
-                            <p>Close: {close_time ? close_time.slice(0, 5) : ''}</p>
+                            <p>オープン: {open_time ? open_time.slice(0, 5) : ''}</p>
+                            <p>クローズ: {close_time ? close_time.slice(0, 5) : ''}</p>
                         </div>
                     )}
 

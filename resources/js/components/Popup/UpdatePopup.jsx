@@ -130,7 +130,7 @@ const UpdatePopup = ({ id, onClose, onReFetch }) => {
 
     const onSubmitHandler = async (e) => {
         e.preventDefault();
-        if (media[0]) imagesFile.push(media[0]);
+        if (media[0]) imagesFile.unshift(media[0]);
         console.log({
             name,
             description: desc,
