@@ -39,11 +39,14 @@ npm install
 ```
 
 ### 3. Cấu hình môi trường
-Tạo file `.env` từ file mẫu `.env.example` và cấu hình các thông số cần thiết:
+Tạo file `.env` từ file mẫu `.env.example`:
 ```sh
 cp .env.example .env
 php artisan key:generate
 ```
+Thay đổi các thông số cần thiết trong file `.env`:
+![image](https://github.com/user-attachments/assets/b3a01453-f7ae-4a13-8d28-f779b9082e26)
+
 
 ### 4. Chạy XAMPP
 Mở XAMPP và khởi động Apache và MySQL.
@@ -53,6 +56,7 @@ Chạy các lệnh sau để tạo bảng và seed dữ liệu:
 ```sh
 php artisan migrate
 php artisan db:seed
+php artisan storage:link
 ```
 
 ### 6. Chạy server
