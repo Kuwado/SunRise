@@ -45,7 +45,9 @@ cp .env.example .env
 php artisan key:generate
 ```
 Thay đổi các thông số cần thiết trong file `.env`:
-![image](https://github.com/user-attachments/assets/b3a01453-f7ae-4a13-8d28-f779b9082e26)
+
+![image](https://github.com/user-attachments/assets/f8cc6b58-6d52-45d0-a87d-b3930728738f)
+
 
 
 ### 4. Chạy XAMPP
