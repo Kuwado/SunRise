@@ -72,11 +72,13 @@ class FavoriteController extends Controller
             // Sắp xếp theo giá
             $sort_price = $request->query('sort_price') ?? null;
 
-            $perPage = 10;
+            $perPage = $request->query('per_page') ?? 10;
             $now = now();
 
             $favorites = Favorite::with(['restaurant.reviews'])
                 ->where('user_id', $request->user_id);
+
+            // $favorites = Favorite::all()->get();
 
             // Logic lọc giá
             if ($start && $end) {

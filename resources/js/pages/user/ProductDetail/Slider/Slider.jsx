@@ -31,12 +31,16 @@ const responsive = {
 };
 
 const Slider = ({ medias = [] }) => {
+    console.log(medias);
     return (
         <div className={cx('slider')}>
             <Carousel responsive={responsive} infinite={false} showDots={true} keyBoardControl={true}>
                 {medias &&
                     medias.length > 0 &&
                     medias.map((item, index) => {
+                        if (item === null) {
+                            return;
+                        }
                         const extension = item.split('.').pop().toLowerCase();
                         return (
                             <div key={`media-item-${index}`} className={cx('slider-item')}>

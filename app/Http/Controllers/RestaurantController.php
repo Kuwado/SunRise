@@ -292,8 +292,6 @@ class RestaurantController extends Controller
     
         return $restaurants;
     }
-    
-
 
     public function getRestaurants(Request $request)
     {
@@ -389,7 +387,10 @@ class RestaurantController extends Controller
 
         // Name filter
         if ($name) {
-            $restaurants = $restaurants->where('name', 'like', "%{$name}%");
+            $restaurants = $restaurants->where(function($query) use ($name) {
+                $query->where('name', 'like', "%{$name}%")
+                      ->orWhere('address', 'like', "%{$name}%");
+            });            
             if ($restaurants->count() == 0) {
                 return response()->json([
                     'message' => 'レストランが見つかりませんでした。',

@@ -30,7 +30,7 @@ const Map = () => {
     useEffect(() => {
         const fetchRes = async () => {
             try {
-                const response = await axios.get(`/api/restaurants?per_page=30&page=1&user_id=${userId}`);
+                const response = await axios.get(`/api/restaurants?per_page=100&page=1&user_id=${userId}`);
                 if (response.status === 200) {
                     setRestaurants(response.data.restaurants.data);
                 }

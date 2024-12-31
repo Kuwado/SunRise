@@ -39,6 +39,8 @@ const FindRestaurant = () => {
     const urlParams = new URLSearchParams(location.search);
     const name = urlParams.get('name');
 
+    console.log(products);
+
     //state filter
 
     const [filterDrPrice, setFilterDrPrice] = useState('評価: 低から高', '高から低');
@@ -46,6 +48,7 @@ const FindRestaurant = () => {
     const [priceRange, setPriceRange] = useState({ start: null, end: null });
     const [priceType, setPriceType] = useState();
     const { userId } = useContext(AuthContext);
+    console.log(localStorage.getItem('userId'));
 
     useEffect(() => {
         const fetchProducts = async () => {

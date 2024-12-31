@@ -102,7 +102,7 @@ class CollectionController extends Controller
             }
 
             // Phân trang
-            $favorites = $favorites->paginate(2);
+            $favorites = $favorites->paginate(4);
 
             $formattedData = $favorites->through(function ($favorite) use ($now) {
                 return [
