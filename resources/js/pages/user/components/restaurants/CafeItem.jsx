@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from './CafeItem.module.scss';
 import classNames from 'classnames/bind';
 import images from '~/assets/images';
@@ -27,6 +27,9 @@ const CafeItem = ({
 }) => {
     const [isFavorite, setIsFavorite] = useState(isFavorited);
     // console.log('review :', reviews);
+    useEffect(() => {
+        setIsFavorite(isFavorited);
+    }, [isFavorited]);
 
     const handleToggleFavorite = () => {
         const user_id = localStorage.getItem('userId');

@@ -39,13 +39,18 @@
     display: flex;
     justify-content: space-between;
     padding: 5px;
+    max-height: 40px;
+    overflow: hidden;
 }
 
 .cafe-address {
     display: flex;
     gap: 5px;
-    justify-content: center;
     align-items: center;
+
+    .location {
+        text-wrap: no-wrap;
+    }
 }
 
 .cafe-price {

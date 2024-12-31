@@ -67,7 +67,7 @@ export default function Favorite() {
                 params: {
                     user_id: localStorage.getItem('userId'),
                     sort_price: filterDrPrice === '' ? '' : filterDrPrice === '並べ替え 評価:低から高' ? 'asc' : 'desc',
-                    perPage: 4,
+                    per_page: 4,
                     page: currentPage,
                     start: priceRange.start || '',
                     end: priceRange.end || '',
@@ -95,6 +95,7 @@ export default function Favorite() {
             })
             .then((response) => {
                 setProducts(response.data.data.collection.restaurants.data);
+                setTotalPages(response.data.data.collection.restaurants.last_page);
             })
             .catch((error) => {
                 console.log(error);
@@ -117,6 +118,7 @@ export default function Favorite() {
     const handleCollectionIdChange = (id) => {
         setCollectionId(id);
         setCollection(id === -1 ? 'すべてのいい' : collections.find((collection) => collection.id === id).name);
+        handlePageChange(1);
     };
 
     const handleClearFilter = () => {

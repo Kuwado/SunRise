@@ -22,7 +22,9 @@ const Home = () => {
         const fetchNew = async () => {
             try {
                 const response = await axios.get(
-                    `/api/restaurants?style_id=${user.style_id ?? 1}&per_page=5&page=1&user_id=${userId}`,
+                    `/api/restaurants?style_id=${
+                        user.style_id ?? 1
+                    }&sort_time=desc&per_page=5&page=1&user_id=${userId}`,
                 );
                 if (response.status === 200) {
                     setNewRestaurant(response.data.restaurants.data);
@@ -78,7 +80,7 @@ const Home = () => {
             {/* New Cafe Style Section */}
             <section className={styles.newStyleSection}>
                 <img src={images.coffeeBlast} alt="Coffee Blast" className={styles.coffeeBlast} />
-                <h2 className={styles.sectionHeading}>新しいカフェスタイルを楽しむ</h2>
+                <h2 className={styles.sectionHeading}>カフェスタイルを楽しむ</h2>
                 <p className={styles.sectionDescription}>
                     一緒にあらゆるスタイルのカフェを探検しましょう。体験する価値のある新しいカフェが常にあります。
                 </p>

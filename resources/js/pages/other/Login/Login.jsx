@@ -35,7 +35,7 @@ const Login = () => {
                 if (role === 'user') {
                     navigate(config.routes.user.home);
                 } else if (role === 'admin') {
-                    navigate(config.routes.admin.dashboard);
+                    navigate(config.routes.admin.restaurantList);
                 }
             }
             console.log(response);

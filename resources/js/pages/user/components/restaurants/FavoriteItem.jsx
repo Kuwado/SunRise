@@ -78,7 +78,7 @@ export default function FavoriteItem({
                         </div>
                     </div>
                     <div className={cx('cafe-rating')}>
-                        <Rating small rate={rating} />
+                        <Rating rate={rating} />
                         <span>({number_reviews})</span>
                     </div>
                     <div className={cx('cafe-action')}>
