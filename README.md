@@ -102,7 +102,7 @@ Mở trình duyệt và truy cập `http://localhost:8000` để xem kết quả
 
 -   Sync và pull code mới về
 -   tạo database mới từ file database/sunrirse.sql (Xóa sunrise cũ nếu có, tạo sunrise mới, import file sunrise.sql vào)
--   paste storage tôi gửi vào cho nó đè cái cũ hoặc xóa cái cũ đi cũng được (Mục đích là lấy ảnh)
+-   giải nén storage.zip vào cho nó đè cái cũ hoặc xóa cái cũ đi cũng được (Mục đích là lấy ảnh)
 
 1. Các restaunrant id từ 1 đến 30 là dữ liệu fake
 
